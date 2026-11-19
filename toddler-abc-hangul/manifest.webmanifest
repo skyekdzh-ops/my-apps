@@ -1,0 +1,31 @@
+{
+  "name": "아기 첫 한글·알파벳",
+  "short_name": "한글알파벳",
+  "description": "코끼리랑 말해요 — 3세 첫 한글·알파벳 말하기 놀이",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFF9EC",
+  "theme_color": "#E84A3A",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

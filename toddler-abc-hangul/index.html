@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="color" data-mode="consonant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="한글알파벳">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFF9EC">
+<title>코끼리랑 말해요 · 한글·알파벳</title>
+<style>
+/* ============================================================
+   코끼리랑 말해요 — 3세 첫 한글·알파벳 말하기 놀이
+   화풍: 추피(T'choupi) 그림책 스타일
+   · 크림색 종이 배경 · 굵은 먹선(#2B2D42) · 파스텔 원색
+   · 통통 튀는 둥근 글씨 · 눌리는 느낌의 3D 그림자
+   테마: color(컬러) / mono(흑백)
+   ============================================================ */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+:root{
+  --font:ui-rounded,"SF Pro Rounded","Apple SD Gothic Neo",Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","Liberation Sans",FreeSans,"Noto Sans CJK KR","Noto Sans KR","Malgun Gothic",sans-serif;
+  --paper:#FFF9EC;
+  --paper-2:#FFF3D6;
+  --card:#FFFDF6;
+  --ink:#2B2D42;
+  --ink-soft:#5B5C74;
+  --muted:#8B8AA1;
+  --red:#E84A3A;
+  --red-deep:#C33A2C;
+  --red-soft:#FDE2DD;
+  --yellow:#FFD447;
+  --yellow-soft:#FFEFB0;
+  --sky:#3E92CC;
+  --sky-soft:#D6EBF9;
+  --green:#52B788;
+  --green-soft:#DCF3E6;
+  --pink:#F4909F;
+  --pink-soft:#FDE3E8;
+  --line:#2B2D42;
+  --bw:3px;
+  --plate:#FFEFB0;
+  --shadow-card:0 7px 0 rgba(43,45,66,.16);
+  --shadow-ink:0 4px 0 #2B2D42;
+  --shadow-ink-sm:0 3px 0 #2B2D42;
+  --el-body:#BFE4F6;
+  --el-body2:#A6D6EE;
+  --el-ear:#CDEAF8;
+  --el-ear2:#F8C6D0;
+  --el-line:#2B2D42;
+  --el-cheek:#F4909F;
+  --el-nail:#FFFDF6;
+  --el-hat:#E84A3A;
+  --el-hat2:#FFD447;
+  --conf-1:#E84A3A;--conf-2:#FFD447;--conf-3:#3E92CC;--conf-4:#52B788;--conf-5:#F4909F;
+  --overlay-bg:#FFF9EC;
+  --bubble-bg:#FFFDF6;
+  --bar-track:#FFF3D6;
+  --hill-back:#BFE6CC;
+  --hill-front:#8FD3A8;
+  --cloud:#FFFFFF;
+  --sun:#FFD447;
+  --frame:#F0DDBB;
+}
+html[data-theme="mono"]{
+  --paper:#FFFFFF;
+  --paper-2:#FFFFFF;
+  --card:#FFFFFF;
+  --ink:#000000;
+  --ink-soft:#1A1A1A;
+  --muted:#4F4F4F;
+  --red:#000000;
+  --red-deep:#000000;
+  --red-soft:#FFFFFF;
+  --yellow:#FFFFFF;
+  --yellow-soft:#FFFFFF;
+  --sky:#000000;
+  --sky-soft:#FFFFFF;
+  --green:#000000;
+  --green-soft:#FFFFFF;
+  --pink:#000000;
+  --pink-soft:#FFFFFF;
+  --line:#000000;
+  --bw:3.5px;
+  --plate:#FFFFFF;
+  --shadow-card:7px 7px 0 #000;
+  --shadow-ink:0 4px 0 #000;
+  --shadow-ink-sm:0 3px 0 #000;
+  --el-body:#FFFFFF;
+  --el-body2:#F4F4F4;
+  --el-ear:#FFFFFF;
+  --el-ear2:#F4F4F4;
+  --el-line:#000000;
+  --el-cheek:#FFFFFF;
+  --el-nail:#FFFFFF;
+  --el-hat:#000000;
+  --el-hat2:#FFFFFF;
+  --conf-1:#000;--conf-2:#000;--conf-3:#000;--conf-4:#000;--conf-5:#000;
+  --overlay-bg:#FFFFFF;
+  --bubble-bg:#FFFFFF;
+  --bar-track:#FFFFFF;
+  --hill-back:#FFFFFF;
+  --hill-front:#FFFFFF;
+  --cloud:#FFFFFF;
+  --sun:#FFFFFF;
+  --frame:#000000;
+}
+html[data-mode="vowel"]{--plate:#D6EBF9}
+html[data-mode="alphabet"]{--plate:#DCF3E6}
+html[data-theme="mono"][data-mode="vowel"],
+html[data-theme="mono"][data-mode="alphabet"]{--plate:#FFFFFF}
+
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  background:var(--paper);
+  overflow:hidden;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+  -webkit-font-smoothing:antialiased;
+  transition:background-color .25s ease,color .25s ease;
+}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- 그림책 배경 ---------- */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.scene .sc{position:absolute;display:block}
+.sc-sun{width:76px;height:76px;right:16px;top:8px;opacity:.95}
+.sc-cloud{width:132px;height:56px;opacity:.95}
+.sc-cloud-1{left:8px;top:66px}
+.sc-cloud-2{right:10px;top:186px;width:104px;height:44px}
+.sc-star{position:absolute;color:var(--yellow);font-size:17px;opacity:.85;text-shadow:0 0 0 var(--ink)}
+html[data-theme="mono"] .sc-star{color:#000;opacity:.35}
+.sc-star.s1{left:14px;top:14px}
+.sc-star.s2{right:120px;top:34px;font-size:13px}
+.sc-star.s3{left:70px;top:150px;font-size:11px}
+.sc-hills{position:absolute;left:0;right:0;bottom:0;width:100%;height:118px}
+.hill-back{fill:var(--hill-back);stroke:var(--line);stroke-width:2.5}
+.hill-front{fill:var(--hill-front);stroke:var(--line);stroke-width:2.5}
+.hill-dot{fill:var(--paper);opacity:.85}
+html[data-theme="mono"] .hill-dot{fill:#fff;stroke:#000;stroke-width:1.5}
+@media (max-width:819px){
+  .sc-sun{width:58px;height:58px;right:10px;top:2px;opacity:.8}
+  .sc-cloud-1{left:-34px;top:52px;opacity:.9}
+  .sc-cloud-2{display:none}
+  .sc-star.s3{display:none}
+}
+
+/* ---------- 앱 골격 ---------- */
+#app{
+  position:relative;z-index:1;
+  height:100vh;height:100dvh;
+  display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 7px) 12px calc(env(safe-area-inset-bottom,0px) + 7px);
+  max-width:780px;margin:0 auto;
+  gap:7px;
+}
+
+/* ---------- 머리말 ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand .mark{
+  width:40px;height:40px;border-radius:14px;display:grid;place-items:center;font-size:21px;
+  background:var(--yellow);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);
+  transform:rotate(-4deg);flex:0 0 auto;
+}
+html[data-theme="mono"] .brand .mark{background:#fff;filter:grayscale(1);box-shadow:0 3px 0 #000}
+.brand{flex:0 1 auto;min-width:0}
+.brand > div{min-width:0}
+.brand h1{font-size:clamp(15px,4.3vw,18px);margin:0;letter-spacing:-.03em;white-space:nowrap;line-height:1.1;font-weight:900;overflow:hidden;text-overflow:ellipsis}
+.brand p{margin:2px 0 0;font-size:10.5px;color:var(--muted);font-weight:800;letter-spacing:.01em}
+
+.theme-toggle{
+  display:flex;padding:3px;gap:2px;border-radius:999px;background:var(--card);
+  border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);flex:0 0 auto;
+}
+html[data-theme="mono"] .theme-toggle{box-shadow:0 3px 0 #000}
+.theme-toggle button{
+  padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900;color:var(--ink-soft);
+  display:flex;align-items:center;gap:4px;min-height:36px;border:2.5px solid transparent;
+  transition:transform .12s ease,background .18s ease,color .18s ease,border-color .18s ease;
+  letter-spacing:-.02em;
+}
+.theme-toggle button .ico{font-size:13px;line-height:1}
+html[data-theme="mono"] .theme-toggle button .ico{filter:grayscale(1)}
+.theme-toggle button[aria-pressed="true"]{
+  background:var(--yellow);color:var(--ink);border-color:var(--ink);
+}
+html[data-theme="mono"] .theme-toggle button[aria-pressed="true"]{background:#000;color:#fff;border-color:#000}
+.theme-toggle button:active{transform:scale(.95)}
+
+/* ---------- 모드 탭 ---------- */
+.modes{
+  display:flex;gap:5px;padding:4px;border-radius:22px;background:var(--card);
+  border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);flex:0 0 auto;
+}
+html[data-theme="mono"] .modes{box-shadow:0 3px 0 #000}
+.modes button{
+  flex:1;min-height:46px;border-radius:17px;font-size:clamp(13px,3.8vw,15px);font-weight:900;
+  color:var(--ink-soft);display:flex;align-items:center;justify-content:center;gap:6px;
+  border:2.5px solid transparent;
+  transition:transform .12s ease,background .18s ease,color .18s ease,box-shadow .18s ease,border-color .18s ease;
+  letter-spacing:-.02em;
+}
+.modes button .m-ico{font-size:15px;font-weight:900;line-height:1}
+html[data-theme="mono"] .modes button .m-ico{filter:grayscale(1)}
+.modes button[aria-selected="true"]{
+  background:var(--plate);color:var(--ink);border-color:var(--ink);
+  box-shadow:0 3px 0 var(--ink);transform:translateY(-1px);
+}
+html[data-theme="mono"] .modes button[aria-selected="true"]{background:#000;color:#fff;box-shadow:0 3px 0 #000}
+.modes button:active{transform:translateY(1px) scale(.98)}
+
+/* ---------- 무대 ---------- */
+.stage{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.card{
+  position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:clamp(3px,1.2vh,10px);
+  background:
+    radial-gradient(circle at 50% 0%, #FFFDF6 0%, #FFFDF6 55%, #FDFBF0 100%);
+  border:3px solid var(--ink);border-radius:32px;
+  box-shadow:var(--shadow-card);padding:clamp(48px,7vh,58px) 14px clamp(8px,1.8vh,16px);
+  overflow:hidden;transition:background .25s,border-color .25s,box-shadow .25s;
+}
+html[data-theme="mono"] .card{background:#fff;border-width:4px;border-radius:24px}
+/* 그림책 액자 */
+.card .frame{
+  position:absolute;inset:7px;border:2px dashed var(--frame);border-radius:25px;pointer-events:none;z-index:0;
+}
+html[data-theme="mono"] .card .frame{border:2px solid #000;border-radius:18px;inset:6px}
+.card .deco{position:absolute;bottom:4px;z-index:0;pointer-events:none;opacity:.95}
+.card .deco-flower{left:8px;width:34px;height:34px}
+.card .deco-grass{right:6px;width:40px;height:34px}
+
+.stage-top{display:flex;align-items:center;justify-content:space-between;position:absolute;top:11px;left:14px;right:14px;z-index:3;padding:0 7px;gap:8px}
+.counter{font-size:12px;font-weight:900;color:var(--muted);letter-spacing:.03em;background:var(--card);padding:3px 2px}
+.stars{
+  display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;background:var(--yellow-soft);
+  font-weight:900;font-size:13px;color:var(--ink);border:2.5px solid var(--ink);box-shadow:0 2.5px 0 var(--ink);
+}
+html[data-theme="mono"] .stars{border:2.5px solid #000;background:#fff;color:#000;box-shadow:0 2.5px 0 #000}
+.stars .star-glyph{font-size:14px;line-height:1;color:var(--sun);filter:drop-shadow(0 1px 0 rgba(43,45,66,.35))}
+html[data-theme="mono"] .stars .star-glyph{color:#000;filter:none}
+html[data-theme="mono"] .card .deco,
+html[data-theme="mono"] .ov-flower{filter:grayscale(1) brightness(1.35) contrast(1.6)}
+html[data-theme="mono"] .pb-btn,html[data-theme="mono"] .pb-label,html[data-theme="mono"] .tiny-btn{filter:grayscale(1)}
+html[data-theme="mono"] .mode-ico{filter:grayscale(1)}
+.stars.pop{animation:starPop .6s cubic-bezier(.2,1.6,.4,1)}
+@keyframes starPop{0%{transform:scale(1)}35%{transform:scale(1.26) rotate(-6deg)}100%{transform:scale(1)}}
+
+.letter-zone{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:1px;min-height:0}
+.plate{
+  position:absolute;left:50%;top:50%;z-index:0;
+  width:clamp(166px,48vw,266px);height:clamp(166px,48vw,266px);
+  transform:translate(-50%,-55%) rotate(-2.5deg);
+  background:var(--plate);border:3px solid var(--ink);border-radius:38%;
+  box-shadow:0 6px 0 rgba(43,45,66,.14);
+}
+html[data-theme="mono"] .plate{background:#fff;box-shadow:5px 5px 0 #000;border-radius:30%}
+.letter{
+  position:relative;z-index:1;
+  font-size:clamp(92px,29vw,192px);line-height:.96;font-weight:900;letter-spacing:-.04em;
+  color:var(--ink);
+  transition:transform .22s cubic-bezier(.2,1.4,.4,1),opacity .18s ease;
+  display:flex;align-items:baseline;gap:8px;
+}
+.letter .lower{font-size:.44em;font-weight:900;color:var(--ink-soft);letter-spacing:-.02em;opacity:.72}
+.letter.swap{animation:letterSwap .36s cubic-bezier(.2,1.3,.4,1)}
+@keyframes letterSwap{0%{transform:scale(.84) rotate(-4deg);opacity:.2}60%{transform:scale(1.05) rotate(1.5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.subline{
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:7px;font-size:clamp(13px,3.9vw,16px);font-weight:900;color:var(--ink-soft);
+  letter-spacing:-.02em;flex-wrap:wrap;justify-content:center;text-align:center;
+  background:var(--card);padding:2px 10px;border-radius:999px;
+}
+html[data-theme="mono"] .subline{color:#000;background:#fff}
+.subline .dot{width:5px;height:5px;border-radius:50%;background:var(--muted);opacity:.7}
+html[data-theme="mono"] .subline .dot{background:#000;opacity:1}
+.subline .example{display:inline-flex;align-items:center;gap:4px}
+.subline .example .em{font-size:1.18em;line-height:1}
+html[data-theme="mono"] .subline .example .em{filter:grayscale(1) contrast(1.4)}
+
+/* ---------- 말하기 버튼 ---------- */
+.actions{display:flex;align-items:flex-start;justify-content:center;gap:clamp(16px,7vw,36px);position:relative;z-index:2;flex:0 0 auto;margin-top:1px}
+.act{display:flex;flex-direction:column;align-items:center;gap:6px}
+.act .circle{
+  width:clamp(66px,18.5vw,86px);height:clamp(66px,18.5vw,86px);border-radius:50%;
+  display:grid;place-items:center;font-size:clamp(28px,8vw,36px);
+  transition:transform .13s ease,box-shadow .13s ease,background .2s ease;
+  position:relative;line-height:1;border:3px solid var(--ink);
+}
+.act .label{font-size:11.5px;font-weight:900;color:var(--ink-soft);letter-spacing:-.02em;white-space:nowrap}
+html[data-theme="mono"] .act .label{color:#000}
+.act:active .circle{transform:translateY(4px)}
+#btnSpeak .circle{
+  background:var(--sky);color:#fff;box-shadow:0 5px 0 var(--ink);
+}
+html[data-theme="mono"] #btnSpeak .circle{background:#fff;color:#000;border-width:3.5px;box-shadow:0 5px 0 #000}
+#btnSpeak:active .circle{box-shadow:0 1px 0 var(--ink)}
+html[data-theme="mono"] #btnSpeak:active .circle{box-shadow:0 1px 0 #000}
+#btnListen .circle{
+  background:var(--red);color:#fff;box-shadow:0 6px 0 var(--ink);
+}
+html[data-theme="mono"] #btnListen .circle{background:#000;color:#fff}
+#btnListen:active .circle{box-shadow:0 2px 0 var(--ink)}
+html[data-theme="mono"] #btnListen:active .circle{box-shadow:0 2px 0 #000}
+#btnListen.listening .circle{animation:micPulse 1.15s ease-in-out infinite}
+#btnListen.listening .label{color:var(--red)}
+html[data-theme="mono"] #btnListen.listening .label{color:#000}
+@keyframes micPulse{
+  0%,100%{transform:scale(1);box-shadow:0 6px 0 var(--ink),0 0 0 0 rgba(232,74,58,.40)}
+  50%{transform:scale(1.06);box-shadow:0 6px 0 var(--ink),0 0 0 15px rgba(232,74,58,0)}
+}
+html[data-theme="mono"] #btnListen.listening .circle{animation:micPulseMono 1.15s ease-in-out infinite}
+@keyframes micPulseMono{
+  0%,100%{transform:scale(1);box-shadow:0 6px 0 #000,0 0 0 0 rgba(0,0,0,.30)}
+  50%{transform:scale(1.06);box-shadow:0 6px 0 #000,0 0 0 13px rgba(0,0,0,0)}
+}
+.mic-ico{display:block;width:1em;height:1em}
+.mic-ico svg{width:100%;height:100%;display:block}
+
+/* 듣는 중 표시 */
+.hearing{
+  position:relative;z-index:2;min-height:17px;font-size:12px;font-weight:900;color:var(--ink-soft);
+  display:flex;align-items:center;gap:6px;justify-content:center;opacity:0;transition:opacity .2s ease;
+  max-width:100%;padding:0 8px;
+}
+.hearing.on{opacity:1}
+.hearing .bars{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
+.hearing .bars i{width:3px;border-radius:2px;background:var(--red);animation:bar 0.9s ease-in-out infinite}
+html[data-theme="mono"] .hearing .bars i{background:#000}
+.hearing .bars i:nth-child(2){animation-delay:.15s}
+.hearing .bars i:nth-child(3){animation-delay:.3s}
+.hearing .bars i:nth-child(4){animation-delay:.45s}
+@keyframes bar{0%,100%{height:4px}50%{height:12px}}
+.hearing .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- gentle retry 피드백 ---------- */
+.feedback{
+  position:absolute;inset:auto 0 0 0;z-index:4;padding:11px 13px calc(12px + env(safe-area-inset-bottom,0px));
+  background:var(--bubble-bg);border-top:3px solid var(--ink);
+  display:flex;flex-direction:column;gap:9px;
+  transform:translateY(106%);transition:transform .3s cubic-bezier(.2,1.1,.4,1);
+  border-radius:0 0 28px 28px;
+}
+.fb-top{display:flex;align-items:center;gap:9px}
+.feedback.show{transform:translateY(0)}
+.feedback .mini-wrap{width:clamp(42px,12vw,54px);flex:0 0 auto}
+.feedback .msg{flex:1 1 auto;min-width:0}
+.feedback .msg b{display:block;font-size:clamp(13px,3.9vw,15px);line-height:1.3;letter-spacing:-.02em}
+.feedback .msg small{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html[data-theme="mono"] .feedback .msg small{color:#333}
+.feedback .fb-actions{display:flex;gap:6px;flex:0 0 auto}
+.tiny-btn{
+  flex:1 1 0;min-height:44px;padding:0 10px;border-radius:13px;font-size:12px;font-weight:900;
+  background:var(--yellow-soft);color:var(--ink);border:2.5px solid var(--ink);box-shadow:0 2.5px 0 var(--ink);
+  display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;transition:transform .12s;
+}
+#fbHear{background:var(--sky-soft)}
+.tiny-btn:active{transform:translateY(2px);box-shadow:none}
+html[data-theme="mono"] .tiny-btn{background:#fff;color:#000;border:3px solid #000;box-shadow:0 2.5px 0 #000}
+
+/* ---------- 부모님 도움 줄 ---------- */
+.parent-bar{
+  flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 7px 5px 11px;border-radius:16px;
+  background:var(--card);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);
+}
+html[data-theme="mono"] .parent-bar{border-radius:12px;box-shadow:0 3px 0 #000}
+.parent-bar .pb-label{font-size:10.5px;font-weight:900;color:var(--ink-soft);white-space:nowrap;display:flex;align-items:center;gap:4px;letter-spacing:-.02em}
+html[data-theme="mono"] .parent-bar .pb-label{color:#000}
+.parent-bar .pb-label .ico{font-size:12px}
+html[data-theme="mono"] .parent-bar .pb-label .ico{filter:grayscale(1)}
+.parent-bar .pb-btns{display:flex;gap:6px;margin-left:auto}
+.pb-btn{
+  min-height:38px;padding:0 12px;border-radius:12px;font-size:11.5px;font-weight:900;
+  display:flex;align-items:center;gap:4px;border:2.5px solid var(--ink);background:var(--yellow-soft);color:var(--ink);
+  box-shadow:0 2.5px 0 var(--ink);
+}
+.pb-btn.ok{background:var(--green-soft);border-color:var(--ink)}
+.pb-btn:active{transform:translateY(2px);box-shadow:none}
+html[data-theme="mono"] .pb-btn{background:#fff;border:3px solid #000;color:#000;box-shadow:0 2.5px 0 #000}
+html[data-theme="mono"] .pb-btn.ok{background:#000;color:#fff}
+.pb-btn .kbd{font-size:9px;opacity:.55;font-weight:800}
+@media (hover:none){.pb-btn .kbd{display:none}}
+
+/* ---------- 이동 줄 ---------- */
+.navbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nav-group{display:flex;gap:7px;align-items:center}
+.nav-btn{
+  min-width:56px;min-height:48px;padding:0 11px;border-radius:16px;background:var(--card);flex:0 0 auto;white-space:nowrap;
+  border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);display:flex;align-items:center;justify-content:center;
+  gap:5px;font-size:12px;font-weight:900;color:var(--ink-soft);transition:transform .12s,box-shadow .12s;
+}
+html[data-theme="mono"] .nav-btn{box-shadow:0 3px 0 #000;border-radius:12px;color:#000}
+.nav-btn:active{transform:translateY(3px);box-shadow:none}
+.nav-btn .arr{font-size:16px;line-height:1}
+@media (max-width:400px){.nav-hint{max-width:38%;font-size:9.5px;padding:4px 7px}}
+#btnRandom{background:var(--yellow)}
+html[data-theme="mono"] #btnRandom{background:#fff}
+.nav-hint{font-size:10px;font-weight:900;color:var(--ink-soft);letter-spacing:-.02em;text-align:center;line-height:1.2;background:var(--card);border:2px solid var(--ink);border-radius:999px;padding:4px 9px;flex:0 1 auto;min-width:0;max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html[data-theme="mono"] .nav-hint{color:#000;background:#fff;border-color:#000}
+
+/* ---------- 마이크 안내 ---------- */
+.sr-notice{
+  flex:0 0 auto;display:none;align-items:flex-start;gap:7px;padding:7px 10px;border-radius:13px;
+  background:var(--yellow-soft);border:2.5px solid var(--ink);font-size:11px;font-weight:800;line-height:1.35;color:var(--ink-soft);
+}
+html[data-theme="mono"] .sr-notice{background:#fff;color:#000;border:3px solid #000}
+.sr-notice.show{display:flex}
+.sr-notice .ico{font-size:13px;line-height:1.1}
+html[data-theme="mono"] .sr-notice .ico{filter:grayscale(1)}
+.sr-notice b{color:var(--ink)}
+html[data-theme="mono"] .sr-notice b{color:#000}
+
+/* ============================================================
+   축하 화면 (코끼리 댄스 + 축하송) — 그림책 한 장면
+   ============================================================ */
+.overlay{
+  position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+  background:var(--overlay-bg);
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+  padding:calc(env(safe-area-inset-top,0px) + 8px) 14px calc(env(safe-area-inset-bottom,0px) + 8px);
+  overflow:hidden;
+}
+.overlay.show{opacity:1;pointer-events:auto}
+.overlay[hidden]{display:none}
+.ov-sun{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;width:84px;height:84px;z-index:1;opacity:.95}
+.ov-cloud{position:absolute;width:120px;height:50px;z-index:1;opacity:.95}
+.ov-cloud-l{left:6px;top:calc(env(safe-area-inset-top,0px) + 60px)}
+.ov-cloud-r{right:6px;top:calc(env(safe-area-inset-top,0px) + 190px);width:92px;height:38px}
+.ov-hills{position:absolute;left:0;right:0;bottom:0;width:100%;height:150px;z-index:1}
+.ov-flower{position:absolute;bottom:16px;z-index:1}
+.ov-flower.f1{left:8%}
+.ov-flower.f2{right:9%}
+.celebrate-inner{width:100%;max-width:540px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(5px,1.5vh,15px);position:relative;z-index:3}
+.bubble{
+  background:var(--bubble-bg);border:3px solid var(--ink);border-radius:22px;padding:10px 18px;
+  font-weight:900;font-size:clamp(16px,4.6vw,21px);letter-spacing:-.03em;color:var(--ink);
+  box-shadow:0 4px 0 var(--ink);display:flex;align-items:center;gap:8px;position:relative;
+  animation:bubbleIn .45s cubic-bezier(.2,1.5,.4,1);transform-origin:50% 100%;
+}
+html[data-theme="mono"] .bubble{border-width:3.5px;box-shadow:0 4px 0 #000;border-radius:14px;color:#000}
+.bubble::after{
+  content:"";position:absolute;left:50%;bottom:-10px;transform:translateX(-50%) rotate(45deg);
+  width:15px;height:15px;background:var(--bubble-bg);border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);
+}
+html[data-theme="mono"] .bubble::after{border-right:3.5px solid #000;border-bottom:3.5px solid #000}
+.bubble .big-ch{font-size:1.24em;color:var(--red);flex:0 0 auto}
+.bubble .pr{display:inline;line-height:1.3}
+.bubble.long{font-size:clamp(13px,3.8vw,16px);max-width:min(100%,360px);text-align:center;border-radius:20px;line-height:1.35;flex-wrap:wrap;justify-content:center}
+html[data-theme="mono"] .bubble .big-ch{color:#000}
+@keyframes bubbleIn{0%{transform:scale(.7) translateY(12px);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+
+.elephant-stage{position:relative;width:100%;flex:0 1 auto;display:flex;align-items:flex-end;justify-content:center;min-height:0;z-index:3}
+.elephant-wrap{width:clamp(206px,58vw,300px);height:auto;filter:drop-shadow(0 8px 0 rgba(43,45,66,.12))}
+html[data-theme="mono"] .elephant-wrap{filter:none}
+.elephant-wrap svg{width:100%;height:auto;display:block;overflow:visible}
+.elephant-wrap .ground{fill:rgba(43,45,66,.10)}
+html[data-theme="mono"] .elephant-wrap .ground{fill:#fff;stroke:#000;stroke-width:2.5}
+
+.elephant-wrap.party{animation:elEnter .5s cubic-bezier(.2,1.5,.4,1)}
+@keyframes elEnter{0%{transform:scale(.5) rotate(-8deg);opacity:0}70%{transform:scale(1.05) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+
+/* 코끼리 — 그림책 먹선 */
+.el .body-fill{fill:var(--el-body);stroke:var(--el-line);stroke-width:4.5}
+.el .body-back{fill:var(--el-body2);stroke:var(--el-line);stroke-width:4.5}
+.el .ear-fill{fill:var(--el-ear);stroke:var(--el-line);stroke-width:4.5}
+.el .ear-inner{fill:var(--el-ear2);stroke:var(--el-line);stroke-width:2.5;opacity:.9}
+.el .line{stroke:var(--el-line);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.el .leg{fill:var(--el-body);stroke:var(--el-line);stroke-width:4.5}
+.el .nail{fill:var(--el-nail);stroke:var(--el-line);stroke-width:2.5}
+.el .trunk-outline{fill:none;stroke:var(--el-line);stroke-width:37;stroke-linecap:round}
+.el .trunk{fill:none;stroke:var(--el-body);stroke-width:29;stroke-linecap:round}
+.el .trunk-line{fill:none;stroke:var(--el-line);stroke-width:3;stroke-linecap:round;opacity:.5}
+.el .trunk-tip{fill:var(--el-body2);stroke:var(--el-line);stroke-width:4.5}
+.el .eye{fill:var(--el-line)}
+.el .eye-shine{fill:#FFFFFF}
+html[data-theme="mono"] .el .eye{fill:#000}
+html[data-theme="mono"] .el .eye-shine{fill:#fff}
+.el .cheek{fill:var(--el-cheek);opacity:.9}
+html[data-theme="mono"] .el .cheek{fill:#fff;stroke:#000;stroke-width:2.5;opacity:1}
+.el .smile{fill:none;stroke:var(--el-line);stroke-width:3.5;stroke-linecap:round}
+.el .hat,.el .hat-pom{opacity:0;transition:opacity .2s}
+.party .el .hat{opacity:1;fill:var(--el-hat);stroke:var(--el-line);stroke-width:3.5;stroke-linejoin:round}
+.party .el .hat-pom{opacity:1;fill:var(--el-hat2);stroke:var(--el-line);stroke-width:3}
+html[data-theme="mono"] .party .el .hat{fill:#000}
+html[data-theme="mono"] .party .el .hat-pom{fill:#fff}
+
+/* 댄스 */
+.dancing .el-body{animation:elBounce .62s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.dancing .el-head{animation:headTilt .9s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 92%}
+.dancing .ear-l{animation:earL .48s ease-in-out infinite;transform-box:fill-box;transform-origin:100% 50%}
+.dancing .ear-r{animation:earR .48s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 50%}
+.dancing .trunk-g{animation:trunkWave .7s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 2%}
+.dancing .leg-l{animation:legL .62s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 4%}
+.dancing .leg-r{animation:legR .62s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 4%}
+.dancing .el-tail{animation:tailWag .4s ease-in-out infinite;transform-box:fill-box;transform-origin:100% 0%}
+.dancing .body-back{animation:bodySquash .62s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes elBounce{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-16px) rotate(-1.5deg)}55%{transform:translateY(0) rotate(0)}78%{transform:translateY(-7px) rotate(1.5deg)}}
+@keyframes headTilt{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes earL{0%,100%{transform:rotate(0) scaleY(1)}50%{transform:rotate(-16deg) scaleY(.94)}}
+@keyframes earR{0%,100%{transform:rotate(0) scaleY(1)}50%{transform:rotate(16deg) scaleY(.94)}}
+@keyframes trunkWave{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(14deg)}}
+@keyframes legL{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes legR{0%,100%{transform:translateY(-6px)}50%{transform:translateY(0)}}
+@keyframes tailWag{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(14deg)}}
+@keyframes bodySquash{0%,100%{transform:scale(1,1)}32%{transform:scale(1.04,.96)}}
+
+/* 음표 & 색종이 */
+.notes{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+.note{
+  position:absolute;font-size:clamp(18px,5.5vw,28px);font-weight:900;color:var(--red);
+  animation:noteRise 2.4s ease-out forwards;opacity:0;
+  text-shadow:0 2px 0 rgba(43,45,66,.18);
+}
+html[data-theme="mono"] .note{color:#000;text-shadow:none}
+@keyframes noteRise{
+  0%{opacity:0;transform:translateY(20px) scale(.7) rotate(-8deg)}
+  15%{opacity:1}
+  70%{opacity:.9}
+  100%{opacity:0;transform:translateY(-150px) scale(1.1) rotate(12deg)}
+}
+.confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2}
+.conf{
+  position:absolute;top:-24px;width:10px;height:14px;border-radius:2px;opacity:.95;
+  border:1.5px solid var(--ink);
+  animation:confFall linear forwards;
+}
+html[data-theme="mono"] .conf{border-radius:0}
+.conf.circle{border-radius:50%;width:11px;height:11px}
+.conf.star{clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);border:0}
+@keyframes confFall{
+  0%{transform:translate3d(0,-20px,0) rotate(0)}
+  100%{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot))}
+}
+
+/* 노래 진행 */
+.song{width:min(100%,400px);display:flex;align-items:center;gap:9px;flex:0 0 auto}
+.song .bar{flex:1;height:14px;border-radius:999px;background:var(--bar-track);overflow:hidden;border:2.5px solid var(--ink);box-shadow:0 2.5px 0 var(--ink)}
+html[data-theme="mono"] .song .bar{border:3px solid #000;background:#fff;border-radius:4px;box-shadow:0 2.5px 0 #000}
+.song .bar i{display:block;height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--yellow),var(--red));transition:width .12s linear}
+html[data-theme="mono"] .song .bar i{background:#000;border-radius:0}
+.song .t{font-size:11.5px;font-weight:900;color:var(--ink-soft);min-width:50px;text-align:right;letter-spacing:-.02em}
+html[data-theme="mono"] .song .t{color:#000}
+.song .t .num{font-variant-numeric:tabular-nums}
+.skip-btn{
+  min-height:48px;padding:0 20px;border-radius:999px;font-size:13px;font-weight:900;
+  background:var(--card);border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);color:var(--ink);
+  display:flex;align-items:center;gap:6px;flex:0 0 auto;transition:transform .12s,box-shadow .12s;
+}
+html[data-theme="mono"] .skip-btn{box-shadow:0 4px 0 #000;border-radius:12px;color:#000}
+.skip-btn:active{transform:translateY(3px);box-shadow:none}
+.dance-caption{font-size:11px;font-weight:900;color:var(--ink-soft);letter-spacing:-.01em;flex:0 0 auto;background:var(--card);padding:3px 10px;border-radius:999px;border:2px solid var(--ink)}
+html[data-theme="mono"] .dance-caption{color:#000;border-color:#000;background:#fff}
+html[data-theme="mono"] .bubble,html[data-theme="mono"] .dance-caption,html[data-theme="mono"] .skip-btn{filter:grayscale(1)}
+
+@media (prefers-reduced-motion: reduce){
+  .dancing .el-body,.dancing .el-head,.dancing .ear-l,.dancing .ear-r,.dancing .trunk-g,.dancing .leg-l,.dancing .leg-r,.dancing .el-tail,.dancing .body-back{animation-duration:1.2s}
+}
+
+/* ---------- 넓은 화면 ---------- */
+@media (min-width:820px) and (min-height:700px){
+  #app{max-width:768px;padding:14px 20px}
+  .brand h1{font-size:19px}
+  .brand .mark{width:44px;height:44px;font-size:23px}
+  .card{border-radius:40px;padding:22px 28px}
+  .card .frame{border-radius:32px}
+  .plate{width:clamp(220px,23vw,290px);height:clamp(220px,23vw,290px)}
+  .letter{font-size:clamp(132px,16vw,216px)}
+  .act .circle{width:92px;height:92px;font-size:38px}
+  .act .label{font-size:13px}
+  .nav-btn{min-width:74px;min-height:52px;font-size:13px}
+  .parent-bar{padding:7px 9px 7px 14px}
+  .pb-label{font-size:12px}
+  .pb-btn{font-size:12.5px;min-height:40px}
+  .navbar{gap:14px}
+  .sc-cloud-2{top:230px;right:24px;width:130px;height:54px}
+  .sc-sun{width:96px;height:96px;right:26px;top:14px}
+  .sc-star.s1{left:34px;top:22px;font-size:20px}
+  .sc-star.s3{left:120px;top:180px}
+  .sc-hills{height:150px}
+}
+@media (max-height:700px){
+  .brand p{display:none}
+  .act .circle{width:60px;height:60px;font-size:26px}
+  .act .label{font-size:10.5px}
+  .letter{font-size:clamp(68px,21vw,140px)}
+  .plate{width:clamp(124px,38vw,180px);height:clamp(124px,38vw,180px)}
+  .modes button{min-height:40px}
+  .theme-toggle button{min-height:32px;padding:4px 8px;font-size:11px}
+  .parent-bar{padding:3px 5px 3px 8px}
+  .pb-btn{min-height:34px}
+  .nav-btn{min-height:42px}
+  .hearing{min-height:14px}
+}
+
+/* ============================================================
+   부모님 설정 (GPT 연동)
+   ============================================================ */
+.gear-btn{
+  position:relative;width:38px;height:38px;border-radius:50%;background:var(--card);
+  border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);display:grid;place-items:center;
+  font-size:16px;flex:0 0 auto;transition:transform .12s,box-shadow .12s;
+}
+.gear-btn:active{transform:translateY(3px);box-shadow:none}
+html[data-theme="mono"] .gear-btn{background:#fff;box-shadow:0 3px 0 #000}
+.gear-btn .ico-gear{line-height:1;display:block}
+html[data-theme="mono"] .gear-btn .ico-gear{filter:grayscale(1)}
+.gear-btn .on-dot{
+  position:absolute;right:-2px;top:-2px;width:12px;height:12px;border-radius:50%;
+  background:var(--green);border:2px solid var(--ink);display:none;
+}
+.gear-btn.on .on-dot{display:block}
+html[data-theme="mono"] .gear-btn .on-dot{background:#000}
+
+.sheet-backdrop{
+  position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(43,45,66,.45);opacity:0;pointer-events:none;transition:opacity .22s ease;
+  padding:0;
+}
+.sheet-backdrop.show{opacity:1;pointer-events:auto}
+.sheet-backdrop[hidden]{display:none}
+.sheet{
+  width:100%;max-width:540px;max-height:90vh;max-height:90dvh;background:var(--card);
+  border:3px solid var(--ink);border-bottom:0;border-radius:28px 28px 0 0;
+  box-shadow:0 -5px 0 rgba(43,45,66,.12);display:flex;flex-direction:column;overflow:hidden;
+  transform:translateY(22px);transition:transform .26s cubic-bezier(.2,1.1,.4,1);
+}
+.sheet-backdrop.show .sheet{transform:translateY(0)}
+html[data-theme="mono"] .sheet{background:#fff;box-shadow:0 -5px 0 #000}
+@media (min-width:760px){
+  .sheet-backdrop{align-items:center;padding:24px}
+  .sheet{border-bottom:3px solid var(--ink);border-radius:28px;max-height:86vh;box-shadow:7px 7px 0 rgba(43,45,66,.18)}
+}
+.sheet-head{
+  display:flex;align-items:center;gap:8px;padding:13px 14px 11px 16px;border-bottom:2.5px dashed var(--frame);flex:0 0 auto;
+}
+html[data-theme="mono"] .sheet-head{border-bottom:2.5px solid #000}
+.sheet-head h2{margin:0;font-size:16px;font-weight:900;letter-spacing:-.03em;display:flex;align-items:center;gap:6px;flex:1}
+.sheet-head .tag{
+  font-size:10px;font-weight:900;color:var(--ink);background:var(--sky-soft);border:2px solid var(--ink);
+  border-radius:999px;padding:2px 7px;letter-spacing:-.01em;
+}
+html[data-theme="mono"] .sheet-head .tag{background:#fff;color:#000}
+.sheet-close{
+  width:34px;height:34px;border-radius:50%;background:var(--card);border:2.5px solid var(--ink);
+  box-shadow:0 2px 0 var(--ink);display:grid;place-items:center;font-size:14px;font-weight:900;flex:0 0 auto;
+}
+.sheet-close:active{transform:translateY(2px);box-shadow:none}
+html[data-theme="mono"] .sheet-close{background:#fff;box-shadow:0 2px 0 #000}
+.sheet-body{padding:13px 16px calc(16px + env(safe-area-inset-bottom,0px));overflow-y:auto;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch}
+
+.conn-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;font-size:11.5px;font-weight:900;
+  border:2.5px solid var(--ink);background:var(--yellow-soft);letter-spacing:-.02em;
+}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:block}
+html[data-theme="mono"] .badge{background:#fff}
+.badge[data-status="none"]{background:var(--card)}
+.badge[data-status="none"] i{background:var(--muted)}
+.badge[data-status="entered"]{background:var(--yellow-soft)}
+.badge[data-status="entered"] i{background:var(--yellow)}
+.badge[data-status="checking"]{background:var(--sky-soft)}
+.badge[data-status="checking"] i{background:var(--sky);animation:badgeBlink .9s ease-in-out infinite}
+.badge[data-status="ok"]{background:var(--green-soft)}
+.badge[data-status="ok"] i{background:var(--green)}
+.badge[data-status="error"]{background:var(--red-soft)}
+.badge[data-status="error"] i{background:var(--red)}
+@keyframes badgeBlink{0%,100%{opacity:1}50%{opacity:.25}}
+.mini-btn{
+  margin-left:auto;min-height:36px;padding:0 12px;border-radius:12px;font-size:11.5px;font-weight:900;
+  background:var(--card);border:2.5px solid var(--ink);box-shadow:0 2px 0 var(--ink);color:var(--ink);
+}
+.mini-btn:active{transform:translateY(2px);box-shadow:none}
+html[data-theme="mono"] .mini-btn{background:#fff;box-shadow:0 2px 0 #000}
+.conn-msg{margin:0;font-size:11px;line-height:1.4;font-weight:800;color:var(--ink-soft);display:none;background:var(--paper-2);border-radius:10px;padding:7px 9px}
+.conn-msg.show{display:block}
+.conn-msg.bad{background:var(--red-soft)}
+html[data-theme="mono"] .conn-msg{background:#fff;border:2px solid #000;color:#000}
+
+.field{display:flex;flex-direction:column;gap:5px}
+.field-lbl{font-size:11.5px;font-weight:900;color:var(--ink-soft);letter-spacing:-.01em}
+html[data-theme="mono"] .field-lbl{color:#000}
+.key-wrap{position:relative;display:flex}
+.key-wrap input{
+  width:100%;height:46px;border-radius:13px;border:2.5px solid var(--ink);background:#fff;
+  padding:0 44px 0 12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--ink);
+  box-shadow:inset 0 -2px 0 rgba(43,45,66,.06);
+}
+.key-wrap input:focus{outline:3px solid var(--sky);outline-offset:1px}
+.key-eye{
+  position:absolute;right:5px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;font-size:14px;background:var(--paper-2);border:1.5px solid var(--frame);
+}
+html[data-theme="mono"] .key-eye{background:#fff;border-color:#000}
+
+.check{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;font-weight:800;color:var(--ink-soft);line-height:1.35;cursor:pointer}
+.check input{position:absolute;opacity:0;pointer-events:none}
+.check .box{
+  width:22px;height:22px;border-radius:7px;border:2.5px solid var(--ink);background:#fff;flex:0 0 auto;
+  display:grid;place-items:center;margin-top:-1px;
+}
+.check input:checked + .box{background:var(--green);}
+.check input:checked + .box::after{content:"✓";font-size:14px;font-weight:900;color:#fff;line-height:1}
+.check input:focus-visible + .box{outline:3px solid var(--sky);outline-offset:2px}
+html[data-theme="mono"] .check input:checked + .box{background:#000}
+.check small{color:var(--muted);font-weight:700}
+html[data-theme="mono"] .check small{color:#333}
+
+.switches{display:flex;flex-direction:column;gap:8px}
+.switch{
+  display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:13px;background:var(--paper-2);
+  border:2px solid var(--frame);cursor:pointer;
+}
+html[data-theme="mono"] .switch{background:#fff;border:2px solid #000}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+.switch .track{
+  width:44px;height:26px;border-radius:999px;background:#fff;border:2.5px solid var(--ink);position:relative;flex:0 0 auto;
+  transition:background .18s ease;
+}
+.switch .track::after{
+  content:"";position:absolute;left:2px;top:2px;width:17px;height:17px;border-radius:50%;background:var(--ink);
+  transition:transform .18s cubic-bezier(.2,1.3,.4,1),background .18s ease;
+}
+.switch input:checked + .track{background:var(--green)}
+.switch input:checked + .track::after{transform:translateX(18px);background:#fff}
+html[data-theme="mono"] .switch input:checked + .track{background:#000}
+html[data-theme="mono"] .switch input:checked + .track::after{background:#fff}
+.switch input:focus-visible + .track{outline:3px solid var(--sky);outline-offset:2px}
+.sw-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.sw-txt b{font-size:12px;font-weight:900;letter-spacing:-.02em;color:var(--ink)}
+.sw-txt small{font-size:10px;font-weight:700;color:var(--muted);line-height:1.3}
+html[data-theme="mono"] .sw-txt b{color:#000}
+html[data-theme="mono"] .sw-txt small{color:#333}
+.fine{font-size:10px;line-height:1.45;color:var(--muted);font-weight:700;margin:0}
+html[data-theme="mono"] .fine{color:#333}
+.fine b{color:var(--ink-soft)}
+.sheet-actions{display:flex;gap:8px;align-items:center;padding-top:2px}
+.s-btn{
+  min-height:48px;padding:0 16px;border-radius:14px;font-size:13px;font-weight:900;border:3px solid var(--ink);
+  box-shadow:0 4px 0 var(--ink);transition:transform .12s,box-shadow .12s;letter-spacing:-.02em;
+}
+.s-btn:active{transform:translateY(3px);box-shadow:none}
+.s-btn.primary{background:var(--red);color:#fff;flex:1}
+html[data-theme="mono"] .s-btn.primary{background:#000;color:#fff}
+.s-btn.ghost{background:var(--card);color:var(--ink-soft)}
+html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
+@media (max-width:560px){
+  .brand p{display:none}
+  .brand h1{font-size:15px}
+  .theme-toggle{padding:2px;border-width:2.5px;box-shadow:0 2.5px 0 var(--ink)}
+  .theme-toggle button{padding:6px 8px;font-size:11.5px;min-height:34px;border-width:2px}
+  .theme-toggle button .ico{font-size:12px}
+  .gear-btn{width:35px;height:35px;font-size:15px;border-width:2.5px;box-shadow:0 2.5px 0 var(--ink)}
+  .topbar{gap:6px}
+  .scene .sc-sun{display:none}
+  .sc-star.s2{right:14px;top:8px}
+}
+@media (max-width:380px){
+  .brand h1{font-size:13.5px}
+  .brand .mark{width:34px;height:34px;font-size:18px;border-width:2.5px}
+  .theme-toggle button{padding:5px 6px;font-size:10.5px}
+  .gear-btn{width:32px;height:32px;font-size:14px}
+}
+@media (max-height:700px){
+  .sheet-body{gap:9px}
+  .switch{padding:6px 8px}
+  .key-wrap input{height:42px}
+}
+</style>
+</head>
+<body>
+
+<!-- 그림책 배경 -->
+<div class="scene" aria-hidden="true">
+  <svg class="sc sc-sun" viewBox="0 0 100 100">
+    <g stroke="#2B2D42" stroke-width="2.6" stroke-linecap="round">
+      <circle cx="50" cy="50" r="22" fill="#FFD447"/>
+      <path d="M50 14v9M50 77v9M14 50h9M77 50h9M25 25l6 6M69 69l6 6M75 25l-6 6M31 69l-6 6" fill="none"/>
+    </g>
+  </svg>
+  <svg class="sc sc-cloud sc-cloud-1" viewBox="0 0 130 54">
+    <path d="M18 46h82a13 13 0 0 0 0-26h-3a19 19 0 0 0-35-10 16 16 0 0 0-27 12 13 13 0 0 0-17 24z" fill="#FFFFFF" stroke="#2B2D42" stroke-width="2.6" stroke-linejoin="round"/>
+  </svg>
+  <svg class="sc sc-cloud sc-cloud-2" viewBox="0 0 130 54">
+    <path d="M18 46h82a13 13 0 0 0 0-26h-3a19 19 0 0 0-35-10 16 16 0 0 0-27 12 13 13 0 0 0-17 24z" fill="#FFFFFF" stroke="#2B2D42" stroke-width="2.6" stroke-linejoin="round"/>
+  </svg>
+  <span class="sc-star s1">✦</span>
+  <span class="sc-star s2">✦</span>
+  <span class="sc-star s3">✦</span>
+  <svg class="sc-hills" viewBox="0 0 400 130" preserveAspectRatio="none">
+    <path class="hill-back" d="M0 86 q54 -44 122 -6 q50 28 108 -6 q62 -38 170 12 v44 H0 Z"/>
+    <path class="hill-front" d="M0 108 q66 -36 148 2 q58 26 122 -10 q66 -34 130 8 v22 H0 Z"/>
+    <circle class="hill-dot" cx="70" cy="112" r="4"/>
+    <circle class="hill-dot" cx="316" cy="116" r="4"/>
+  </svg>
+</div>
+
+<div id="app">
+
+  <!-- 머리말 -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">🐘</span>
+      <div>
+        <h1>코끼리랑 말해요</h1>
+        <p>한글 첫소리 · 알파벳</p>
+      </div>
+    </div>
+    <div class="theme-toggle" role="group" aria-label="색깔 버전 선택">
+      <button id="btnColor" type="button" aria-pressed="true" data-theme-value="color">
+        <span class="ico" aria-hidden="true">🎨</span>컬러
+      </button>
+      <button id="btnMono" type="button" aria-pressed="false" data-theme-value="mono">
+        <span class="ico" aria-hidden="true">◐</span>흑백
+      </button>
+    </div>
+    <button class="gear-btn" id="btnSettings" type="button" aria-label="부모님 설정 (GPT 연동)" title="부모님 설정 (GPT 연동)">
+      <span class="ico-gear" aria-hidden="true">⚙️</span><span class="on-dot" aria-hidden="true"></span>
+    </button>
+  </header>
+
+  <!-- 모드 -->
+  <div class="modes" role="tablist" aria-label="배우는 글자 종류">
+    <button role="tab" id="tabConsonant" data-mode="consonant" aria-selected="true">
+      <span class="m-ico" aria-hidden="true">ㄱ</span>자음
+    </button>
+    <button role="tab" id="tabVowel" data-mode="vowel" aria-selected="false">
+      <span class="m-ico" aria-hidden="true">ㅏ</span>모음
+    </button>
+    <button role="tab" id="tabAlphabet" data-mode="alphabet" aria-selected="false">
+      <span class="m-ico" aria-hidden="true">A</span>알파벳
+    </button>
+  </div>
+
+  <!-- 무대 -->
+  <main class="stage">
+    <section class="card" id="card" aria-live="polite">
+      <div class="frame" aria-hidden="true"></div>
+      <svg class="deco deco-flower" viewBox="0 0 40 40" aria-hidden="true">
+        <g stroke="#2B2D42" stroke-width="2" stroke-linejoin="round">
+          <circle cx="20" cy="13" r="5.5" fill="#F4909F"/>
+          <circle cx="27" cy="18" r="5.5" fill="#F4909F"/>
+          <circle cx="24" cy="26" r="5.5" fill="#F4909F"/>
+          <circle cx="16" cy="26" r="5.5" fill="#F4909F"/>
+          <circle cx="13" cy="18" r="5.5" fill="#F4909F"/>
+          <circle cx="20" cy="20" r="4" fill="#FFD447"/>
+        </g>
+      </svg>
+      <svg class="deco deco-grass" viewBox="0 0 48 40" aria-hidden="true">
+        <g stroke="#2B2D42" stroke-width="2" stroke-linecap="round" fill="none">
+          <path d="M8 38c0-8 2-12 6-16M16 38c0-7-1-13-4-18M24 38c0-9 2-14 5-17"/>
+          <circle cx="33" cy="26" r="5" fill="#FFD447"/>
+        </g>
+      </svg>
+
+      <div class="stage-top">
+        <span class="counter" id="counter">1 / 14</span>
+        <div class="stars" id="stars" title="정답 스티커">
+          <span class="star-glyph" aria-hidden="true">★</span><span id="starNum">0</span>
+        </div>
+      </div>
+
+      <div class="letter-zone">
+        <div class="plate" aria-hidden="true"></div>
+        <div class="letter" id="letter" aria-labelledby="subline">ㄱ</div>
+        <div class="subline" id="subline">
+          <span id="subName">기역</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="example"><span class="em" id="subEmoji" aria-hidden="true"></span><span id="subExample"></span></span>
+        </div>
+      </div>
+
+      <div class="hearing" id="hearing" aria-hidden="false">
+        <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="txt" id="hearingTxt">듣고 있어요…</span>
+      </div>
+
+      <div class="actions">
+        <button class="act" id="btnSpeak" type="button" aria-label="글자 소리 듣기">
+          <span class="circle" aria-hidden="true">🔊</span>
+          <span class="label">소리 듣기</span>
+        </button>
+        <button class="act" id="btnListen" type="button" aria-label="마이크로 따라 말하기">
+          <span class="circle" aria-hidden="true">
+            <span class="mic-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3" fill="currentColor" stroke="none"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/><path d="M8.5 21h7"/></svg></span>
+          </span>
+          <span class="label">따라 말해요</span>
+        </button>
+      </div>
+
+      <!-- 오답 / 다시 -->
+      <div class="feedback" id="feedback" role="status">
+        <div class="fb-top">
+          <div class="mini-wrap" id="mascotMini" aria-hidden="true"></div>
+          <div class="msg">
+            <b id="fbTitle">다시 한 번 말해볼까요? 🐘</b>
+            <small id="fbHeard">잘 들었어요, 조금만 더 크게!</small>
+          </div>
+        </div>
+        <div class="fb-actions">
+          <button class="tiny-btn" id="fbHear" type="button">🔊 소리 듣기</button>
+          <button class="tiny-btn" id="fbRetry" type="button">🎤 다시 말하기</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="sr-notice" id="srNotice" role="status">
+    <span class="ico" aria-hidden="true">🎤</span>
+    <span id="srNoticeText">이 브라우저에서는 마이크 인식을 쓸 수 없어요. 아래 <b>부모님 도움</b>에서 <b>정답</b>을 눌러 주세요.</span>
+  </div>
+
+  <!-- 부모님 도움 -->
+  <div class="parent-bar">
+    <span class="pb-label"><span class="ico" aria-hidden="true">👨‍👩‍👧</span>부모님 도움</span>
+    <div class="pb-btns">
+      <button class="pb-btn ok" id="pbCorrect" type="button">⭕ 정답</button>
+      <button class="pb-btn" id="pbRetry" type="button">🔄 다시</button>
+    </div>
+  </div>
+
+  <!-- 이동 -->
+  <nav class="navbar" aria-label="글자 이동">
+    <div class="nav-group">
+      <button class="nav-btn" id="btnPrev" type="button" aria-label="이전 글자"><span class="arr">◀</span>이전</button>
+      <button class="nav-btn" id="btnRandom" type="button" aria-label="아무 글자나"><span class="arr">🎲</span>랜덤</button>
+    </div>
+    <span class="nav-hint" id="navHint">큰 소리로 읽어 볼까요?</span>
+    <div class="nav-group">
+      <button class="nav-btn" id="btnNext" type="button" aria-label="다음 글자">다음<span class="arr">▶</span></button>
+    </div>
+  </nav>
+</div>
+
+<!-- 부모님 설정 (GPT 연동) -->
+<div class="sheet-backdrop" id="settingsBackdrop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="sheet-head">
+      <h2 id="settingsTitle">⚙️ 부모님 설정 <span class="tag">GPT 연동</span></h2>
+      <button class="sheet-close" id="settingsClose" type="button" aria-label="설정 닫기">✕</button>
+    </div>
+    <div class="sheet-body">
+
+      <div class="conn-row">
+        <span class="badge" id="gptBadge" data-status="none"><i aria-hidden="true"></i><span id="gptBadgeText">키 없음 · 기본 모드</span></span>
+        <button class="mini-btn" id="gptTest" type="button">연결 확인</button>
+      </div>
+      <p class="conn-msg" id="gptMsg" role="status"></p>
+
+      <label class="field">
+        <span class="field-lbl">OpenAI API 키</span>
+        <span class="key-wrap">
+          <input id="gptKey" type="password" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-..." aria-label="OpenAI API 키">
+          <button class="key-eye" id="gptEye" type="button" aria-label="키 보기">👁</button>
+        </span>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" id="gptSave">
+        <span class="box" aria-hidden="true"></span>
+        <span>이 기기에 키 저장 <small>(localStorage · 끄면 메모리에만 있어요)</small></span>
+      </label>
+
+      <div class="switches">
+        <label class="switch">
+          <input type="checkbox" id="gptSmart" checked>
+          <span class="track" aria-hidden="true"></span>
+          <span class="sw-txt"><b>GPT 똑똑한 판정</b><small>아기 발음을 gpt-4o-mini가 한 번 더 봐 줘요</small></span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="gptVoice">
+          <span class="track" aria-hidden="true"></span>
+          <span class="sw-txt"><b>자연스러운 목소리 (TTS)</b><small>글자·칭찬을 OpenAI 목소리로 읽어 줘요</small></span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="gptWhisper">
+          <span class="track" aria-hidden="true"></span>
+          <span class="sw-txt"><b>Whisper 녹음 듣기</b><small>마이크 인식이 안 될 때 4초 녹음해서 듣어요</small></span>
+        </label>
+      </div>
+
+      <p class="fine">키는 이 기기 브라우저에만 있어요. <b>GPT 판정</b>을 켜면 아이가 말한 글자(텍스트)가 OpenAI로 전송되고, 요금은 부모님 OpenAI 계정에 청구돼요. 키가 없어도 <b>기본 사전 판정</b>으로 모든 놀이가 그대로 동작해요.</p>
+
+      <div class="sheet-actions">
+        <button class="s-btn ghost" id="gptClear" type="button">키 삭제</button>
+        <button class="s-btn primary" id="gptDone" type="button">저장하고 닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 축하 화면 -->
+<div class="overlay" id="overlay" hidden aria-hidden="true">
+  <svg class="ov-sun" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="#2B2D42" stroke-width="2.6" stroke-linecap="round">
+      <circle cx="50" cy="50" r="22" fill="#FFD447"/>
+      <path d="M50 14v9M50 77v9M14 50h9M77 50h9M25 25l6 6M69 69l6 6M75 25l-6 6M31 69l-6 6" fill="none"/>
+    </g>
+  </svg>
+  <svg class="ov-cloud ov-cloud-l" viewBox="0 0 130 54" aria-hidden="true">
+    <path d="M18 46h82a13 13 0 0 0 0-26h-3a19 19 0 0 0-35-10 16 16 0 0 0-27 12 13 13 0 0 0-17 24z" fill="#FFFFFF" stroke="#2B2D42" stroke-width="2.6" stroke-linejoin="round"/>
+  </svg>
+  <svg class="ov-cloud ov-cloud-r" viewBox="0 0 130 54" aria-hidden="true">
+    <path d="M18 46h82a13 13 0 0 0 0-26h-3a19 19 0 0 0-35-10 16 16 0 0 0-27 12 13 13 0 0 0-17 24z" fill="#FFFFFF" stroke="#2B2D42" stroke-width="2.6" stroke-linejoin="round"/>
+  </svg>
+  <svg class="ov-hills" viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true">
+    <path class="hill-back" d="M0 96 q56 -46 126 -6 q52 30 110 -6 q64 -40 172 14 v52 H0 Z"/>
+    <path class="hill-front" d="M0 122 q70 -38 152 2 q60 26 124 -10 q68 -34 132 8 v28 H0 Z"/>
+  </svg>
+  <svg class="ov-flower f1" width="34" height="34" viewBox="0 0 40 40" aria-hidden="true">
+    <g stroke="#2B2D42" stroke-width="2" stroke-linejoin="round">
+      <circle cx="20" cy="13" r="5.5" fill="#F4909F"/><circle cx="27" cy="18" r="5.5" fill="#F4909F"/>
+      <circle cx="24" cy="26" r="5.5" fill="#F4909F"/><circle cx="16" cy="26" r="5.5" fill="#F4909F"/>
+      <circle cx="13" cy="18" r="5.5" fill="#F4909F"/><circle cx="20" cy="20" r="4" fill="#FFD447"/>
+    </g>
+  </svg>
+  <svg class="ov-flower f2" width="30" height="30" viewBox="0 0 40 40" aria-hidden="true">
+    <g stroke="#2B2D42" stroke-width="2" stroke-linejoin="round">
+      <circle cx="20" cy="13" r="5.5" fill="#FFD447"/><circle cx="27" cy="18" r="5.5" fill="#FFD447"/>
+      <circle cx="24" cy="26" r="5.5" fill="#FFD447"/><circle cx="16" cy="26" r="5.5" fill="#FFD447"/>
+      <circle cx="13" cy="18" r="5.5" fill="#FFD447"/><circle cx="20" cy="20" r="4" fill="#F4909F"/>
+    </g>
+  </svg>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <div class="notes" id="notes" aria-hidden="true"></div>
+  <div class="celebrate-inner">
+    <div class="bubble" id="celebBubble">정답이에요! <span class="big-ch" id="celebLetter">ㄱ</span> 🎉</div>
+    <div class="elephant-stage">
+      <div class="elephant-wrap" id="mascotBig" aria-hidden="true"></div>
+    </div>
+    <div class="song" role="progressbar" aria-label="축하송 남은 시간" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10" id="songBar">
+      <div class="bar"><i id="songFill"></i></div>
+      <span class="t"><span class="num" id="songNum">10</span>초</span>
+    </div>
+    <button class="skip-btn" id="btnSkip" type="button">다음 글자로 넘어가기 ▶</button>
+    <div class="dance-caption" id="danceCaption">🎵 코끼리 축하송이 나오고 있어요</div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   1. 글자 데이터
+   ============================================================ */
+const CONSONANT = [
+  {ch:'ㄱ', name:'기역', roman:'giyeok', say:['기역','기억','기윽','긔역','그','그으','가','ㄱ','giyeok','kiyeok','g','k','gee','geeyuk']},
+  {ch:'ㄴ', name:'니은', roman:'nieun', say:['니은','니언','니흔','니온','느','나','ㄴ','nieun','niun','n']},
+  {ch:'ㄷ', name:'디귿', roman:'digeut', say:['디귿','디근','디그','디귯','드','다','ㄷ','digeut','digeud','d','dee']},
+  {ch:'ㄹ', name:'리을', roman:'rieul', say:['리을','리울','리흘','리얼','르','라','ㄹ','rieul','l','r','lee']},
+  {ch:'ㅁ', name:'미음', roman:'mieum', say:['미음','미엄','미윰','므','마','ㅁ','mieum','miem','m']},
+  {ch:'ㅂ', name:'비읍', roman:'bieup', say:['비읍','비습','비업','브','바','ㅂ','bieup','bieub','b']},
+  {ch:'ㅅ', name:'시옷', roman:'siot', say:['시옷','시옫','시옻','시읏','스','사','ㅅ','siot','s']},
+  {ch:'ㅇ', name:'이응', roman:'ieung', say:['이응','이웅','이융','이잉','응','으','아','ㅇ','ieung','eung','ng']},
+  {ch:'ㅈ', name:'지읒', roman:'jieut', say:['지읒','지읃','지읏','지으','즈','자','ㅈ','jieut','jieud','j']},
+  {ch:'ㅊ', name:'치읓', roman:'chieut', say:['치읓','치읏','치읃','치으','츠','차','ㅊ','chieut','chieud','ch']},
+  {ch:'ㅋ', name:'키읔', roman:'kieuk', say:['키읔','키윽','키읍','키으크','크','카','ㅋ','kieuk','k']},
+  {ch:'ㅌ', name:'티읕', roman:'tieut', say:['티읕','티읍','티읏','티으','트','타','ㅌ','tieut','tieud','t']},
+  {ch:'ㅍ', name:'피읖', roman:'pieup', say:['피읖','피읍','피윕','피으','프','파','ㅍ','pieup','pieub','p']},
+  {ch:'ㅎ', name:'히읗', roman:'hieut', say:['히읗','히읏','히으','히흐','흐','하','ㅎ','hieut','hieud','h']}
+];
+
+const VOWEL = [
+  {ch:'ㅏ', name:'아', roman:'a', say:['아','ㅏ','a','ah']},
+  {ch:'ㅑ', name:'야', roman:'ya', say:['야','ㅑ','ya','yah']},
+  {ch:'ㅓ', name:'어', roman:'eo', say:['어','ㅓ','eo','uh']},
+  {ch:'ㅕ', name:'여', roman:'yeo', say:['여','ㅕ','yeo','yuh']},
+  {ch:'ㅗ', name:'오', roman:'o', say:['오','ㅗ','o','oh']},
+  {ch:'ㅛ', name:'요', roman:'yo', say:['요','ㅛ','yo','yoh']},
+  {ch:'ㅜ', name:'우', roman:'u', say:['우','ㅜ','u','oo','woo']},
+  {ch:'ㅠ', name:'유', roman:'yu', say:['유','ㅠ','yu','yoo']},
+  {ch:'ㅡ', name:'으', roman:'eu', say:['으','ㅡ','eu','euh']},
+  {ch:'ㅣ', name:'이', roman:'i', say:['이','ㅣ','i','ee','yi']}
+];
+
+const ALPHABET = [
+  {ch:'A', lower:'a', name:'에이', example:'apple', emoji:'🍎', say:['a','ay','ey','ei','에이','애이','아','에','apple','eh']},
+  {ch:'B', lower:'b', name:'비', example:'ball', emoji:'⚽', say:['b','bee','be','비','비이','삐','boy']},
+  {ch:'C', lower:'c', name:'씨', example:'cat', emoji:'🐱', say:['c','see','sea','씨','시','씨이','cat','cee']},
+  {ch:'D', lower:'d', name:'디', example:'dog', emoji:'🐶', say:['d','dee','디','디이','dog']},
+  {ch:'E', lower:'e', name:'이', example:'egg', emoji:'🥚', say:['e','ee','이','에','이이','egg']},
+  {ch:'F', lower:'f', name:'에프', example:'fish', emoji:'🐟', say:['f','ef','eff','에프','에풍','에피','fish']},
+  {ch:'G', lower:'g', name:'지', example:'goat', emoji:'🐐', say:['g','gee','지','쥐','지이','goat']},
+  {ch:'H', lower:'h', name:'에이치', example:'hat', emoji:'👒', say:['h','aitch','haitch','에이치','에이취','에치','hat']},
+  {ch:'I', lower:'i', name:'아이', example:'ice', emoji:'🧊', say:['i','eye','아이','아이이','ice']},
+  {ch:'J', lower:'j', name:'제이', example:'jam', emoji:'🍯', say:['j','jay','제이','줴이','제이이','jam']},
+  {ch:'K', lower:'k', name:'케이', example:'kite', emoji:'🪁', say:['k','kay','케이','케','kite']},
+  {ch:'L', lower:'l', name:'엘', example:'lion', emoji:'🦁', say:['l','el','ell','엘','엘르','lion']},
+  {ch:'M', lower:'m', name:'엠', example:'moon', emoji:'🌙', say:['m','em','엠','음','moon']},
+  {ch:'N', lower:'n', name:'엔', example:'nose', emoji:'👃', say:['n','en','엔','은','nose']},
+  {ch:'O', lower:'o', name:'오', example:'octopus', emoji:'🐙', say:['o','oh','오','오우','octopus']},
+  {ch:'P', lower:'p', name:'피', example:'pig', emoji:'🐷', say:['p','pee','피','피이','pig']},
+  {ch:'Q', lower:'q', name:'큐', example:'queen', emoji:'👑', say:['q','cue','queue','큐','큐우','queen']},
+  {ch:'R', lower:'r', name:'알', example:'rabbit', emoji:'🐰', say:['r','ar','are','알','아르','rabbit']},
+  {ch:'S', lower:'s', name:'에스', example:'sun', emoji:'☀️', say:['s','ess','에스','에쓰','sun']},
+  {ch:'T', lower:'t', name:'티', example:'tiger', emoji:'🐯', say:['t','tee','티','티이','tiger']},
+  {ch:'U', lower:'u', name:'유', example:'umbrella', emoji:'☂️', say:['u','you','유','유우','umbrella']},
+  {ch:'V', lower:'v', name:'브이', example:'van', emoji:'🚐', say:['v','vee','브이','비','브이이','van']},
+  {ch:'W', lower:'w', name:'더블유', example:'whale', emoji:'🐳', say:['w','double you','double u','doubleyou','더블유','더블류','더부유','whale']},
+  {ch:'X', lower:'x', name:'엑스', example:'box', emoji:'📦', say:['x','ex','엑스','엑쓰','엑수','box']},
+  {ch:'Y', lower:'y', name:'와이', example:'yo-yo', emoji:'🪀', say:['y','why','와이','와이이','yoyo','yo yo']},
+  {ch:'Z', lower:'z', name:'지', example:'zebra', emoji:'🦓', say:['z','zee','zed','지','제드','지이','제트','zebra']}
+];
+
+const MODES = {
+  consonant:{
+    label:'자음', lang:'ko-KR',
+    items: CONSONANT.map(it=>({ch:it.ch, sub:it.name, roman:it.roman, say:it.say, spoken:it.name, emoji:''})),
+    hint:'따라 말해 볼까요?'
+  },
+  vowel:{
+    label:'모음', lang:'ko-KR',
+    items: VOWEL.map(it=>({ch:it.ch, sub:it.name, roman:it.roman, say:it.say, spoken:it.name, emoji:''})),
+    hint:'입을 크게 벌려요!'
+  },
+  alphabet:{
+    label:'알파벳', lang:'en-US',
+    items: ALPHABET.map(it=>({ch:it.ch, lower:it.lower, sub:it.name, roman:it.lower, say:it.say, spoken:it.ch, emoji:it.emoji, example:it.example})),
+    hint:'에이 비 씨!'
+  }
+};
+
+const ORDER = ['consonant','vowel','alphabet'];
+const STAR_KEY = 'toddlerSpeak.stars.v1';
+const THEME_KEY = 'toddlerSpeak.theme.v1';
+const MODE_KEY = 'toddlerSpeak.mode.v1';
+
+/* ============================================================
+   2. 상태
+   ============================================================ */
+const state = {
+  mode:'consonant',
+  theme:'color',
+  index:{consonant:0, vowel:0, alphabet:0},
+  stars:0,
+  celebrating:false,
+  songPlaying:false,
+  celebrationDuration:10,
+  listening:false,
+  lastFeedback:null,
+  lastHeard:'',
+  lastMatched:'',
+  lastPraise:'',
+  lastSource:'local',
+  attempts:0,
+  srSupported: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
+  srError:null,
+  songNotes:0
+};
+window.ToddlerApp = {state:state, MODES:MODES};
+
+/* ============================================================
+   3. DOM
+   ============================================================ */
+const $ = (id)=>document.getElementById(id);
+const el = {
+  letter:$('letter'), subName:$('subName'), subEmoji:$('subEmoji'), subExample:$('subExample'),
+  counter:$('counter'), stars:$('stars'), starNum:$('starNum'),
+  hearing:$('hearing'), hearingTxt:$('hearingTxt'),
+  btnSpeak:$('btnSpeak'), btnListen:$('btnListen'),
+  feedback:$('feedback'), fbTitle:$('fbTitle'), fbHeard:$('fbHeard'), fbHear:$('fbHear'), fbRetry:$('fbRetry'),
+  srNotice:$('srNotice'), srNoticeText:$('srNoticeText'),
+  pbCorrect:$('pbCorrect'), pbRetry:$('pbRetry'),
+  btnPrev:$('btnPrev'), btnNext:$('btnNext'), btnRandom:$('btnRandom'),
+  navHint:$('navHint'),
+  overlay:$('overlay'), confetti:$('confetti'), notes:$('notes'),
+  celebBubble:$('celebBubble'), celebLetter:$('celebLetter'),
+  mascotMini:$('mascotMini'), mascotBig:$('mascotBig'),
+  songFill:$('songFill'), songNum:$('songNum'), songBar:$('songBar'),
+  btnSkip:$('btnSkip'), danceCaption:$('danceCaption'),
+  tabs:document.querySelectorAll('.modes [role="tab"]'),
+  themeBtns:document.querySelectorAll('.theme-toggle button'),
+  btnSettings:$('btnSettings'),
+  settingsBackdrop:$('settingsBackdrop'), settingsClose:$('settingsClose'),
+  gptKey:$('gptKey'), gptEye:$('gptEye'), gptSave:$('gptSave'),
+  gptSmart:$('gptSmart'), gptVoice:$('gptVoice'), gptWhisper:$('gptWhisper'),
+  gptBadge:$('gptBadge'), gptBadgeText:$('gptBadgeText'), gptMsg:$('gptMsg'),
+  gptTest:$('gptTest'), gptClear:$('gptClear'), gptDone:$('gptDone')
+};
+
+/* ============================================================
+   4. 코끼리 SVG — 그림책 먹선 캐릭터
+   ============================================================ */
+function elephantSVG(party){
+  return ''+
+'<svg class="el" viewBox="0 0 300 320" role="img" aria-label="춤추는 아기 코끼리">'+
+  '<ellipse class="ground" cx="150" cy="300" rx="88" ry="10"/>'+
+  '<g class="el-body">'+
+    '<g class="el-tail">'+
+      '<path class="line" d="M78 214 q-22 -2 -28 -24" stroke-width="7"/>'+
+      '<circle cx="48" cy="186" r="7.5" fill="var(--el-line)"/>'+
+    '</g>'+
+    '<ellipse class="body-back" cx="150" cy="226" rx="78" ry="60"/>'+
+    '<rect class="leg leg-l" x="110" y="244" width="36" height="54" rx="18"/>'+
+    '<rect class="leg leg-r" x="158" y="244" width="36" height="54" rx="18"/>'+
+    '<rect class="nail" x="120" y="278" width="17" height="11" rx="5.5"/>'+
+    '<rect class="nail" x="168" y="278" width="17" height="11" rx="5.5"/>'+
+    '<g class="el-head">'+
+      '<ellipse class="ear-fill ear-l" cx="78" cy="120" rx="41" ry="50"/>'+
+      '<ellipse class="ear-inner ear-l" cx="83" cy="123" rx="25" ry="33"/>'+
+      '<ellipse class="ear-fill ear-r" cx="222" cy="120" rx="41" ry="50"/>'+
+      '<ellipse class="ear-inner ear-r" cx="217" cy="123" rx="25" ry="33"/>'+
+      '<ellipse class="body-fill" cx="150" cy="128" rx="74" ry="66"/>'+
+      '<path class="line" d="M136 64 q4 -13 14 -8 q3 -11 13 -6" stroke-width="5"/>'+
+      '<ellipse class="eye" cx="121" cy="118" rx="10" ry="11"/>'+
+      '<ellipse class="eye" cx="179" cy="118" rx="10" ry="11"/>'+
+      '<circle class="eye-shine" cx="124.5" cy="113.5" r="3.6"/>'+
+      '<circle class="eye-shine" cx="182.5" cy="113.5" r="3.6"/>'+
+      '<circle class="eye-shine" cx="118" cy="122" r="1.7"/>'+
+      '<circle class="eye-shine" cx="176" cy="122" r="1.7"/>'+
+      '<ellipse class="cheek" cx="99" cy="150" rx="13" ry="9"/>'+
+      '<ellipse class="cheek" cx="201" cy="150" rx="13" ry="9"/>'+
+      '<path class="smile" d="M126 158 q10 9 20 0"/>'+
+      '<g class="trunk-g">'+
+        '<path class="trunk-outline" d="M152 168 q-4 30 1 47 q4 15 17 17 q14 1 15 -12"/>'+
+        '<path class="trunk" d="M152 168 q-4 30 1 47 q4 15 17 17 q14 1 15 -12"/>'+
+        '<path class="trunk-line" d="M149 197 q9 5 16 1"/>'+
+        '<path class="trunk-line" d="M151 213 q9 4 15 0"/>'+
+      '</g>'+
+    '</g>'+
+  '</g>'+
+  '<g class="hat">'+
+    '<path d="M150 28 L179 87 H121 Z"/>'+
+    '<circle class="hat-pom" cx="150" cy="24" r="9.5"/>'+
+  '</g>'+
+'</svg>';
+}
+el.mascotMini.innerHTML = elephantSVG(false);
+el.mascotBig.innerHTML = elephantSVG(true);
+
+/* ============================================================
+   5. 저장
+   ============================================================ */
+function loadStore(){
+  try{
+    const s = localStorage.getItem(STAR_KEY);
+    if(s!==null && !isNaN(parseInt(s,10))) state.stars = Math.max(0, parseInt(s,10));
+    const t = localStorage.getItem(THEME_KEY);
+    if(t==='mono'||t==='color') state.theme = t;
+    const m = localStorage.getItem(MODE_KEY);
+    if(ORDER.indexOf(m)>=0) state.mode = m;
+  }catch(e){}
+}
+function saveStore(){
+  try{
+    localStorage.setItem(STAR_KEY, String(state.stars));
+    localStorage.setItem(THEME_KEY, state.theme);
+    localStorage.setItem(MODE_KEY, state.mode);
+  }catch(e){}
+}
+
+/* ============================================================
+   6. 소리 (Web Speech Synthesis)
+   ============================================================ */
+let voices = [];
+function refreshVoices(){
+  try{ voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }catch(e){ voices=[]; }
+}
+if(window.speechSynthesis){
+  refreshVoices();
+  window.speechSynthesis.onvoiceschanged = refreshVoices;
+}
+function pickVoice(lang){
+  if(!voices.length) refreshVoices();
+  const exact = voices.find(v=>v.lang && v.lang.replace('_','-').toLowerCase()===lang.toLowerCase());
+  if(exact) return exact;
+  const short = lang.split('-')[0].toLowerCase();
+  return voices.find(v=>v.lang && v.lang.toLowerCase().indexOf(short)===0) || null;
+}
+function speak(text, lang, opts){
+  if(!window.speechSynthesis || !text) return false;
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    const v = pickVoice(lang);
+    if(v) u.voice = v;
+    u.rate = (opts && opts.rate) || 0.82;
+    u.pitch = (opts && opts.pitch) || 1.12;
+    u.volume = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+    return true;
+  }catch(e){ return false; }
+}
+function speakCurrent(){
+  const item = currentItem();
+  if(state.mode==='alphabet'){
+    say(item.ch + '. ' + item.ch, 'en-US', {rate:0.7, pitch:1.1});
+  }else{
+    say(item.sub, 'ko-KR', {rate:0.72, pitch:1.15});
+  }
+}
+
+/* ============================================================
+   6-b. OpenAI(GPT) 연동 — 선택 사항, 키가 없으면 조용히 기본 모드
+   ============================================================ */
+const GPT_STORE_KEY = 'toddlerSpeak.gpt.v1';
+const GPT = {
+  key:'', save:false, smart:true, voice:false, whisper:false,
+  status:'none',        // none | entered | checking | ok | error
+  msg:'', msgBad:false,
+  lastPraise:'', lastSource:'local',
+  testedKey:''
+};
+let gptObjUrl = null;
+let gptAudio = null;
+let gptTimer = null;
+
+function gptHasKey(){ return !!(GPT.key && GPT.key.trim().length >= 10); }
+function gptLoad(){
+  try{
+    const raw = localStorage.getItem(GPT_STORE_KEY);
+    if(raw){
+      const j = JSON.parse(raw);
+      if(j && typeof j==='object'){
+        if(typeof j.smart==='boolean') GPT.smart = j.smart;
+        if(typeof j.voice==='boolean') GPT.voice = j.voice;
+        if(typeof j.whisper==='boolean') GPT.whisper = j.whisper;
+        GPT.save = !!j.save;
+        if(GPT.save && typeof j.key==='string') GPT.key = j.key;
+      }
+    }
+  }catch(e){}
+  if(gptHasKey()) GPT.status = 'entered';
+}
+function gptPersist(){
+  try{
+    const payload = {save:!!GPT.save, smart:!!GPT.smart, voice:!!GPT.voice, whisper:!!GPT.whisper};
+    if(GPT.save && GPT.key) payload.key = GPT.key;
+    localStorage.setItem(GPT_STORE_KEY, JSON.stringify(payload));
+  }catch(e){}
+}
+function gptBadgeInfo(){
+  if(!gptHasKey()) return {status:'none', text:'키 없음 · 기본 모드'};
+  if(GPT.status==='checking') return {status:'checking', text:'연결 확인 중…'};
+  if(GPT.status==='ok') return {status:'ok', text:'연결됨 ✓' };
+  if(GPT.status==='error') return {status:'error', text:'연결 실패'};
+  return {status:'entered', text:'키 입력됨 · 확인 전'};
+}
+function renderGpt(){
+  const info = gptBadgeInfo();
+  if(el.gptBadge){
+    el.gptBadge.dataset.status = info.status;
+    el.gptBadgeText.textContent = info.text;
+  }
+  if(el.gptMsg){
+    el.gptMsg.textContent = GPT.msg || '';
+    el.gptMsg.classList.toggle('show', !!GPT.msg);
+    el.gptMsg.classList.toggle('bad', !!GPT.msgBad);
+  }
+  if(el.btnSettings) el.btnSettings.classList.toggle('on', info.status==='ok');
+}
+
+function openSettings(){
+  el.gptKey.value = GPT.key || '';
+  el.gptSave.checked = !!GPT.save;
+  el.gptSmart.checked = !!GPT.smart;
+  el.gptVoice.checked = !!GPT.voice;
+  el.gptWhisper.checked = !!GPT.whisper;
+  renderGpt();
+  el.settingsBackdrop.hidden = false;
+  void el.settingsBackdrop.offsetWidth;
+  el.settingsBackdrop.classList.add('show');
+}
+function closeSettings(){
+  el.settingsBackdrop.classList.remove('show');
+  setTimeout(()=>{
+    if(!el.settingsBackdrop.classList.contains('show')) el.settingsBackdrop.hidden = true;
+  }, 240);
+}
+function readSettingsInputs(){
+  const prevKey = GPT.key;
+  GPT.key = (el.gptKey.value || '').trim();
+  GPT.save = !!el.gptSave.checked;
+  GPT.smart = !!el.gptSmart.checked;
+  GPT.voice = !!el.gptVoice.checked;
+  GPT.whisper = !!el.gptWhisper.checked;
+  if(GPT.key !== prevKey){
+    GPT.status = gptHasKey() ? 'entered' : 'none';
+    GPT.msg = '';
+    GPT.msgBad = false;
+    GPT.lastPraise = '';
+  }
+  if(!gptHasKey()) GPT.status = 'none';
+  gptPersist();
+  renderGpt();
+}
+function clearGptKey(){
+  GPT.key = '';
+  GPT.status = 'none';
+  GPT.msg = '키를 지웠어요. 이제 기본 사전 판정으로 놀이해요.';
+  GPT.msgBad = false;
+  el.gptKey.value = '';
+  gptPersist();
+  renderGpt();
+}
+
+function gptAbort(ms){
+  const c = {ctrl:null, id:null};
+  try{
+    if(window.AbortController){
+      c.ctrl = new AbortController();
+      c.id = setTimeout(()=>{ try{ c.ctrl.abort(); }catch(e){} }, ms);
+    }
+  }catch(e){}
+  return c;
+}
+function gptClearAbort(c){ if(c && c.id) clearTimeout(c.id); }
+function gptNetMessage(err){
+  const s = String(err && err.message || err || '');
+  if(/abort/i.test(s)) return '응답이 늦어요. 잠시 후 다시 시도해 주세요.';
+  if(/Failed to fetch|NetworkError|Load failed|CORS/i.test(s)){
+    return '브라우저에서 OpenAI로 직접 연결이 막혔어요(CORS/네트워크). 기본 사전 판정으로 계속 놀이할 수 있어요.';
+  }
+  return '연결하지 못했어요: ' + s;
+}
+
+async function testConnection(){
+  readSettingsInputs();
+  if(!gptHasKey()){
+    GPT.status='none'; GPT.msg='키를 먼저 입력해 주세요.'; GPT.msgBad=true; renderGpt();
+    return {ok:false, reason:'no-key'};
+  }
+  GPT.status='checking'; GPT.msg=''; GPT.msgBad=false; renderGpt();
+  const ac = gptAbort(9000);
+  try{
+    const r = await fetch('https://api.openai.com/v1/models', {
+      method:'GET',
+      headers:{ 'Authorization':'Bearer ' + GPT.key },
+      signal: ac.ctrl ? ac.ctrl.signal : undefined
+    });
+    if(!r.ok){
+      let t='';
+      try{ const j = await r.json(); t = (j && j.error && j.error.message) || ''; }catch(e){}
+      GPT.status='error'; GPT.msgBad=true;
+      GPT.msg = r.status===401 ? '키가 올바르지 않아요(401). 다시 확인해 주세요.'
+             : r.status===429 ? '요청이 너무 많아요(429). 잠시 후 다시 확인해 주세요.'
+             : ('연결 실패 (HTTP ' + r.status + ') ' + t).trim();
+      renderGpt();
+      return {ok:false, reason:'http-'+r.status};
+    }
+    const j = await r.json();
+    const models = (j && j.data) || [];
+    GPT.status='ok'; GPT.msgBad=false;
+    GPT.msg = '연결됐어요! ' + (GPT.voice ? 'GPT 판정과 자연스러운 목소리를' : 'GPT 판정을') + ' 쓸 수 있어요.';
+    GPT.testedKey = GPT.key;
+    renderGpt();
+    return {ok:true, models:models.length};
+  }catch(e){
+    GPT.status='error'; GPT.msgBad=true; GPT.msg = gptNetMessage(e);
+    renderGpt();
+    return {ok:false, reason:'network', message:GPT.msg};
+  }finally{
+    gptClearAbort(ac);
+  }
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function gptJudge(text, item){
+  if(!gptHasKey()) throw new Error('no-key');
+  const ac = gptAbort(7000);
+  try{
+    const sys = [
+      'You are a gentle Korean speech teacher for a 3-year-old toddler.',
+      'Decide whether the child\u2019s utterance is an acceptable attempt at the target letter.',
+      'Be very lenient: toddler approximations, baby talk, and Korean-accented pronunciation all count.',
+      'For an English letter accept its English name and common Korean transliterations (A: "ay", "에이"; W: "double you", "더블유").',
+      'For a Hangul consonant accept its name (기역), a rough reading (그), or the jamo itself.',
+      'Reply with JSON ONLY in this shape: {"correct": true or false, "praise": "<one short warm Korean sentence for the child>"}.',
+      'praise must be at most 20 Korean words, cheerful, and never scold.'
+    ].join(' ');
+    const user = JSON.stringify({
+      target:{ kind: state.mode, letter:item.ch, name:item.sub, english:item.roman||'', acceptable:item.say.slice(0,10) },
+      child_said: text
+    });
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{ 'Authorization':'Bearer ' + GPT.key, 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'gpt-4o-mini',
+        temperature:0.2,
+        max_tokens:120,
+        response_format:{ type:'json_object' },
+        messages:[{role:'system', content:sys},{role:'user', content:user}]
+      }),
+      signal: ac.ctrl ? ac.ctrl.signal : undefined
+    });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    let content = j && j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : '';
+    content = String(content||'').trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
+    let parsed = null;
+    try{ parsed = JSON.parse(content); }
+    catch(e){ const m = content.match(/\{[\s\S]*\}/); if(m) parsed = JSON.parse(m[0]); }
+    if(!parsed || typeof parsed.correct === 'undefined') throw new Error('bad-json');
+    const correct = parsed.correct === true || parsed.correct === 'true';
+    let praise = String(parsed.praise || '').replace(/\s+/g,' ').trim();
+    if(praise.length > 120) praise = praise.slice(0, 118) + '…';
+    return {correct:correct, praise:praise};
+  }catch(e){
+    GPT.msgBad = true;
+    if(/HTTP 401|HTTP 403/.test(String(e && e.message))) GPT.status = 'error';
+    GPT.msg = gptNetMessage(e);
+    renderGpt();
+    throw e;
+  }finally{
+    gptClearAbort(ac);
+  }
+}
+
+async function openaiSpeech(text){
+  if(!gptHasKey() || !GPT.voice) return false;
+  const ac = gptAbort(9000);
+  const attempt = async (model, extra)=>{
+    const r = await fetch('https://api.openai.com/v1/audio/speech', {
+      method:'POST',
+      headers:{ 'Authorization':'Bearer ' + GPT.key, 'Content-Type':'application/json' },
+      body: JSON.stringify(Object.assign({
+        model:model, voice:'nova', input:text, response_format:'mp3'
+      }, extra||{})),
+      signal: ac.ctrl ? ac.ctrl.signal : undefined
+    });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const blob = await r.blob();
+    if(!blob || blob.size < 80) throw new Error('empty-audio');
+    const url = URL.createObjectURL(blob);
+    if(gptObjUrl){ try{ URL.revokeObjectURL(gptObjUrl); }catch(e){} }
+    gptObjUrl = url;
+    if(gptAudio){ try{ gptAudio.pause(); }catch(e){} }
+    gptAudio = new Audio(url);
+    gptAudio.volume = 1;
+    await gptAudio.play();
+    return true;
+  };
+  try{
+    try{
+      return await attempt('gpt-4o-mini-tts', {instructions:'Warm, cheerful Korean picture-book teacher voice for a toddler. Speak slowly and brightly.'});
+    }catch(e){
+      return await attempt('tts-1', null);
+    }
+  }catch(e){
+    GPT.msgBad = true; GPT.msg = gptNetMessage(e) + ' 기본 목소리로 읽어 줄게요.';
+    renderGpt();
+    return false;
+  }finally{ gptClearAbort(ac); }
+}
+
+function say(text, lang, opts){
+  if(!text) return false;
+  if(gptHasKey() && GPT.voice){
+    openaiSpeech(text).then(ok=>{ if(!ok) speak(text, lang, opts); }).catch(()=>{ speak(text, lang, opts); });
+    return true;
+  }
+  return speak(text, lang, opts);
+}
+
+/* ---------- Whisper 녹음 듣기 (SpeechRecognition이 없을 때) ---------- */
+function whisperAvailable(){
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+}
+async function whisperTranscribe(blob){
+  const fd = new FormData();
+  const ext = (blob.type && blob.type.indexOf('mp4')>=0) ? 'mp4' : 'webm';
+  fd.append('file', blob, 'toddler.' + ext);
+  fd.append('model', 'whisper-1');
+  fd.append('language', state.mode==='alphabet' ? 'en' : 'ko');
+  const ac = gptAbort(15000);
+  try{
+    const r = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method:'POST',
+      headers:{ 'Authorization':'Bearer ' + GPT.key },
+      body: fd,
+      signal: ac.ctrl ? ac.ctrl.signal : undefined
+    });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    return String((j && j.text) || '').trim();
+  } finally { gptClearAbort(ac); }
+}
+let whisperStream = null;
+let whisperRec = null;
+async function startWhisperListening(){
+  if(state.celebrating) return;
+  hideFeedback();
+  stopRecognition();
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(e){
+    showSRNotice('마이크를 켤 수 없어요. 아래 <b>부모님 도움</b>에서 <b>정답</b>을 눌러 주세요.');
+    gentlePrompt('마이크를 켜 주세요', '부모님이 허용을 확인해 주세요.', 'retry');
+    return;
+  }
+  whisperStream = stream;
+  let rec;
+  try{ rec = new MediaRecorder(stream); }
+  catch(e){ stopWhisperTracks(); gentlePrompt('녹음을 할 수 없어요', '부모님이 <b>정답</b>을 눌러 주세요.', 'retry'); return; }
+  whisperRec = rec;
+  const chunks = [];
+  rec.ondataavailable = (e)=>{ if(e.data && e.data.size) chunks.push(e.data); };
+  const stopped = new Promise(res=>{ rec.onstop = ()=>res(); });
+  rec.start();
+  setListening(true);
+  el.hearingTxt.textContent = '4초 동안 듣고 있어요…';
+  await new Promise(r=>setTimeout(r, 4000));
+  try{ if(rec.state!=='inactive') rec.stop(); }catch(e){}
+  await stopped;
+  stopWhisperTracks();
+  setListening(false);
+  const blob = new Blob(chunks, {type: rec.mimeType || 'audio/webm'});
+  if(!blob.size){ gentlePrompt('하나도 못 들었어요', '조금 더 크게, 천천히 말해 볼까요?', 'retry'); return; }
+  el.hearing.classList.add('on');
+  el.hearingTxt.textContent = '들은 말을 글로 적고 있어요…';
+  try{
+    const text = await whisperTranscribe(blob);
+    el.hearing.classList.remove('on');
+    evaluateTranscripts([text]);
+  }catch(e){
+    el.hearing.classList.remove('on');
+    GPT.msgBad = true; GPT.msg = gptNetMessage(e); renderGpt();
+    showSRNotice('녹음 듣기를 하지 못했어요. <b>부모님 도움</b>의 <b>정답</b>으로도 놀이할 수 있어요.');
+    gentlePrompt('잠깐 연결이 안 됐어요', '부모님이 도와주세요.', 'retry');
+  }
+}
+function stopWhisperTracks(){
+  try{ if(whisperStream) whisperStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+  whisperStream = null;
+  whisperRec = null;
+}
+
+/* ============================================================
+   7. 축하송 (Web Audio)
+   ============================================================ */
+let audioCtx = null;
+let masterGain = null;
+function getCtx(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    try{ audioCtx = new AC(); }catch(e){ return null; }
+  }
+  if(audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(e){} }
+  return audioCtx;
+}
+const midiToFreq = (m)=>440*Math.pow(2,(m-69)/12);
+
+function marimba(ctx, dest, midi, when, dur, vol){
+  const f = midiToFreq(midi);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+dur);
+  g.connect(dest);
+  const o1 = ctx.createOscillator(); o1.type='sine'; o1.frequency.setValueAtTime(f, when);
+  o1.connect(g); o1.start(when); o1.stop(when+dur+0.05);
+  const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.0001, when);
+  g2.gain.exponentialRampToValueAtTime(vol*0.42, when+0.008);
+  g2.gain.exponentialRampToValueAtTime(0.0001, when+dur*0.7);
+  g2.connect(dest);
+  const o2 = ctx.createOscillator(); o2.type='triangle'; o2.frequency.setValueAtTime(f*2, when);
+  o2.connect(g2); o2.start(when); o2.stop(when+dur*0.75);
+  const g3 = ctx.createGain(); g3.gain.setValueAtTime(0.0001, when);
+  g3.gain.exponentialRampToValueAtTime(vol*0.18, when+0.006);
+  g3.gain.exponentialRampToValueAtTime(0.0001, when+dur*0.35);
+  g3.connect(dest);
+  const o3 = ctx.createOscillator(); o3.type='sine'; o3.frequency.setValueAtTime(f*4, when);
+  o3.connect(g3); o3.start(when); o3.stop(when+dur*0.4);
+  state.songNotes++;
+}
+function bassNote(ctx, dest, midi, when, dur, vol){
+  const f = midiToFreq(midi);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+dur);
+  g.connect(dest);
+  const o = ctx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(f, when);
+  o.frequency.exponentialRampToValueAtTime(f*0.98, when+dur);
+  o.connect(g); o.start(when); o.stop(when+dur+0.03);
+  state.songNotes++;
+}
+let noiseBuf = null;
+function noise(ctx){
+  if(!noiseBuf){
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate*0.5, ctx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1);
+  }
+  const s = ctx.createBufferSource(); s.buffer = noiseBuf; return s;
+}
+function shaker(ctx, dest, when, vol){
+  const s = noise(ctx);
+  const bp = ctx.createBiquadFilter(); bp.type='highpass'; bp.frequency.value=6500;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+0.075);
+  s.connect(bp); bp.connect(g); g.connect(dest);
+  s.start(when); s.stop(when+0.09);
+  state.songNotes++;
+}
+function kick(ctx, dest, when, vol){
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+0.2);
+  g.connect(dest);
+  const o = ctx.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(150, when);
+  o.frequency.exponentialRampToValueAtTime(52, when+0.17);
+  o.connect(g); o.start(when); o.stop(when+0.22);
+  state.songNotes++;
+}
+
+const SONG = {
+  bpm: 138,
+  melody: [
+    [72,null,76,79, 76,79,81,null],
+    [79,76,72,null, 74,76,79,null],
+    [81,79,76,null, 72,74,76,null],
+    [79,null,76,72, null,72,74,null]
+  ],
+  chord: [ [60,64,67], [60,64,67], [57,60,64], [55,59,62] ]
+};
+
+function playSong(seconds){
+  const ctx = getCtx();
+  if(!ctx) return {ok:false, duration:seconds};
+  const t0 = ctx.currentTime + 0.05;
+  const out = ctx.createGain();
+  out.gain.setValueAtTime(0.0001, t0);
+  out.gain.exponentialRampToValueAtTime(0.9, t0+0.05);
+  out.gain.setValueAtTime(0.9, t0+seconds-0.9);
+  out.gain.exponentialRampToValueAtTime(0.0001, t0+seconds-0.02);
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=8200;
+  out.connect(lp); lp.connect(ctx.destination);
+  masterGain = out;
+
+  const spb = 60/SONG.bpm;
+  const eighth = spb/2;
+  const barLen = spb*4;
+  const total = seconds - 0.12;
+
+  [84,88,91,96].forEach((m,i)=> marimba(ctx,out,m,t0+i*0.07,0.5,0.16));
+
+  let bar = 0;
+  while(bar*barLen < total){
+    const bt = t0 + bar*barLen;
+    const phrase = bar % SONG.melody.length;
+    SONG.melody[phrase].forEach((m,i)=>{
+      if(m===null) return;
+      const when = bt + i*eighth;
+      if(when - t0 > total) return;
+      marimba(ctx,out,m,when,0.34,0.26);
+      if(i%4===2) marimba(ctx,out,m+12,when+0.004,0.2,0.07);
+    });
+    const chord = SONG.chord[phrase];
+    bassNote(ctx,out,chord[0]-12,bt,0.42,0.22);
+    bassNote(ctx,out,chord[0]-12,bt+spb*2,0.38,0.19);
+    chord.forEach(m=>marimba(ctx,out,m+12,bt+spb,0.16,0.055));
+    for(let i=0;i<8;i++){
+      const when = bt+i*eighth;
+      if(when-t0>total) break;
+      shaker(ctx,out,when, i%2? 0.075:0.04);
+    }
+    kick(ctx,out,bt,0.32); kick(ctx,out,bt+spb*2,0.26);
+    bar++;
+  }
+  return {ok:true, contextState:ctx.state, duration:seconds};
+}
+function stopSong(){
+  if(!audioCtx || !masterGain) return;
+  try{
+    const now = audioCtx.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(Math.max(masterGain.gain.value, 0.0001), now);
+    masterGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+  }catch(e){}
+  try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){}
+  state.songPlaying = false;
+}
+function unlockAudio(){
+  const ctx = getCtx();
+  if(ctx && ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
+}
+
+/* ============================================================
+   8. 글자 매칭
+   ============================================================ */
+function normalize(s){
+  if(!s) return '';
+  let t = String(s).toLowerCase();
+  t = t.replace(/[\u200b-\u200d\ufeff]/g,'');
+  t = t.replace(/[^\p{L}\p{N}\s]/gu,' ');
+  t = t.replace(/\s+/g,'');
+  t = t.replace(/(이에요|예요|입니다|라고요|라고|라고 합니다)/g,'');
+  return t;
+}
+function levenshtein(a,b){
+  if(a===b) return 0;
+  const m=a.length,n=b.length;
+  if(!m) return n; if(!n) return m;
+  let prev=new Array(n+1), cur=new Array(n+1);
+  for(let j=0;j<=n;j++) prev[j]=j;
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++){
+      const cost = a[i-1]===b[j-1]?0:1;
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+cost);
+    }
+    const tmp=prev; prev=cur; cur=tmp;
+  }
+  return prev[n];
+}
+function matchesItem(heard, item){
+  const h = normalize(heard);
+  if(!h) return null;
+  for(const raw of item.say){
+    const a = normalize(raw);
+    if(!a) continue;
+    if(h===a) return raw;
+    if(a.length>=2 && h.indexOf(a)>=0) return raw;
+    if(a.length>=2 && h.length>=1 && a.indexOf(h)===0 && h.length>=Math.min(2,a.length-1)) return raw;
+    // 한글 발음은 한 글자 차이까지 너그럽게 (영문 철자 이름은 정확히)
+    if(/[\uAC00-\uD7A3]/.test(a) && /[\uAC00-\uD7A3]/.test(h) &&
+       a.length>=2 && h.length>=2 && Math.abs(a.length-h.length)<=1 && levenshtein(h,a)<=1) return raw;
+  }
+  const tokens = String(heard).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(Boolean);
+  if(tokens.length>1){
+    for(const tk of tokens){
+      const r = matchesItem(tk, item);
+      if(r) return r;
+    }
+  }
+  return null;
+}
+function currentItem(){
+  const m = MODES[state.mode];
+  return m.items[state.index[state.mode] % m.items.length];
+}
+
+/* ============================================================
+   9. 음성 인식
+   ============================================================ */
+let recog = null;
+let recTimer = null;
+let recGeneration = 0;
+let judgeToken = 0;
+function srAvailable(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+function showSRNotice(msg){
+  if(msg) el.srNoticeText.innerHTML = msg;
+  el.srNotice.classList.add('show');
+}
+function hideSRNotice(){ el.srNotice.classList.remove('show'); }
+
+function setListening(on){
+  state.listening = on;
+  el.btnListen.classList.toggle('listening', on);
+  el.btnListen.querySelector('.label').textContent = on? '듣는 중…' : '따라 말해요';
+  el.hearing.classList.toggle('on', on);
+  if(!on){ el.hearingTxt.textContent=''; }
+  else { el.hearingTxt.textContent = '듣고 있어요…'; }
+}
+function stopRecognition(){
+  const r = recog;
+  recog = null;
+  if(recTimer){ clearTimeout(recTimer); recTimer=null; }
+  if(r){ try{ r.onresult=null; r.onerror=null; r.onend=null; r.abort(); }catch(e){} }
+  if(whisperStream) stopWhisperTracks();
+  setListening(false);
+}
+
+/* 인식된 문장들 → 정답/오답 (사전 → 필요하면 GPT) */
+function evaluateTranscripts(texts){
+  const item = currentItem();
+  let matched=null, heard='';
+  for(const t of texts){
+    if(!t) continue;
+    if(!heard) heard = t;
+    const m = matchesItem(t, item);
+    if(m){ matched = m; heard = t; break; }
+  }
+  stopRecognition();
+  if(matched){
+    state.lastHeard = heard; state.lastMatched = matched;
+    state.lastPraise = ''; state.lastSource = 'local';
+    hideSRNotice();
+    celebrate(item);
+    return true;
+  }
+  state.lastHeard = heard || '';
+  state.attempts++;
+
+  if(gptHasKey() && GPT.smart){
+    const token = ++judgeToken;
+    el.hearing.classList.add('on');
+    el.hearingTxt.textContent = 'GPT 선생님이 한 번 더 듣고 있어요…';
+    gptJudge(heard || '(잘 안 들림)', item).then(res=>{
+      if(token!==judgeToken || state.celebrating) return;
+      el.hearing.classList.remove('on');
+      if(res && res.correct){
+        GPT.lastPraise = res.praise || '';
+        GPT.lastSource = 'gpt';
+        state.lastSource = 'gpt';
+        hideSRNotice();
+        celebrate(item, {praise:res.praise, source:'gpt'});
+      }else{
+        GPT.lastSource = 'gpt';
+        GPT.lastPraise = (res && res.praise) || '';
+        gentlePrompt('다시 한 번 말해볼까요? 🐘',
+          heard ? ('들린 말: ' + heard) : '조금 더 크게 말해 볼까요?', 'wrong');
+      }
+    }).catch(()=>{
+      if(token!==judgeToken || state.celebrating) return;
+      el.hearing.classList.remove('on');
+      gentlePrompt('다시 한 번 말해볼까요? 🐘',
+        heard ? ('들린 말: ' + heard) : '잘 안 들렸어요. 조금 더 크게!', 'wrong');
+    });
+    return false;
+  }
+
+  gentlePrompt('다시 한 번 말해볼까요? 🐘',
+    heard ? ('들린 말: ' + heard) : '잘 안 들렸어요. 조금 더 크게!', 'wrong');
+  return false;
+}
+function currentLang(){ return MODES[state.mode].lang; }
+
+function startListening(){
+  unlockAudio();
+  if(state.celebrating) return;
+  hideFeedback();
+  stopRecognition();
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    state.srError='unsupported';
+    if(gptHasKey() && GPT.whisper && whisperAvailable()){
+      startWhisperListening();
+      return;
+    }
+    showSRNotice();
+    gentlePrompt('마이크를 쓸 수 없어요', '부모님이 아래 <b>정답</b> 단추를 눌러 주세요.', 'retry');
+    return;
+  }
+  const myGen = ++recGeneration;
+  let r;
+  try{ r = new SR(); }catch(e){ showSRNotice(); return; }
+  recog = r;
+  r.lang = currentLang();
+  r.continuous = false;
+  r.interimResults = true;
+  r.maxAlternatives = 5;
+  let finished = false;
+
+  const finishWith = (texts)=>{
+    if(finished) return;
+    finished = true;
+    evaluateTranscripts(texts);
+  };
+
+  r.onstart = ()=>{ if(myGen===recGeneration) setListening(true); };
+  r.onresult = (ev)=>{
+    if(myGen!==recGeneration) return;
+    const texts = [];
+    let interim = '';
+    for(let i=ev.resultIndex; i<ev.results.length; i++){
+      const res = ev.results[i];
+      for(let k=0;k<res.length;k++){
+        const t = res[k] && res[k].transcript ? res[k].transcript.trim() : '';
+        if(t) texts.push(t);
+        if(!res.isFinal && t && !interim) interim = t;
+      }
+    }
+    if(interim){ el.hearingTxt.textContent = '“' + interim + '”'; }
+    const item = currentItem();
+    const hit = texts.find(t=>matchesItem(t,item));
+    if(hit){ finishWith(texts); return; }
+    const last = ev.results[ev.results.length-1];
+    if(last && last.isFinal) finishWith(texts);
+  };
+  r.onerror = (ev)=>{
+    if(myGen!==recGeneration) return;
+    const err = ev && ev.error ? ev.error : 'unknown';
+    state.srError = err;
+    finished = true;
+    stopRecognition();
+    if(err==='not-allowed' || err==='service-not-allowed'){
+      showSRNotice('마이크 사용이 막혀 있어요. 브라우저 주소창의 마이크 허용을 켜거나, 아래 <b>부모님 도움</b>의 <b>정답</b>을 눌러 주세요.');
+      gentlePrompt('마이크를 켜 주세요', '부모님이 마이크 허용을 확인해 주세요.', 'retry');
+    }else if(err==='no-speech'){
+      gentlePrompt('하나도 못 들었어요', '조금 더 크게, 천천히 말해 볼까요?', 'retry');
+    }else if(err==='audio-capture'){
+      showSRNotice('마이크를 찾지 못했어요. 마이크가 연결되어 있는지 확인해 주세요.');
+      gentlePrompt('마이크가 안 보여요', '부모님이 확인해 주세요.', 'retry');
+    }else if(err==='language-not-supported'){
+      showSRNotice('이 기기에서 한국어/영어 인식을 지원하지 않아요. <b>부모님 도움</b>으로 놀이할 수 있어요.');
+      gentlePrompt('이 기기에서는 인식이 어려워요', '부모님이 도와주세요.', 'retry');
+    }else if(err==='network'){
+      showSRNotice('인터넷 연결 때문에 음성인식이 안 돼요. <b>부모님 도움</b>으로도 놀이할 수 있어요.');
+      gentlePrompt('잠깐 연결이 안 됐어요', '부모님이 도와주세요.', 'retry');
+    }else if(err!=='aborted'){
+      showSRNotice('음성인식을 쓰기 어려워요. 아래 <b>부모님 도움</b>의 <b>정답</b>을 눌러 주세요.');
+    }
+    if(err==='aborted') setListening(false);
+  };
+  r.onend = ()=>{
+    if(myGen!==recGeneration) return;
+    setListening(false);
+    recog = null;
+  };
+
+  try{
+    r.start();
+    setListening(true);
+  }catch(e){
+    state.srError='start-failed';
+    showSRNotice();
+    gentlePrompt('마이크를 켤 수 없어요', '부모님이 <b>정답</b>을 눌러 주세요.', 'retry');
+    return;
+  }
+  recTimer = setTimeout(()=>{
+    if(recog){ try{ recog.stop(); }catch(e){} }
+  }, 7000);
+}
+
+/* ============================================================
+   10. 화면 그리기
+   ============================================================ */
+function render(animate){
+  const m = MODES[state.mode];
+  const item = currentItem();
+  const idx = state.index[state.mode];
+  document.documentElement.dataset.mode = state.mode;
+
+  el.letter.innerHTML = '';
+  const big = document.createElement('span');
+  big.textContent = item.ch;
+  el.letter.appendChild(big);
+  if(item.lower){
+    const low = document.createElement('span');
+    low.className='lower';
+    low.textContent = item.lower;
+    el.letter.appendChild(low);
+  }
+  el.letter.setAttribute('aria-label', item.ch + ' ' + (item.sub||''));
+  el.subName.textContent = item.sub || '';
+  if(state.mode==='alphabet'){
+    el.subEmoji.textContent = item.emoji || '';
+    el.subEmoji.style.display = item.emoji ? '' : 'none';
+    el.subExample.textContent = item.example || '';
+  }else{
+    el.subEmoji.textContent = '';
+    el.subEmoji.style.display = 'none';
+    el.subExample.textContent = item.roman || '';
+  }
+  el.counter.textContent = (idx+1) + ' / ' + m.items.length;
+  el.navHint.textContent = m.hint;
+  el.celebLetter.textContent = item.ch;
+  el.starNum.textContent = String(state.stars);
+  el.tabs.forEach(t=>{
+    const on = t.dataset.mode === state.mode;
+    t.setAttribute('aria-selected', on? 'true':'false');
+    t.tabIndex = on?0:-1;
+  });
+  hideFeedback();
+  if(animate){
+    el.letter.classList.remove('swap');
+    void el.letter.offsetWidth;
+    el.letter.classList.add('swap');
+  }
+}
+function setMode(mode, opts){
+  if(ORDER.indexOf(mode)<0) return;
+  judgeToken++;
+  stopRecognition();
+  if(state.celebrating) finishCelebration(false, true);
+  state.mode = mode;
+  state.attempts = 0;
+  saveStore();
+  render(true);
+  if(!opts || !opts.silent) unlockAudio();
+}
+function setTheme(theme){
+  if(theme!=='color' && theme!=='mono') return;
+  state.theme = theme;
+  document.documentElement.dataset.theme = theme;
+  el.themeBtns.forEach(b=>{
+    const on = b.dataset.themeValue===theme;
+    b.setAttribute('aria-pressed', on?'true':'false');
+    b.setAttribute('aria-label', (b.dataset.themeValue==='color'?'컬러 버전':'흑백 버전') + (on?' 선택됨':''));
+  });
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', theme==='mono'? '#FFFFFF':'#FFF9EC');
+  saveStore();
+}
+function step(dir){
+  if(state.celebrating) return;
+  judgeToken++;
+  const m = MODES[state.mode];
+  const n = m.items.length;
+  state.index[state.mode] = (state.index[state.mode] + dir + n) % n;
+  state.attempts = 0;
+  render(true);
+  stopRecognition();
+  hideFeedback();
+}
+function next(){ step(1); }
+function prev(){ step(-1); }
+function random(){
+  if(state.celebrating) return;
+  judgeToken++;
+  const m = MODES[state.mode];
+  const n = m.items.length;
+  if(n<2){ render(true); return; }
+  let i = state.index[state.mode];
+  while(i===state.index[state.mode]) i = Math.floor(Math.random()*n);
+  state.index[state.mode] = i;
+  state.attempts = 0;
+  render(true);
+  stopRecognition();
+  hideFeedback();
+}
+function addStar(){
+  state.stars++;
+  el.starNum.textContent = String(state.stars);
+  el.stars.classList.remove('pop');
+  void el.stars.offsetWidth;
+  el.stars.classList.add('pop');
+  saveStore();
+}
+
+/* ---------- 다정한 피드백 ---------- */
+let fbTimer = null;
+function hideFeedback(){
+  el.feedback.classList.remove('show');
+  if(fbTimer){ clearTimeout(fbTimer); fbTimer=null; }
+}
+function gentlePrompt(title, sub, kind){
+  state.lastFeedback = kind || 'wrong';
+  el.fbTitle.textContent = title;
+  el.fbHeard.innerHTML = sub || '';
+  el.feedback.classList.add('show');
+  if(fbTimer){ clearTimeout(fbTimer); }
+  fbTimer = setTimeout(()=>{ el.feedback.classList.remove('show'); }, 9000);
+  if(state.attempts>=2){
+    el.fbHeard.innerHTML = (sub? sub+' · ':'') + '부모님이 <b>정답</b>을 눌러도 좋아요';
+  }
+}
+
+/* ============================================================
+   11. 축하
+   ============================================================ */
+let celebRaf = null;
+let celebTimer = null;
+
+function buildConfetti(){
+  el.confetti.innerHTML = '';
+  const colors = ['var(--conf-1)','var(--conf-2)','var(--conf-3)','var(--conf-4)','var(--conf-5)'];
+  for(let i=0;i<34;i++){
+    const d = document.createElement('i');
+    d.className = 'conf' + (i%3===0?' circle':'') + (i%7===0?' star':'');
+    d.style.left = (Math.random()*100).toFixed(2) + '%';
+    d.style.background = colors[i % colors.length];
+    d.style.setProperty('--dx', (Math.random()*140-70).toFixed(0) + 'px');
+    d.style.setProperty('--rot', (Math.random()*720-360).toFixed(0) + 'deg');
+    d.style.animationDuration = (2.2 + Math.random()*2.4).toFixed(2) + 's';
+    d.style.animationDelay = (Math.random()*1.6).toFixed(2) + 's';
+    d.style.width = (7 + Math.random()*8).toFixed(0)+'px';
+    d.style.height = (9 + Math.random()*10).toFixed(0)+'px';
+    el.confetti.appendChild(d);
+  }
+}
+let noteTimer = null;
+function startNotes(){
+  stopNotes();
+  const glyphs = ['♪','♫','♩','♬','✦','★'];
+  const spawn = ()=>{
+    if(!state.celebrating) return;
+    const s = document.createElement('span');
+    s.className='note';
+    s.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+    s.style.left = (12 + Math.random()*76).toFixed(1) + '%';
+    s.style.top = (55 + Math.random()*25).toFixed(1) + '%';
+    s.style.animationDuration = (1.8 + Math.random()*1.2).toFixed(2)+'s';
+    el.notes.appendChild(s);
+    setTimeout(()=>{ try{ s.remove(); }catch(e){} }, 3200);
+  };
+  spawn(); spawn();
+  noteTimer = setInterval(spawn, 320);
+}
+function stopNotes(){
+  if(noteTimer){ clearInterval(noteTimer); noteTimer=null; }
+  el.notes.innerHTML = '';
+}
+
+function celebrate(item, opts){
+  if(state.celebrating) return;
+  stopRecognition();
+  stopSong();
+  hideFeedback();
+  unlockAudio();
+
+  const praise = (opts && opts.praise) ? String(opts.praise).replace(/\s+/g,' ').trim().slice(0,120) : '';
+  state.lastPraise = praise;
+  state.lastSource = (opts && opts.source) || 'local';
+
+  state.celebrating = true;
+  state.lastFeedback = 'correct';
+  state.songPlaying = false;
+  state.songNotes = 0;
+  state.celebrationDuration = 10;
+  addStar();
+
+  el.celebLetter.textContent = item.ch;
+  if(praise){
+    el.celebBubble.innerHTML = '<span class="pr">' + escapeHtml(praise) + '</span> <span class="big-ch">' + escapeHtml(item.ch) + '</span>';
+    el.celebBubble.classList.toggle('long', praise.length > 26);
+  }else{
+    el.celebBubble.innerHTML = '정답이에요! <span class="big-ch">' + escapeHtml(item.ch) + '</span> 🎉';
+    el.celebBubble.classList.remove('long');
+  }
+  el.overlay.hidden = false;
+  el.overlay.setAttribute('aria-hidden','false');
+  void el.overlay.offsetWidth;
+  el.overlay.classList.add('show');
+  el.mascotBig.classList.add('party','dancing');
+  el.songFill.style.width = '100%';
+  el.songNum.textContent = '10';
+  el.btnSkip.disabled = false;
+  el.danceCaption.textContent = '🎵 코끼리 축하송이 나오고 있어요';
+
+  buildConfetti();
+  startNotes();
+
+  const res = playSong(10);
+  state.songPlaying = !!(res && res.ok);
+
+  if(praise){
+    setTimeout(()=>{ if(state.celebrating) say(praise, 'ko-KR', {rate:0.86, pitch:1.18}); }, 140);
+  }else if(state.mode==='alphabet'){
+    setTimeout(()=>{ if(state.celebrating) say(item.ch, 'en-US', {rate:0.75, pitch:1.2}); }, 120);
+  }else{
+    setTimeout(()=>{ if(state.celebrating) say(item.sub, 'ko-KR', {rate:0.8, pitch:1.25}); }, 120);
+  }
+
+  const start = performance.now();
+  const DUR = 10000;
+  const tick = ()=>{
+    if(!state.celebrating) return;
+    const e = performance.now() - start;
+    const left = Math.max(0, DUR - e);
+    const ratio = Math.max(0, 1 - e/DUR);
+    el.songFill.style.width = (ratio*100).toFixed(2) + '%';
+    el.songNum.textContent = String(Math.ceil(left/1000));
+    el.songBar.setAttribute('aria-valuenow', String(Math.ceil(left/100)));
+    if(e < DUR) celebRaf = requestAnimationFrame(tick);
+  };
+  celebRaf = requestAnimationFrame(tick);
+
+  celebTimer = setTimeout(()=>{
+    if(state.celebrating) finishCelebration(true);
+  }, DUR);
+}
+
+function finishCelebration(advance, silent){
+  if(!state.celebrating) return;
+  state.celebrating = false;
+  if(celebRaf){ cancelAnimationFrame(celebRaf); celebRaf=null; }
+  if(celebTimer){ clearTimeout(celebTimer); celebTimer=null; }
+  stopNotes();
+  stopSong();
+  el.overlay.classList.remove('show');
+  el.overlay.setAttribute('aria-hidden','true');
+  el.mascotBig.classList.remove('dancing');
+  el.confetti.innerHTML = '';
+  setTimeout(()=>{ if(!state.celebrating){ el.overlay.hidden = true; el.mascotBig.classList.remove('party'); } }, 260);
+  state.lastFeedback = 'correct';
+  if(advance){ step(1); }
+  if(!silent) render(true);
+}
+
+/* ============================================================
+   12. 이벤트
+   ============================================================ */
+el.btnSpeak.addEventListener('click', ()=>{ unlockAudio(); speakCurrent(); });
+el.btnListen.addEventListener('click', ()=>{
+  if(state.listening){ stopRecognition(); return; }
+  startListening();
+});
+el.btnPrev.addEventListener('click', ()=> prev());
+el.btnNext.addEventListener('click', ()=> next());
+el.btnRandom.addEventListener('click', ()=> random());
+
+el.pbCorrect.addEventListener('click', ()=>{
+  unlockAudio();
+  state.lastHeard='(부모님 확인)';
+  state.lastMatched='parent';
+  celebrate(currentItem());
+});
+el.pbRetry.addEventListener('click', ()=>{
+  state.attempts++;
+  gentlePrompt('다시 한 번 말해볼까요? 🐘', '부모님이 다시 들려주세요.', 'wrong');
+  speakCurrent();
+});
+el.fbHear.addEventListener('click', ()=>{ unlockAudio(); speakCurrent(); });
+el.fbRetry.addEventListener('click', ()=>{ hideFeedback(); startListening(); });
+el.btnSkip.addEventListener('click', ()=> finishCelebration(true));
+
+el.tabs.forEach(t=>{
+  t.addEventListener('click', ()=> setMode(t.dataset.mode));
+  t.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key==='ArrowLeft'){
+      e.preventDefault();
+      const i = ORDER.indexOf(state.mode);
+      const d = e.key==='ArrowRight'? 1 : -1;
+      setMode(ORDER[(i+d+ORDER.length)%ORDER.length]);
+      el.tabs.forEach(x=>{ if(x.dataset.mode===state.mode) x.focus(); });
+    }
+  });
+});
+el.themeBtns.forEach(b=>{
+  b.addEventListener('click', ()=> setTheme(b.dataset.themeValue));
+});
+
+/* ---------- 부모님 설정 (GPT) ---------- */
+el.btnSettings.addEventListener('click', openSettings);
+el.settingsClose.addEventListener('click', closeSettings);
+el.settingsBackdrop.addEventListener('click', (e)=>{ if(e.target===el.settingsBackdrop) closeSettings(); });
+el.gptDone.addEventListener('click', ()=>{ readSettingsInputs(); closeSettings(); });
+el.gptTest.addEventListener('click', ()=>{ testConnection(); });
+el.gptClear.addEventListener('click', clearGptKey);
+el.gptEye.addEventListener('click', ()=>{
+  const show = el.gptKey.type === 'password';
+  el.gptKey.type = show ? 'text' : 'password';
+  el.gptEye.textContent = show ? '🙈' : '👁';
+  el.gptEye.setAttribute('aria-label', show ? '키 가리기' : '키 보기');
+});
+el.gptKey.addEventListener('input', ()=>{
+  const k = (el.gptKey.value || '').trim();
+  if(k !== GPT.key){
+    GPT.key = k;
+    GPT.status = gptHasKey() ? 'entered' : 'none';
+    GPT.msg = ''; GPT.msgBad = false;
+    if(!gptHasKey()){ GPT.status='none'; }
+  }
+  gptPersist();
+  renderGpt();
+});
+[el.gptSave, el.gptSmart, el.gptVoice, el.gptWhisper].forEach(cb=>{
+  cb.addEventListener('change', ()=>{ readSettingsInputs(); });
+});
+
+document.addEventListener('keydown', (e)=>{
+  const tag = (e.target && e.target.tagName) ? e.target.tagName : '';
+  if(tag==='INPUT' || tag==='TEXTAREA') return;
+  if(!el.settingsBackdrop.hidden){
+    if(e.key==='Escape'){ e.preventDefault(); closeSettings(); }
+    return;
+  }
+  if(e.key==='ArrowRight'){ e.preventDefault(); next(); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); prev(); }
+  else if(e.key===' '){ e.preventDefault(); if(!state.celebrating) startListening(); }
+  else if(e.key==='s' || e.key==='S'){ speakCurrent(); }
+  else if(e.key==='Escape' && state.celebrating){ finishCelebration(true); }
+});
+
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden){
+    stopRecognition();
+    stopSong();
+    if(window.speechSynthesis) try{ window.speechSynthesis.cancel(); }catch(e){}
+  }
+});
+window.addEventListener('beforeunload', ()=>{ stopSong(); });
+
+/* ============================================================
+   13. 테스트용 공개 훅
+   ============================================================ */
+ToddlerApp.matches = (text)=> matchesItem(text, currentItem());
+ToddlerApp.judge = (text)=>{
+  const item = currentItem();
+  const m = matchesItem(text, item);
+  if(m){ state.lastHeard=text; state.lastMatched=m; state.lastPraise=''; state.lastSource='local'; celebrate(item); return true; }
+  evaluateTranscripts([text || '']);
+  return false;
+};
+ToddlerApp.setMode = setMode;
+ToddlerApp.setTheme = setTheme;
+ToddlerApp.next = next;
+ToddlerApp.prev = prev;
+ToddlerApp.random = random;
+ToddlerApp.skip = ()=> finishCelebration(true);
+ToddlerApp.current = ()=>{ const it=currentItem(); return {ch:it.ch, sub:it.sub, mode:state.mode, index:state.index[state.mode], total:MODES[state.mode].items.length}; };
+ToddlerApp.stars = ()=> state.stars;
+ToddlerApp.setStars = (n)=>{ state.stars = Math.max(0, n|0); el.starNum.textContent=String(state.stars); saveStore(); };
+ToddlerApp.hasSR = srAvailable;
+ToddlerApp.reset = ()=>{ state.index = {consonant:0, vowel:0, alphabet:0}; state.attempts=0; render(true); };
+ToddlerApp.gpt = {
+  state: GPT,
+  hasKey: gptHasKey,
+  open: openSettings,
+  close: closeSettings,
+  test: testConnection,
+  judge: (text)=> gptJudge(text, currentItem()),
+  speak: say,
+  setKey: (key, saveFlag)=>{
+    GPT.key = key || '';
+    GPT.save = !!saveFlag;
+    GPT.status = gptHasKey() ? 'entered' : 'none';
+    GPT.msg = ''; GPT.msgBad = false;
+    gptPersist(); renderGpt();
+  },
+  readInputs: readSettingsInputs,
+  clear: clearGptKey,
+  whisperAvailable: whisperAvailable,
+  badge: ()=> gptBadgeInfo()
+};
+
+/* ============================================================
+   14. 시작
+   ============================================================ */
+loadStore();
+gptLoad();
+setTheme(state.theme);
+render(false);
+renderGpt();
+if(!srAvailable()){
+  showSRNotice('이 브라우저에서는 마이크 인식을 쓸 수 없어요. 아래 <b>부모님 도움</b>에서 <b>정답</b>을 눌러 주세요.');
+}else{
+  hideSRNotice();
+}
+['pointerdown','touchstart','keydown'].forEach(ev=>{
+  window.addEventListener(ev, unlockAudio, {once:true, passive:true});
+});
+})();
+</script>
+</body>
+</html>
