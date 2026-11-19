@@ -563,21 +563,34 @@ html[data-theme="mono"] .skip-btn{box-shadow:0 4px 0 #000;border-radius:12px;col
 .dance-caption{font-size:11px;font-weight:900;color:var(--ink-soft);letter-spacing:-.01em;flex:0 0 auto;background:var(--card);padding:3px 10px;border-radius:999px;border:2px solid var(--ink)}
 html[data-theme="mono"] .dance-caption{color:#000;border-color:#000;background:#fff}
 
-/* 축하송 가사 — 한 줄씩 반짝이며 따라 부르기 */
-.lyrics{width:min(100%,420px);display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto;z-index:4}
+/* 축하송 가사 — 음절 하나하나가 노래 박자에 맞춰 반짝이는 가라오케 */
+.lyrics{width:min(100%,420px);display:flex;flex-direction:column;align-items:center;gap:4px;flex:0 0 auto;z-index:4}
 .lyrics .line{
-  font-size:clamp(12.5px,3.7vw,17px);font-weight:900;letter-spacing:-.03em;line-height:1.22;
-  color:var(--ink-soft);opacity:.5;transform:scale(.94);padding:1px 11px;border-radius:999px;
+  font-size:clamp(12.5px,3.7vw,17px);font-weight:900;letter-spacing:-.01em;line-height:1.22;
+  color:var(--ink-soft);opacity:.72;padding:2px 10px;border-radius:999px;
   border:2.5px solid transparent;background:transparent;white-space:nowrap;
-  transition:opacity .18s, transform .18s, background .18s, color .18s;
+  transition:opacity .18s, transform .18s, background .18s, color .18s, border-color .18s;
 }
 .lyrics .line.on{
-  opacity:1;color:var(--ink);background:var(--yellow-soft);border-color:var(--ink);
-  transform:scale(1.05);animation:lineBounce .5s cubic-bezier(.2,1.6,.4,1);
+  opacity:1;color:var(--ink);border-color:var(--ink);background:var(--card);
+  transform:scale(1.04);animation:lineBounce .45s cubic-bezier(.2,1.6,.4,1);
+}
+.lyrics .line .sy{
+  display:inline-block;font-style:normal;padding:1px 2px;margin:0 1px;border-radius:7px;
+  color:var(--ink-soft);opacity:.5;
+  transition:color .1s,opacity .1s,background .1s,transform .12s;
+}
+.lyrics .line .sy.done{color:var(--ink);opacity:.9}
+.lyrics .line .sy.hit{
+  color:var(--ink);opacity:1;background:var(--yellow);
+  transform:translateY(-3px);
+  animation:sylBounce .22s cubic-bezier(.2,1.7,.4,1);
 }
 html[data-theme="mono"] .lyrics .line{color:#000}
 html[data-theme="mono"] .lyrics .line.on{background:#fff;border-color:#000}
-@keyframes lineBounce{0%{transform:scale(.9) translateY(3px)}60%{transform:scale(1.1)}100%{transform:scale(1.05)}}
+html[data-theme="mono"] .lyrics .line .sy{color:#000}
+html[data-theme="mono"] .lyrics .line .sy.hit{background:#000;color:#fff}
+@keyframes lineBounce{0%{transform:scale(.94) translateY(2px)}60%{transform:scale(1.08)}100%{transform:scale(1.04)}}@keyframes sylBounce{0%{transform:translateY(1px) scale(.92)}60%{transform:translateY(-5px) scale(1.1)}100%{transform:translateY(-3px) scale(1)}}
 html[data-theme="mono"] .bubble,html[data-theme="mono"] .dance-caption,html[data-theme="mono"] .skip-btn{filter:grayscale(1)}
 
 @media (prefers-reduced-motion: reduce){
@@ -1177,7 +1190,11 @@ const state = {
   srSupported: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
   srError:null,
   songNotes:0,
+  songLead:0,
+  songPlan:[],
+  songStart:0,
   lyricIndex:-1,
+  lyricSyl:-1,
   musicDuck:false,
   srSoftRetries:0
 };
@@ -1288,11 +1305,14 @@ function saveStore(){
 /* ============================================================
    6. 소리 (Web Speech Synthesis)
    ============================================================ */
-/* ---------- 아기코끼리 목소리 ----------
-   밝고 통통 튀는 아기 코끼리 캐릭터 목소리: 높은 음(pitch 1.6) +
-   천천히 또박또박(rate 0.84) + 다정한 여성/아이 목소리 우선.
+/* ---------- 귀여운 남자아이 목소리 (뽀로로 참고) ----------
+   뽀로로처럼 장난기 많고 밝고 에너지 넘치는 3~4세 남자아이 목소리.
+   여성/아이 음성에 가산점을 주던 예전 방식 대신, 기기에 있는 또렷하고
+   자연스러운 기본 음성(중성·남성 포함)을 고른 뒤 pitch를 살짝만 올리고(1.35)
+   통통 튀는 말투(rate 0.94)를 얹어 '귀여운 남자아이'로 만든다.
+   (1.6대의 새된 소리·느린 0.82의 또박또박한 낭독이 아니라, 씩씩하고 발랄한 톤)
    발음을 다 읽고 나면 짧게 "뿌우~" 하고 코끼리 인사를 한다. */
-const VOICE_CHAR = { pitch:1.6, rate:0.84 };
+const VOICE_CHAR = { pitch:1.35, rate:0.94 };
 const VoiceLog = { last:null, chimes:0, chimeReq:0, ducks:0, spoken:[] };
 let voices = [];
 function refreshVoices(){
@@ -1311,15 +1331,23 @@ function pickVoice(lang){
   const pool = exact.length ? exact
     : voices.filter(v=>v.lang && v.lang.toLowerCase().replace('_','-').indexOf(short)===0);
   if(!pool.length) return null;
-  // 밝고 귀여운(여성·아이) 목소리에 점수를 준다
+  // 높은 여성/아이 음성을 강제하지 않는다 — 또렷하고 자연스러운 기본 음성을
+  // 고르고, 남자아이 톤은 pitch/rate로 만든다.
+  const words = String(v.name||'').toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  const has = (list)=> words.some(w=> list.indexOf(w)>=0);
   const score = (v)=>{
     const n = String(v.name||'').toLowerCase();
     let s = 0;
-    if(/female|woman|girl|child|kid|cute/.test(n)) s += 6;
-    if(/yuna|sora|sunhi|heami|jihye|sujin|nara|jina|aria|samantha|karen|zira|jenny|michelle|allison|ava|susan|tessa|moira|serena|kyuri|nayeon/.test(n)) s += 5;
-    if(/google/.test(n)) s += 3;
-    if(/compact|espeak|low quality|robot/.test(n)) s -= 4;
-    if(v.localService===false) s += 1;
+    // 차분한 중성·남성 음성이 있으면 먼저 (여기에 pitch 1.35를 얹으면 남자아이 톤)
+    if(has(['male','man','boy','alex','aaron','daniel','fred','guy','david','james','mark','tom','oliver','rishi'])) s += 5;
+    // 맑고 깨끗한 기본/고품질 음성
+    if(has(['yuna','suhyun','sora','sunhi','google','samantha','karen','ava','serena','moira','tessa','nora','shelley','enhanced','premium','neural','natural'])) s += 3;
+    // 지나치게 새된 여성·아이·캐릭터 음성은 뒤로
+    if(has(['female','woman','girl','child','kid','cute','princess','baby'])) s -= 2;
+    if(has(['compact','espeak','robot','novelty','whisper'])) s -= 6;
+    if(v.localService) s += 2;          // 기기에 내장된 음성이 더 또렷하다
+    else s -= 1;                        // 네트워크 음성은 끊김이 있다
+    if(/low quality/.test(n)) s -= 4;
     return s;
   };
   return pool.slice().sort((a,b)=>score(b)-score(a))[0] || pool[0];
@@ -1390,9 +1418,9 @@ function elephantChime(level){
 function speakCurrent(){
   const item = currentItem();
   if(state.mode==='alphabet'){
-    say(item.ch + '. ' + item.ch, 'en-US', {rate:0.82, pitch:1.62, chime:true});
+    say(item.ch + '. ' + item.ch, 'en-US', {rate:0.95, pitch:1.34, chime:true});
   }else{
-    say(item.sub, 'ko-KR', {rate:0.82, pitch:1.64, chime:true});
+    say(item.sub, 'ko-KR', {rate:0.94, pitch:1.35, chime:true});
   }
 }
 
@@ -1625,7 +1653,7 @@ async function openaiSpeech(text, opts){
       method:'POST',
       headers:{ 'Authorization':'Bearer ' + GPT.key, 'Content-Type':'application/json' },
       body: JSON.stringify(Object.assign({
-        model:model, voice:'nova', input:text, response_format:'mp3'
+        model:model, voice:'echo', input:text, response_format:'mp3'
       }, extra||{})),
       signal: ac.ctrl ? ac.ctrl.signal : undefined
     });
@@ -1638,7 +1666,7 @@ async function openaiSpeech(text, opts){
     if(gptAudio){ try{ gptAudio.pause(); }catch(e){} }
     gptAudio = new Audio(url);
     gptAudio.volume = 1;
-    VoiceLog.last = { text:String(text), lang:'openai', rate:1, pitch:1.6, voice:'nova', at:Date.now() };
+    VoiceLog.last = { text:String(text), lang:'openai', rate:1, pitch:1.35, voice:'echo', at:Date.now() };
     gptAudio.onended = ()=>{ if(opts.chime) elephantChime(); };
     await gptAudio.play();
     return true;
@@ -1646,11 +1674,9 @@ async function openaiSpeech(text, opts){
   try{
     try{
       return await attempt('gpt-4o-mini-tts', {instructions:
-        'You are a cute baby elephant character in a Korean picture book for a three-year-old. '
-        + 'Speak in a bright, cheerful, playful high-pitched cartoon voice — warm and sparkly, never scary. '
-        + 'Say the Korean letter name slowly and very clearly with a happy lilt, like a friendly elephant calf teaching a friend.'});
+        '뽀로로처럼 장난기 많고 밝고 에너지 넘치는 3~4세 귀여운 남자아기 목소리로 또랑또랑하게 말해 주세요.'});
     }catch(e){
-      return await attempt('tts-1', null);
+      return await attempt('tts-1', {speed:1.04});
     }
   }catch(e){
     GPT.msgBad = true; GPT.msg = gptNetMessage(e) + ' 기본 목소리로 읽어 줄게요.';
@@ -1792,53 +1818,49 @@ function bassNote(ctx, dest, midi, when, dur, vol){
   o.connect(g); o.start(when); o.stop(when+dur+0.03);
   state.songNotes++;
 }
-let noiseBuf = null;
-function noise(ctx){
-  if(!noiseBuf){
-    noiseBuf = ctx.createBuffer(1, ctx.sampleRate*0.5, ctx.sampleRate);
-    const d = noiseBuf.getChannelData(0);
-    for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1);
-  }
-  const s = ctx.createBufferSource(); s.buffer = noiseBuf; return s;
-}
-function shaker(ctx, dest, when, vol){
-  const s = noise(ctx);
-  const bp = ctx.createBiquadFilter(); bp.type='highpass'; bp.frequency.value=6500;
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, when);
-  g.gain.exponentialRampToValueAtTime(vol, when+0.006);
-  g.gain.exponentialRampToValueAtTime(0.0001, when+0.075);
-  s.connect(bp); bp.connect(g); g.connect(dest);
-  s.start(when); s.stop(when+0.09);
-  state.songNotes++;
-}
-function kick(ctx, dest, when, vol){
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, when);
-  g.gain.exponentialRampToValueAtTime(vol, when+0.008);
-  g.gain.exponentialRampToValueAtTime(0.0001, when+0.2);
-  g.connect(dest);
-  const o = ctx.createOscillator(); o.type='sine';
-  o.frequency.setValueAtTime(150, when);
-  o.frequency.exponentialRampToValueAtTime(52, when+0.17);
-  o.connect(g); o.start(when); o.stop(when+0.22);
-  state.songNotes++;
-}
 
-/* 아기자기하고 경쾌한 동요 — 가사가 있는 축하송 (10초) */
+/* ============================================================
+   「나비야」 같은 전래동요 스타일 — 선율이 살아 있는 10초 축하송
+   · 120 BPM 4/4, 다장조(C major), 4마디 훅(A-A'-B-A')
+   · 리드: 사람 목소리처럼 따뜻하게 노래하는 신스(사인+트라이앵글+비브라토)
+   · 반주: 쿵-짝-쿵-짝(1·3박 베이스, 2·4박 화음) + 마림바 알베르티
+   · 전자 타악기(셰이커·킥·박수) 없이 맑고 동글동글한 그림책 반주
+   ============================================================ */
 const SONG = {
-  bpm: 126,
-  intro: 1.0,
+  bpm: 120,
+  intro: 1.0,          // 2박 인트로(도-미-솔-도 픽업) — 0.9초 안쪽의 짧은 환호
+  style: 'nabiya',     // 「나비야」풍 전래동요
+  key: 'C',
+  lead: 'voice',       // 노래하듯 부는 리드 멜로디
   lines: [
-    { text:'짝짝짝! 정말 잘했어',      mel:[[79,1],[79,1],[79,1],[76,1],[79,1],[76,1],[74,2]], chord:[60,64,67] },
-    { text:'뿌우뿌우 아기 코끼리도',   mel:[[72,1],[72,1],[74,1],[76,1],[79,1],[77,1],[76,2]], chord:[57,60,64] },
-    { text:'신나게 춤을 추네~',       mel:[[81,1],[79,1],[76,1],[74,1],[72,1],[74,1],[76,2]], chord:[53,57,60] },
-    { text:'랄랄라 최고야! 뿌우!',    mel:[[79,1],[81,1],[84,1],[81,1],[79,1],[76,1],[72,2]], chord:[55,59,62] }
+    { text:'짝짝짝! 정말 잘했어',  syl:['짝','짝','짝!','정','말','잘','했','어'], we:[2,4,7],
+      mel:[[79,1],[79,1],[76,1],[79,1],[77,1],[76,1],[74,1],[74,1]], chord:[48,60,64,67] },
+    { text:'뿌우뿌우 코끼리도',    syl:['뿌','우','뿌','우','코','끼','리','도'], we:[3,7],
+      mel:[[79,1],[79,1],[76,1],[79,1],[81,1],[79,1],[77,1],[79,1]], chord:[48,60,64,67] },
+    { text:'신나게 춤을 춰요',      syl:['신','나','게','춤','을','춰','요'], we:[2,4,6],
+      mel:[[84,1],[84,1],[81,1],[81,1],[79,1],[77,1],[79,2]], chord:[53,65,69,72] },
+    { text:'짝짝짝! 최고야 뿌우!',  syl:['짝','짝','짝!','최','고','야','뿌','우!'], we:[2,5,7],
+      mel:[[79,1],[79,1],[76,1],[79,1],[77,1],[76,1],[79,1],[72,1]], chord:[48,60,64,67] }
   ]
 };
+SONG.spb = 60/SONG.bpm;      // 한 박 = 0.5초
+SONG.unit = SONG.spb/2;      // 8분음표 = 0.25초
+SONG.barLen = SONG.spb*4;    // 한 마디 = 2초
 function lyricStartTimes(){
-  const barLen = (60/SONG.bpm)*4;
-  return SONG.lines.map((l,i)=> SONG.intro + i*barLen);
+  return SONG.lines.map((l,i)=> SONG.intro + i*SONG.barLen);
+}
+/* 음절 하나하나가 어느 박에 불리는지 (가라오케 타이밍) */
+function noteTimeline(){
+  const out = [];
+  SONG.lines.forEach((line, li)=>{
+    let t = SONG.intro + li*SONG.barLen;
+    line.mel.forEach(([m,d], k)=>{
+      const dur = d*SONG.unit;
+      out.push({ line:li, k:k, at:t, dur:dur, midi:m });
+      t += dur;
+    });
+  });
+  return out;
 }
 
 /* 글로켄슈필/뮤직박스 느낌 */
@@ -1865,16 +1887,125 @@ function glock(ctx, dest, midi, when, dur, vol){
   o3.connect(g3); o3.start(when); o3.stop(when+dur*0.35);
   state.songNotes++;
 }
-function clap(ctx, dest, when, vol){
-  const s = noise(ctx);
-  const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1800; bp.Q.value=1.2;
+/* 노래하는 리드 — 사인+트라이앵글+비브라토, 따뜻한 로우패스를 거친 ‘사람 목소리’ 톤 */
+function leadVoice(ctx, dest, midi, when, dur, vol){
+  const f = midiToFreq(midi);
   const g = ctx.createGain();
   g.gain.setValueAtTime(0.0001, when);
-  g.gain.exponentialRampToValueAtTime(vol, when+0.005);
-  g.gain.exponentialRampToValueAtTime(0.0001, when+0.11);
-  s.connect(bp); bp.connect(g); g.connect(dest);
-  s.start(when); s.stop(when+0.13);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.028);
+  g.gain.setValueAtTime(vol*0.94, when+Math.max(0.04, dur*0.55));
+  g.gain.exponentialRampToValueAtTime(vol*0.58, when+dur*0.94);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+dur+0.06);
+  g.connect(dest);
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=0.6;
+  lp.frequency.setValueAtTime(2900, when);
+  lp.frequency.exponentialRampToValueAtTime(1900, when+Math.max(0.06, dur));
+  const air = ctx.createBiquadFilter(); air.type='bandpass'; air.frequency.value=950; air.Q.value=0.85;
+  const airG = ctx.createGain(); airG.gain.value=0.30;
+  lp.connect(g); air.connect(airG); airG.connect(g);
+  const mix = ctx.createGain(); mix.gain.value=1; mix.connect(lp); mix.connect(air);
+  // 비브라토 — 살짝 늦게 붙어 노래하듯 흔들린다
+  const lfo = ctx.createOscillator(); lfo.type='sine'; lfo.frequency.setValueAtTime(5.2, when);
+  const depth = ctx.createGain(); depth.gain.setValueAtTime(0, when);
+  depth.gain.linearRampToValueAtTime(f*0.006, when+Math.min(0.2, Math.max(0.05, dur*0.6)));
+  lfo.connect(depth);
+  [[1,0.62,'sine'],[2,0.12,'sine'],[1,0.16,'triangle'],[1.002,0.10,'sine']].forEach(([mul,amp,type])=>{
+    const o = ctx.createOscillator(); o.type=type;
+    o.frequency.setValueAtTime(f*mul, when);
+    depth.connect(o.frequency);
+    const og = ctx.createGain(); og.gain.value=amp;
+    o.connect(og); og.connect(mix);
+    o.start(when); o.stop(when+dur+0.1);
+  });
+  lfo.start(when); lfo.stop(when+dur+0.1);
   state.songNotes++;
+  state.songLead++;
+}
+/* 토이피아노 — '짝' 박의 화음 (동글동글한 어택과 짧은 여운) */
+function piano(ctx, dest, midi, when, dur, vol){
+  const f = midiToFreq(midi);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.008);
+  g.gain.exponentialRampToValueAtTime(vol*0.35, when+0.10);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+dur);
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=3400;
+  lp.connect(g); g.connect(dest);
+  [[1,1.0,'triangle'],[2,0.30,'sine'],[3,0.10,'sine']].forEach(([mul,amp,type])=>{
+    const o = ctx.createOscillator(); o.type=type;
+    o.frequency.setValueAtTime(f*mul, when);
+    const og = ctx.createGain(); og.gain.value=amp;
+    o.connect(og); og.connect(lp);
+    o.start(when); o.stop(when+dur+0.03);
+  });
+  state.songNotes++;
+}
+
+/* 반주 한 마디 — 쿵(1박 베이스) · 짝(2박 화음) · 쿵(3박 베이스) · 짝(4박 화음)
+   + 마림바 알베르티(도-솔-미-솔)로 동요 반주를 채운다 */
+function compBar(ctx, dest, bar, bt, plan, t0){
+  const spb = SONG.spb;
+  [0,2].forEach(b=>{
+    const when = bt + b*spb;
+    bassNote(ctx, dest, bar[0], when, 0.42, 0.22);
+    plan.push({kind:'bass', midi:bar[0], at:+(when-t0).toFixed(3), dur:0.42, vol:0.22});
+  });
+  [1,3].forEach(b=>{
+    const when = bt + b*spb;
+    bar.slice(1).forEach(m=>{
+      piano(ctx, dest, m, when, 0.30, 0.055);
+      plan.push({kind:'chord', midi:m, at:+(when-t0).toFixed(3), dur:0.30, vol:0.055});
+    });
+  });
+  const alb = [bar[1], bar[3], bar[2], bar[3], bar[1], bar[3], bar[2], bar[3]];
+  alb.forEach((m,i)=>{
+    const when = bt + i*SONG.unit;
+    marimba(ctx, dest, m, when, 0.16, 0.035);
+    plan.push({kind:'alberti', midi:m, at:+(when-t0).toFixed(3), dur:0.16, vol:0.035});
+  });
+}
+
+/* 곡 전체를 ctx에 예약하고, 예약한 음표 목록(plan)을 돌려준다 */
+function scheduleSong(ctx, dest, t0, seconds){
+  const plan = [];
+  const total = Math.min(seconds, SONG.intro + SONG.lines.length*SONG.barLen + 1.0) - 0.05;
+  // 인트로(2박) — 도-미-솔-도 픽업
+  [72,76,79,84].forEach((m,i)=>{
+    const at = t0 + i*0.12;
+    glock(ctx, dest, m, at, 0.34, 0.12);
+    plan.push({kind:'intro', midi:m, at:+(at-t0).toFixed(3), dur:0.34, vol:0.12});
+  });
+  const melStart = t0 + SONG.intro;
+  SONG.lines.forEach((line, li)=>{
+    const bt = melStart + li*SONG.barLen;
+    compBar(ctx, dest, line.chord, bt, plan, t0);
+    let t = bt;
+    line.mel.forEach(([m,d], k)=>{
+      const when = t;
+      const dur = d*SONG.unit;
+      t += dur;
+      if(when - t0 > total) return;
+      // 노래하는 리드 — 가장 앞에서 또렷하게
+      leadVoice(ctx, dest, m, when, dur*0.96, 0.34);
+      plan.push({kind:'lead', midi:m, at:+(when-t0).toFixed(3), dur:+(dur*0.96).toFixed(3), vol:0.34, line:li, syl:k});
+      // 맑은 글로켄슈필이 같은 선율을 살짝 겹친다(뮤직박스)
+      glock(ctx, dest, m, when, Math.min(0.32, dur*1.1), 0.05);
+      plan.push({kind:'glock', midi:m, at:+(when-t0).toFixed(3), dur:0.32, vol:0.05});
+    });
+  });
+  // 마무리 — 도미솔도 화음 팡파르
+  const endT = melStart + SONG.lines.length*SONG.barLen;
+  if(endT - t0 < total){
+    [72,76,79,84].forEach((m,i)=>{
+      const at = endT + i*0.05;
+      glock(ctx, dest, m, at, 0.9, 0.13);
+      plan.push({kind:'end', midi:m, at:+(at-t0).toFixed(3), dur:0.9, vol:0.13});
+    });
+    bassNote(ctx, dest, 48, endT, 0.85, 0.22);
+    plan.push({kind:'bass', midi:48, at:+(endT-t0).toFixed(3), dur:0.85, vol:0.22});
+    [60,64,67].forEach(m=> piano(ctx, dest, m, endT, 0.9, 0.055));
+  }
+  return plan;
 }
 
 function playSong(seconds){
@@ -1883,55 +2014,16 @@ function playSong(seconds){
   const t0 = ctx.currentTime + 0.05;
   const out = ctx.createGain();
   out.gain.setValueAtTime(0.0001, t0);
-  out.gain.exponentialRampToValueAtTime(0.9, t0+0.05);
-  out.gain.setValueAtTime(0.9, t0+seconds-0.9);
+  out.gain.exponentialRampToValueAtTime(0.82, t0+0.06);
+  out.gain.setValueAtTime(0.82, t0+seconds-0.9);
   out.gain.exponentialRampToValueAtTime(0.0001, t0+seconds-0.02);
-  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=8200;
+  const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=9000;
   out.connect(lp); lp.connect(ctx.destination);
   masterGain = out;
-
-  const spb = 60/SONG.bpm;
-  const eighth = spb/2;
-  const barLen = spb*4;
-  const total = seconds - 0.15;
-
-  // 인트로 — 아기 코끼리 팡파르
-  [72,76,79,84].forEach((m,i)=> glock(ctx,out,m,t0+i*0.11,0.45,0.2));
-  elephantChime(0.55);
-
-  const melStart = t0 + SONG.intro;
-  SONG.lines.forEach((line, li)=>{
-    const bt = melStart + li*barLen;
-    if(bt - t0 > total) return;
-    let t = bt;
-    line.mel.forEach(([m,d])=>{
-      const when = t;
-      t += d*eighth;
-      if(when - t0 > total) return;
-      glock(ctx,out,m,when,0.36,0.3);
-      if(d>=2) glock(ctx,out,m+12,when+0.05,0.22,0.09);
-    });
-    const chord = line.chord;
-    bassNote(ctx,out,chord[0]-12,bt,0.42,0.24);
-    bassNote(ctx,out,chord[0]-12,bt+spb*2,0.38,0.21);
-    chord.forEach(m=> glock(ctx,out,m+12,bt+spb,0.2,0.07));
-    chord.forEach(m=> glock(ctx,out,m+12,bt+spb*3,0.2,0.07));
-    for(let i=0;i<8;i++){
-      const when = bt+i*eighth;
-      if(when-t0>total) break;
-      shaker(ctx,out,when, i%2? 0.07:0.035);
-    }
-    kick(ctx,out,bt,0.3); kick(ctx,out,bt+spb*2,0.24);
-    clap(ctx,out,bt+spb,0.085); clap(ctx,out,bt+spb*3,0.085);
-  });
-
-  // 마무리 — 반짝반짝 화음
-  const endT = melStart + SONG.lines.length*barLen;
-  if(endT - t0 < total){
-    [72,76,79,84].forEach((m,i)=> glock(ctx,out,m,endT+i*0.06,1.0,0.22));
-    bassNote(ctx,out,48,endT,0.6,0.22);
-  }
-  return {ok:true, contextState:ctx.state, duration:seconds};
+  const plan = scheduleSong(ctx, out, t0, seconds);
+  state.songPlan = plan;
+  state.songStart = performance.now();
+  return {ok:true, contextState:ctx.state, duration:seconds, plan:plan.length};
 }
 function stopSong(){
   if(!audioCtx || !masterGain) return;
@@ -1958,44 +2050,54 @@ function duckMusic(on){
     const now = audioCtx.currentTime;
     masterGain.gain.cancelScheduledValues(now);
     masterGain.gain.setValueAtTime(Math.max(masterGain.gain.value, 0.0001), now);
-    masterGain.gain.exponentialRampToValueAtTime(on? 0.42 : 0.9, now + (on? 0.12 : 0.3));
+    masterGain.gain.exponentialRampToValueAtTime(on? 0.4 : 0.82, now + (on? 0.12 : 0.3));
   }catch(e){}
 }
+let lyricLines = [], lyricCells = [];
+/* 가사 4줄 — 음절(sy)마다 span을 두어 노래의 음표와 1:1로 반짝인다 */
 function buildLyrics(){
   if(!el.lyrics) return;
   el.lyrics.innerHTML = '';
+  lyricLines = []; lyricCells = [];
   SONG.lines.forEach((line, i)=>{
-    const s = document.createElement('span');
-    s.className = 'line';
-    s.dataset.line = String(i);
-    s.textContent = line.text;
-    el.lyrics.appendChild(s);
+    const row = document.createElement('span');
+    row.className = 'line';
+    row.dataset.line = String(i);
+    row.dataset.text = line.text;
+    const cells = [];
+    line.syl.forEach((s, k)=>{
+      const c = document.createElement('span');
+      c.className = 'sy';
+      c.dataset.k = String(k);
+      c.textContent = s;
+      row.appendChild(c);
+      cells.push(c);
+      if((line.we||[]).indexOf(k)>=0) row.appendChild(document.createTextNode(' '));
+    });
+    el.lyrics.appendChild(row);
+    lyricLines.push(row); lyricCells.push(cells);
   });
 }
 function setLyric(i){
   state.lyricIndex = i;
+  state.lyricSyl = -1;
   if(!el.lyrics) return;
-  const lines = el.lyrics.querySelectorAll('.line');
-  for(let k=0;k<lines.length;k++) lines[k].classList.toggle('on', k===i);
+  lyricLines.forEach((ln, idx)=> ln.classList.toggle('on', idx===i));
+  if(i < 0) lyricCells.forEach(cells=> cells.forEach(c=> c.classList.remove('hit','done')));
 }
-/* 가사 한 줄을 아기코끼리 목소리로 노래하듯 읽기 (앞 음성은 끊지 않는다) */
-function chantLine(text){
-  if(!window.speechSynthesis || !text) return false;
-  try{
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ko-KR';
-    const v = pickVoice('ko-KR');
-    if(v) u.voice = v;
-    u.rate = 1.0; u.pitch = 1.7; u.volume = 1;
-    VoiceLog.last = { text:String(text), lang:'ko-KR', rate:1.0, pitch:1.7,
-                      voice:v? v.name : '', at:Date.now(), chant:true };
-    VoiceLog.spoken.push(VoiceLog.last);
-    u.onstart = ()=> duckMusic(true);
-    u.onend = ()=> duckMusic(false);
-    u.onerror = ()=> duckMusic(false);
-    window.speechSynthesis.speak(u);
-    return true;
-  }catch(e){ return false; }
+/* 가라오케: 지금 불리는 음절만 반짝, 지나간 음절은 진하게 */
+function hitSyllable(li, k){
+  if(!lyricLines.length) return;
+  state.lyricIndex = li;
+  state.lyricSyl = k;
+  lyricLines.forEach((ln, idx)=>{
+    ln.classList.toggle('on', idx===li);
+    if(idx > li) return;
+    lyricCells[idx].forEach((c, ci)=>{
+      c.classList.toggle('hit', idx===li && ci===k);
+      c.classList.toggle('done', idx<li || ci<k);
+    });
+  });
 }
 
 /* ============================================================
@@ -2509,6 +2611,8 @@ function celebrate(item, opts){
   state.lastFeedback = 'correct';
   state.songPlaying = false;
   state.songNotes = 0;
+  state.songLead = 0;
+  state.songPlan = [];
   state.celebrationDuration = 10;
   addStar();
 
@@ -2538,25 +2642,23 @@ function celebrate(item, opts){
   const res = playSong(10);
   state.songPlaying = !!(res && res.ok);
 
-  if(praise){
-    setTimeout(()=>{ if(state.celebrating) say(praise, 'ko-KR', {rate:0.86, pitch:1.42}); }, 140);
-  }else if(state.mode==='alphabet'){
-    setTimeout(()=>{ if(state.celebrating) say(item.ch, 'en-US', {rate:0.78, pitch:1.56}); }, 120);
-  }else{
-    setTimeout(()=>{ if(state.celebrating) say(item.sub, 'ko-KR', {rate:0.82, pitch:1.6}); }, 120);
-  }
+  // 시작 환호 — 0.9초 안쪽의 짧고 씩씩한 남자아이 목소리.
+  // (가사 4줄을 낭독하지 않는다. 노래는 순수하게 선율과 반주로 들려준다.)
+  const cheerLang = state.mode==='alphabet' ? 'en-US' : 'ko-KR';
+  const cheerText = (praise && praise.length <= 18) ? praise
+                  : (state.mode==='alphabet' ? ('와! ' + item.ch + '!') : ('와! ' + item.sub + '!'));
+  setTimeout(()=>{ if(state.celebrating) say(cheerText, cheerLang, {rate:0.96, pitch:1.35}); }, 90);
 
-  // 가사 한 줄씩 노래와 함께 반짝이며 따라 부르기
+  // 가라오케 — 노래의 음표에 맞춰 가사 음절을 하나하나 반짝인다
   clearLyricTimers();
-  lyricStartTimes().forEach((at, i)=>{
+  noteTimeline().forEach(n=>{
     lyricTimers.push(setTimeout(()=>{
       if(!state.celebrating) return;
-      setLyric(i);
-      chantLine(SONG.lines[i].text);
-      duckMusic(true);
-      lyricTimers.push(setTimeout(()=>{ if(state.celebrating) duckMusic(false); }, 1450));
-    }, at*1000));
+      hitSyllable(n.line, n.k);
+    }, Math.max(0, n.at*1000 - 40)));
   });
+  lyricTimers.push(setTimeout(()=>{ if(state.celebrating) setLyric(-1); }, 9500));
+  lyricTimers.push(setTimeout(()=>{ if(state.celebrating) elephantChime(0.5); }, 9350));
 
   const start = performance.now();
   const DUR = 10000;
@@ -2725,8 +2827,23 @@ ToddlerApp.voice = {
 };
 ToddlerApp.song = {
   lines: SONG.lines.map(l=> l.text),
+  syllables: SONG.lines.map(l=> l.syl.slice()),
+  melody: SONG.lines.map(l=> l.mel.map(n=> n[0])),
+  chords: SONG.lines.map(l=> l.chord.slice()),
+  bpm: SONG.bpm,
+  style: SONG.style,
+  key: SONG.key,
+  lead: SONG.lead,
+  leadNotes: ()=> state.songLead,
+  startAt: ()=> state.songStart,
   lyricTimes: lyricStartTimes,
-  state: ()=> ({ playing:state.songPlaying, notes:state.songNotes, lyric:state.lyricIndex, duck:state.musicDuck }),
+  timeline: noteTimeline,
+  plan: ()=> (state.songPlan||[]).slice(),
+  schedule: scheduleSong,
+  build: buildLyrics,
+  hit: hitSyllable,
+  state: ()=> ({ playing:state.songPlaying, notes:state.songNotes, lead:state.songLead,
+                 lyric:state.lyricIndex, syl:state.lyricSyl, duck:state.musicDuck }),
   duck: duckMusic
 };
 ToddlerApp.sr = {
