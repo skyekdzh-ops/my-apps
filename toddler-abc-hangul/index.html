@@ -487,10 +487,13 @@ html[data-theme="mono"] .el .eye-shine{fill:#fff}
 .el .cheek{fill:var(--el-cheek);opacity:.9}
 html[data-theme="mono"] .el .cheek{fill:#fff;stroke:#000;stroke-width:2.5;opacity:1}
 .el .smile{fill:none;stroke:var(--el-line);stroke-width:3.5;stroke-linecap:round}
-.el .hat,.el .hat-pom{opacity:0;transition:opacity .2s}
-.party .el .hat{opacity:1;fill:var(--el-hat);stroke:var(--el-line);stroke-width:3.5;stroke-linejoin:round}
-.party .el .hat-pom{opacity:1;fill:var(--el-hat2);stroke:var(--el-line);stroke-width:3}
-html[data-theme="mono"] .party .el .hat{fill:#000}
+.el .hat{opacity:0;transition:opacity .2s}
+.el .hat-cone{fill:var(--el-hat);stroke:var(--el-line);stroke-width:3.5;stroke-linejoin:round}
+.el .hat-stripe{fill:none;stroke:var(--el-hat2);stroke-width:7;stroke-linecap:round}
+.el .hat-pom{fill:var(--el-hat2);stroke:var(--el-line);stroke-width:3}
+.party .el .hat{opacity:1}
+html[data-theme="mono"] .party .el .hat-cone{fill:#000}
+html[data-theme="mono"] .party .el .hat-stripe{stroke:#fff}
 html[data-theme="mono"] .party .el .hat-pom{fill:#fff}
 
 /* 댄스 */
@@ -504,7 +507,7 @@ html[data-theme="mono"] .party .el .hat-pom{fill:#fff}
 .dancing .el-tail{animation:tailWag .4s ease-in-out infinite;transform-box:fill-box;transform-origin:100% 0%}
 .dancing .body-back{animation:bodySquash .62s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
 @keyframes elBounce{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-16px) rotate(-1.5deg)}55%{transform:translateY(0) rotate(0)}78%{transform:translateY(-7px) rotate(1.5deg)}}
-@keyframes headTilt{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes headTilt{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes earL{0%,100%{transform:rotate(0) scaleY(1)}50%{transform:rotate(-16deg) scaleY(.94)}}
 @keyframes earR{0%,100%{transform:rotate(0) scaleY(1)}50%{transform:rotate(16deg) scaleY(.94)}}
 @keyframes trunkWave{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(14deg)}}
@@ -559,6 +562,22 @@ html[data-theme="mono"] .skip-btn{box-shadow:0 4px 0 #000;border-radius:12px;col
 .skip-btn:active{transform:translateY(3px);box-shadow:none}
 .dance-caption{font-size:11px;font-weight:900;color:var(--ink-soft);letter-spacing:-.01em;flex:0 0 auto;background:var(--card);padding:3px 10px;border-radius:999px;border:2px solid var(--ink)}
 html[data-theme="mono"] .dance-caption{color:#000;border-color:#000;background:#fff}
+
+/* 축하송 가사 — 한 줄씩 반짝이며 따라 부르기 */
+.lyrics{width:min(100%,420px);display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto;z-index:4}
+.lyrics .line{
+  font-size:clamp(12.5px,3.7vw,17px);font-weight:900;letter-spacing:-.03em;line-height:1.22;
+  color:var(--ink-soft);opacity:.5;transform:scale(.94);padding:1px 11px;border-radius:999px;
+  border:2.5px solid transparent;background:transparent;white-space:nowrap;
+  transition:opacity .18s, transform .18s, background .18s, color .18s;
+}
+.lyrics .line.on{
+  opacity:1;color:var(--ink);background:var(--yellow-soft);border-color:var(--ink);
+  transform:scale(1.05);animation:lineBounce .5s cubic-bezier(.2,1.6,.4,1);
+}
+html[data-theme="mono"] .lyrics .line{color:#000}
+html[data-theme="mono"] .lyrics .line.on{background:#fff;border-color:#000}
+@keyframes lineBounce{0%{transform:scale(.9) translateY(3px)}60%{transform:scale(1.1)}100%{transform:scale(1.05)}}
 html[data-theme="mono"] .bubble,html[data-theme="mono"] .dance-caption,html[data-theme="mono"] .skip-btn{filter:grayscale(1)}
 
 @media (prefers-reduced-motion: reduce){
@@ -1038,6 +1057,7 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
     <div class="elephant-stage">
       <div class="elephant-wrap" id="mascotBig" aria-hidden="true"></div>
     </div>
+    <div class="lyrics" id="lyrics" aria-label="축하송 가사" aria-live="polite"></div>
     <div class="song" role="progressbar" aria-label="축하송 남은 시간" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10" id="songBar">
       <div class="bar"><i id="songFill"></i></div>
       <span class="t"><span class="num" id="songNum">10</span>초</span>
@@ -1055,20 +1075,20 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
    1. 글자 데이터
    ============================================================ */
 const CONSONANT = [
-  {ch:'ㄱ', name:'기역', roman:'giyeok', say:['기역','기억','기윽','긔역','그','그으','가','ㄱ','giyeok','kiyeok','g','k','gee','geeyuk']},
-  {ch:'ㄴ', name:'니은', roman:'nieun', say:['니은','니언','니흔','니온','느','나','ㄴ','nieun','niun','n']},
-  {ch:'ㄷ', name:'디귿', roman:'digeut', say:['디귿','디근','디그','디귯','드','다','ㄷ','digeut','digeud','d','dee']},
-  {ch:'ㄹ', name:'리을', roman:'rieul', say:['리을','리울','리흘','리얼','르','라','ㄹ','rieul','l','r','lee']},
-  {ch:'ㅁ', name:'미음', roman:'mieum', say:['미음','미엄','미윰','므','마','ㅁ','mieum','miem','m']},
-  {ch:'ㅂ', name:'비읍', roman:'bieup', say:['비읍','비습','비업','브','바','ㅂ','bieup','bieub','b']},
-  {ch:'ㅅ', name:'시옷', roman:'siot', say:['시옷','시옫','시옻','시읏','스','사','ㅅ','siot','s']},
-  {ch:'ㅇ', name:'이응', roman:'ieung', say:['이응','이웅','이융','이잉','응','으','아','ㅇ','ieung','eung','ng']},
-  {ch:'ㅈ', name:'지읒', roman:'jieut', say:['지읒','지읃','지읏','지으','즈','자','ㅈ','jieut','jieud','j']},
-  {ch:'ㅊ', name:'치읓', roman:'chieut', say:['치읓','치읏','치읃','치으','츠','차','ㅊ','chieut','chieud','ch']},
-  {ch:'ㅋ', name:'키읔', roman:'kieuk', say:['키읔','키윽','키읍','키으크','크','카','ㅋ','kieuk','k']},
-  {ch:'ㅌ', name:'티읕', roman:'tieut', say:['티읕','티읍','티읏','티으','트','타','ㅌ','tieut','tieud','t']},
-  {ch:'ㅍ', name:'피읖', roman:'pieup', say:['피읖','피읍','피윕','피으','프','파','ㅍ','pieup','pieub','p']},
-  {ch:'ㅎ', name:'히읗', roman:'hieut', say:['히읗','히읏','히으','히흐','흐','하','ㅎ','hieut','hieud','h']}
+  {ch:'ㄱ', name:'기역', roman:'giyeok', say:['기역','기억','기여','기윽','긔역','기','그','가','ㄱ','giyeok','kiyeok','g','k','gee','geeyuk']},
+  {ch:'ㄴ', name:'니은', roman:'nieun', say:['니은','니언','니흔','니온','니','느','나','ㄴ','nieun','niun','n']},
+  {ch:'ㄷ', name:'디귿', roman:'digeut', say:['디귿','디근','디그','디귯','디','드','다','ㄷ','digeut','digeud','d','dee']},
+  {ch:'ㄹ', name:'리을', roman:'rieul', say:['리을','리울','리흘','리얼','리','르','라','ㄹ','rieul','l','r','lee']},
+  {ch:'ㅁ', name:'미음', roman:'mieum', say:['미음','미엄','미윰','미','므','마','ㅁ','mieum','miem','m']},
+  {ch:'ㅂ', name:'비읍', roman:'bieup', say:['비읍','비습','비업','비으','비','브','바','ㅂ','bieup','bieub','b']},
+  {ch:'ㅅ', name:'시옷', roman:'siot', say:['시옷','시옫','시옻','시읏','시','스','사','ㅅ','siot','s']},
+  {ch:'ㅇ', name:'이응', roman:'ieung', say:['이응','이웅','이융','이잉','이','응','으','아','ㅇ','ieung','eung','ng']},
+  {ch:'ㅈ', name:'지읒', roman:'jieut', say:['지읒','지읃','지읏','지으','지','즈','자','ㅈ','jieut','jieud','j']},
+  {ch:'ㅊ', name:'치읓', roman:'chieut', say:['치읓','치읏','치읃','치으','치','츠','차','ㅊ','chieut','chieud','ch']},
+  {ch:'ㅋ', name:'키읔', roman:'kieuk', say:['키읔','키윽','키읍','키으','키','크','카','ㅋ','kieuk','k']},
+  {ch:'ㅌ', name:'티읕', roman:'tieut', say:['티읕','티읍','티읏','티으','티','트','타','ㅌ','tieut','tieud','t']},
+  {ch:'ㅍ', name:'피읖', roman:'pieup', say:['피읖','피읍','피윕','피으','피','프','파','ㅍ','pieup','pieub','p']},
+  {ch:'ㅎ', name:'히읗', roman:'hieut', say:['히읗','히읏','히으','히흐','히','흐','하','ㅎ','hieut','hieud','h']}
 ];
 
 const VOWEL = [
@@ -1086,31 +1106,31 @@ const VOWEL = [
 
 const ALPHABET = [
   {ch:'A', lower:'a', name:'에이', example:'apple', emoji:'🍎', say:['a','ay','ey','ei','에이','애이','아','에','apple','eh']},
-  {ch:'B', lower:'b', name:'비', example:'ball', emoji:'⚽', say:['b','bee','be','비','비이','삐','boy']},
-  {ch:'C', lower:'c', name:'씨', example:'cat', emoji:'🐱', say:['c','see','sea','씨','시','씨이','cat','cee']},
-  {ch:'D', lower:'d', name:'디', example:'dog', emoji:'🐶', say:['d','dee','디','디이','dog']},
+  {ch:'B', lower:'b', name:'비', example:'ball', emoji:'⚽', say:['b','bee','be','비','비이','삐','빼','boy']},
+  {ch:'C', lower:'c', name:'씨', example:'cat', emoji:'🐱', say:['c','see','sea','씨','시','씨이','싸','cat','cee']},
+  {ch:'D', lower:'d', name:'디', example:'dog', emoji:'🐶', say:['d','dee','디','디이','띠','dog']},
   {ch:'E', lower:'e', name:'이', example:'egg', emoji:'🥚', say:['e','ee','이','에','이이','egg']},
-  {ch:'F', lower:'f', name:'에프', example:'fish', emoji:'🐟', say:['f','ef','eff','에프','에풍','에피','fish']},
-  {ch:'G', lower:'g', name:'지', example:'goat', emoji:'🐐', say:['g','gee','지','쥐','지이','goat']},
-  {ch:'H', lower:'h', name:'에이치', example:'hat', emoji:'👒', say:['h','aitch','haitch','에이치','에이취','에치','hat']},
-  {ch:'I', lower:'i', name:'아이', example:'ice', emoji:'🧊', say:['i','eye','아이','아이이','ice']},
+  {ch:'F', lower:'f', name:'에프', example:'fish', emoji:'🐟', say:['f','ef','eff','에프','에푸','에피','에풍','피','fish']},
+  {ch:'G', lower:'g', name:'지', example:'goat', emoji:'🐐', say:['g','gee','지','쥐','지이','기','goat']},
+  {ch:'H', lower:'h', name:'에이치', example:'hat', emoji:'👒', say:['h','aitch','haitch','에이치','에이취','에치','에이씨','hat']},
+  {ch:'I', lower:'i', name:'아이', example:'ice', emoji:'🧊', say:['i','eye','아이','아이이','아이요','ice']},
   {ch:'J', lower:'j', name:'제이', example:'jam', emoji:'🍯', say:['j','jay','제이','줴이','제이이','jam']},
-  {ch:'K', lower:'k', name:'케이', example:'kite', emoji:'🪁', say:['k','kay','케이','케','kite']},
-  {ch:'L', lower:'l', name:'엘', example:'lion', emoji:'🦁', say:['l','el','ell','엘','엘르','lion']},
-  {ch:'M', lower:'m', name:'엠', example:'moon', emoji:'🌙', say:['m','em','엠','음','moon']},
-  {ch:'N', lower:'n', name:'엔', example:'nose', emoji:'👃', say:['n','en','엔','은','nose']},
+  {ch:'K', lower:'k', name:'케이', example:'kite', emoji:'🪁', say:['k','kay','케이','케','케읭','kite']},
+  {ch:'L', lower:'l', name:'엘', example:'lion', emoji:'🦁', say:['l','el','ell','엘','엘르','엘리','lion']},
+  {ch:'M', lower:'m', name:'엠', example:'moon', emoji:'🌙', say:['m','em','엠','음','엠므','moon']},
+  {ch:'N', lower:'n', name:'엔', example:'nose', emoji:'👃', say:['n','en','엔','은','엔느','nose']},
   {ch:'O', lower:'o', name:'오', example:'octopus', emoji:'🐙', say:['o','oh','오','오우','octopus']},
-  {ch:'P', lower:'p', name:'피', example:'pig', emoji:'🐷', say:['p','pee','피','피이','pig']},
-  {ch:'Q', lower:'q', name:'큐', example:'queen', emoji:'👑', say:['q','cue','queue','큐','큐우','queen']},
-  {ch:'R', lower:'r', name:'알', example:'rabbit', emoji:'🐰', say:['r','ar','are','알','아르','rabbit']},
-  {ch:'S', lower:'s', name:'에스', example:'sun', emoji:'☀️', say:['s','ess','에스','에쓰','sun']},
-  {ch:'T', lower:'t', name:'티', example:'tiger', emoji:'🐯', say:['t','tee','티','티이','tiger']},
+  {ch:'P', lower:'p', name:'피', example:'pig', emoji:'🐷', say:['p','pee','피','피이','삐','pig']},
+  {ch:'Q', lower:'q', name:'큐', example:'queen', emoji:'👑', say:['q','cue','queue','큐','큐우','크유','queen']},
+  {ch:'R', lower:'r', name:'알', example:'rabbit', emoji:'🐰', say:['r','ar','are','알','아르','알르','rabbit']},
+  {ch:'S', lower:'s', name:'에스', example:'sun', emoji:'☀️', say:['s','ess','에스','에쓰','에쑤','sun']},
+  {ch:'T', lower:'t', name:'티', example:'tiger', emoji:'🐯', say:['t','tee','티','티이','띠','tiger']},
   {ch:'U', lower:'u', name:'유', example:'umbrella', emoji:'☂️', say:['u','you','유','유우','umbrella']},
-  {ch:'V', lower:'v', name:'브이', example:'van', emoji:'🚐', say:['v','vee','브이','비','브이이','van']},
-  {ch:'W', lower:'w', name:'더블유', example:'whale', emoji:'🐳', say:['w','double you','double u','doubleyou','더블유','더블류','더부유','whale']},
-  {ch:'X', lower:'x', name:'엑스', example:'box', emoji:'📦', say:['x','ex','엑스','엑쓰','엑수','box']},
-  {ch:'Y', lower:'y', name:'와이', example:'yo-yo', emoji:'🪀', say:['y','why','와이','와이이','yoyo','yo yo']},
-  {ch:'Z', lower:'z', name:'지', example:'zebra', emoji:'🦓', say:['z','zee','zed','지','제드','지이','제트','zebra']}
+  {ch:'V', lower:'v', name:'브이', example:'van', emoji:'🚐', say:['v','vee','브이','뷔','비','브이이','van']},
+  {ch:'W', lower:'w', name:'더블유', example:'whale', emoji:'🐳', say:['w','double you','double u','doubleyou','더블유','더블류','더부유','더블리유','whale']},
+  {ch:'X', lower:'x', name:'엑스', example:'box', emoji:'📦', say:['x','ex','엑스','엑쓰','엑수','엑씨','box']},
+  {ch:'Y', lower:'y', name:'와이', example:'yo-yo', emoji:'🪀', say:['y','why','와이','와이이','와이예','yoyo','yo yo']},
+  {ch:'Z', lower:'z', name:'지', example:'zebra', emoji:'🦓', say:['z','zee','zed','지','제드','제트','지이','zebra']}
 ];
 
 const MODES = {
@@ -1156,7 +1176,10 @@ const state = {
   attempts:0,
   srSupported: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
   srError:null,
-  songNotes:0
+  songNotes:0,
+  lyricIndex:-1,
+  musicDuck:false,
+  srSoftRetries:0
 };
 window.ToddlerApp = {state:state, MODES:MODES};
 
@@ -1178,6 +1201,7 @@ const el = {
   celebBubble:$('celebBubble'), celebLetter:$('celebLetter'),
   mascotMini:$('mascotMini'), mascotBig:$('mascotBig'),
   songFill:$('songFill'), songNum:$('songNum'), songBar:$('songBar'),
+  lyrics:$('lyrics'),
   btnSkip:$('btnSkip'), danceCaption:$('danceCaption'),
   tabs:document.querySelectorAll('.modes [role="tab"]'),
   themeBtns:document.querySelectorAll('.theme-toggle button'),
@@ -1212,7 +1236,12 @@ function elephantSVG(party){
       '<ellipse class="ear-fill ear-r" cx="222" cy="120" rx="41" ry="50"/>'+
       '<ellipse class="ear-inner ear-r" cx="217" cy="123" rx="25" ry="33"/>'+
       '<ellipse class="body-fill" cx="150" cy="128" rx="74" ry="66"/>'+
-      '<path class="line" d="M136 64 q4 -13 14 -8 q3 -11 13 -6" stroke-width="5"/>'+
+      (party ? '' : '<path class="line" d="M136 64 q4 -13 14 -8 q3 -11 13 -6" stroke-width="5"/>')+
+      '<g class="hat">'+
+        '<path class="hat-cone" d="M150 22 L188 80 H112 Z"/>'+
+        '<path class="hat-stripe" d="M133 66 H167"/>'+
+        '<circle class="hat-pom" cx="150" cy="18" r="9.5"/>'+
+      '</g>'+
       '<ellipse class="eye" cx="121" cy="118" rx="10" ry="11"/>'+
       '<ellipse class="eye" cx="179" cy="118" rx="10" ry="11"/>'+
       '<circle class="eye-shine" cx="124.5" cy="113.5" r="3.6"/>'+
@@ -1229,10 +1258,6 @@ function elephantSVG(party){
         '<path class="trunk-line" d="M151 213 q9 4 15 0"/>'+
       '</g>'+
     '</g>'+
-  '</g>'+
-  '<g class="hat">'+
-    '<path d="M150 28 L179 87 H121 Z"/>'+
-    '<circle class="hat-pom" cx="150" cy="24" r="9.5"/>'+
   '</g>'+
 '</svg>';
 }
@@ -1263,6 +1288,12 @@ function saveStore(){
 /* ============================================================
    6. 소리 (Web Speech Synthesis)
    ============================================================ */
+/* ---------- 아기코끼리 목소리 ----------
+   밝고 통통 튀는 아기 코끼리 캐릭터 목소리: 높은 음(pitch 1.6) +
+   천천히 또박또박(rate 0.84) + 다정한 여성/아이 목소리 우선.
+   발음을 다 읽고 나면 짧게 "뿌우~" 하고 코끼리 인사를 한다. */
+const VOICE_CHAR = { pitch:1.6, rate:0.84 };
+const VoiceLog = { last:null, chimes:0, chimeReq:0, ducks:0, spoken:[] };
 let voices = [];
 function refreshVoices(){
   try{ voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }catch(e){ voices=[]; }
@@ -1273,32 +1304,95 @@ if(window.speechSynthesis){
 }
 function pickVoice(lang){
   if(!voices.length) refreshVoices();
-  const exact = voices.find(v=>v.lang && v.lang.replace('_','-').toLowerCase()===lang.toLowerCase());
-  if(exact) return exact;
-  const short = lang.split('-')[0].toLowerCase();
-  return voices.find(v=>v.lang && v.lang.toLowerCase().indexOf(short)===0) || null;
+  if(!voices.length || !lang) return null;
+  const want = String(lang).replace('_','-').toLowerCase();
+  const short = want.split('-')[0];
+  const exact = voices.filter(v=>v.lang && v.lang.replace('_','-').toLowerCase()===want);
+  const pool = exact.length ? exact
+    : voices.filter(v=>v.lang && v.lang.toLowerCase().replace('_','-').indexOf(short)===0);
+  if(!pool.length) return null;
+  // 밝고 귀여운(여성·아이) 목소리에 점수를 준다
+  const score = (v)=>{
+    const n = String(v.name||'').toLowerCase();
+    let s = 0;
+    if(/female|woman|girl|child|kid|cute/.test(n)) s += 6;
+    if(/yuna|sora|sunhi|heami|jihye|sujin|nara|jina|aria|samantha|karen|zira|jenny|michelle|allison|ava|susan|tessa|moira|serena|kyuri|nayeon/.test(n)) s += 5;
+    if(/google/.test(n)) s += 3;
+    if(/compact|espeak|low quality|robot/.test(n)) s -= 4;
+    if(v.localService===false) s += 1;
+    return s;
+  };
+  return pool.slice().sort((a,b)=>score(b)-score(a))[0] || pool[0];
 }
 function speak(text, lang, opts){
   if(!window.speechSynthesis || !text) return false;
+  opts = opts || {};
   try{
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang;
     const v = pickVoice(lang);
     if(v) u.voice = v;
-    u.rate = (opts && opts.rate) || 0.82;
-    u.pitch = (opts && opts.pitch) || 1.12;
-    u.volume = 1;
+    u.rate = opts.rate || VOICE_CHAR.rate;
+    u.pitch = opts.pitch || VOICE_CHAR.pitch;
+    u.volume = (opts.volume!=null) ? opts.volume : 1;
+    VoiceLog.last = { text:String(text), lang:lang, rate:u.rate, pitch:u.pitch,
+                      voice:v? v.name : '', at:Date.now() };
+    VoiceLog.spoken.push(VoiceLog.last);
+    if(VoiceLog.spoken.length > 40) VoiceLog.spoken.shift();
+    let chimed = false;
+    const fireChime = ()=>{ if(chimed) return; chimed = true; if(opts.chime) elephantChime(); };
+    if(opts.chime){
+      VoiceLog.chimeReq++;
+      setTimeout(fireChime, 1100);   // 발음이 끝난 뒤 "뿌우~" (이벤트가 없어도 한 번은)
+    }
+    u.onend = fireChime;
+    u.onerror = fireChime;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
+    return true;
+  }catch(e){ return false; }
+}
+/* 짧고 귀여운 "뿌우~" 코끼리 인사 (Web Audio) */
+function elephantChime(level){
+  VoiceLog.chimes++;
+  const ctx = getCtx();
+  if(!ctx) return false;
+  try{
+    const t = ctx.currentTime + 0.02;
+    const vol = (level==null? 1 : level);
+    const out = ctx.createGain();
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(0.16*vol, t+0.03);
+    out.gain.exponentialRampToValueAtTime(0.0001, t+0.34);
+    out.connect(ctx.destination);
+    const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.setValueAtTime(1100,t);
+    lp.frequency.exponentialRampToValueAtTime(2400, t+0.12);
+    lp.connect(out);
+    const o = ctx.createOscillator(); o.type='sawtooth';
+    o.frequency.setValueAtTime(196, t);
+    o.frequency.exponentialRampToValueAtTime(392, t+0.10);
+    o.frequency.exponentialRampToValueAtTime(294, t+0.30);
+    o.connect(lp); o.start(t); o.stop(t+0.36);
+    // 반짝반짝 마무리
+    [[84,0.12],[88,0.20]].forEach(([m,d])=>{
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t+d);
+      g.gain.exponentialRampToValueAtTime(0.05*vol, t+d+0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+d+0.16);
+      g.connect(ctx.destination);
+      const s = ctx.createOscillator(); s.type='sine';
+      s.frequency.setValueAtTime(midiToFreq(m), t+d);
+      s.connect(g); s.start(t+d); s.stop(t+d+0.2);
+    });
     return true;
   }catch(e){ return false; }
 }
 function speakCurrent(){
   const item = currentItem();
   if(state.mode==='alphabet'){
-    say(item.ch + '. ' + item.ch, 'en-US', {rate:0.7, pitch:1.1});
+    say(item.ch + '. ' + item.ch, 'en-US', {rate:0.82, pitch:1.62, chime:true});
   }else{
-    say(item.sub, 'ko-KR', {rate:0.72, pitch:1.15});
+    say(item.sub, 'ko-KR', {rate:0.82, pitch:1.64, chime:true});
   }
 }
 
@@ -1522,7 +1616,8 @@ async function gptJudge(text, item){
   }
 }
 
-async function openaiSpeech(text){
+async function openaiSpeech(text, opts){
+  opts = opts || {};
   if(!gptHasKey() || !GPT.voice) return false;
   const ac = gptAbort(9000);
   const attempt = async (model, extra)=>{
@@ -1543,12 +1638,17 @@ async function openaiSpeech(text){
     if(gptAudio){ try{ gptAudio.pause(); }catch(e){} }
     gptAudio = new Audio(url);
     gptAudio.volume = 1;
+    VoiceLog.last = { text:String(text), lang:'openai', rate:1, pitch:1.6, voice:'nova', at:Date.now() };
+    gptAudio.onended = ()=>{ if(opts.chime) elephantChime(); };
     await gptAudio.play();
     return true;
   };
   try{
     try{
-      return await attempt('gpt-4o-mini-tts', {instructions:'Warm, cheerful Korean picture-book teacher voice for a toddler. Speak slowly and brightly.'});
+      return await attempt('gpt-4o-mini-tts', {instructions:
+        'You are a cute baby elephant character in a Korean picture book for a three-year-old. '
+        + 'Speak in a bright, cheerful, playful high-pitched cartoon voice — warm and sparkly, never scary. '
+        + 'Say the Korean letter name slowly and very clearly with a happy lilt, like a friendly elephant calf teaching a friend.'});
     }catch(e){
       return await attempt('tts-1', null);
     }
@@ -1562,7 +1662,7 @@ async function openaiSpeech(text){
 function say(text, lang, opts){
   if(!text) return false;
   if(gptHasKey() && GPT.voice){
-    openaiSpeech(text).then(ok=>{ if(!ok) speak(text, lang, opts); }).catch(()=>{ speak(text, lang, opts); });
+    openaiSpeech(text, opts).then(ok=>{ if(!ok) speak(text, lang, opts); }).catch(()=>{ speak(text, lang, opts); });
     return true;
   }
   return speak(text, lang, opts);
@@ -1725,16 +1825,57 @@ function kick(ctx, dest, when, vol){
   state.songNotes++;
 }
 
+/* 아기자기하고 경쾌한 동요 — 가사가 있는 축하송 (10초) */
 const SONG = {
-  bpm: 138,
-  melody: [
-    [72,null,76,79, 76,79,81,null],
-    [79,76,72,null, 74,76,79,null],
-    [81,79,76,null, 72,74,76,null],
-    [79,null,76,72, null,72,74,null]
-  ],
-  chord: [ [60,64,67], [60,64,67], [57,60,64], [55,59,62] ]
+  bpm: 126,
+  intro: 1.0,
+  lines: [
+    { text:'짝짝짝! 정말 잘했어',      mel:[[79,1],[79,1],[79,1],[76,1],[79,1],[76,1],[74,2]], chord:[60,64,67] },
+    { text:'뿌우뿌우 아기 코끼리도',   mel:[[72,1],[72,1],[74,1],[76,1],[79,1],[77,1],[76,2]], chord:[57,60,64] },
+    { text:'신나게 춤을 추네~',       mel:[[81,1],[79,1],[76,1],[74,1],[72,1],[74,1],[76,2]], chord:[53,57,60] },
+    { text:'랄랄라 최고야! 뿌우!',    mel:[[79,1],[81,1],[84,1],[81,1],[79,1],[76,1],[72,2]], chord:[55,59,62] }
+  ]
 };
+function lyricStartTimes(){
+  const barLen = (60/SONG.bpm)*4;
+  return SONG.lines.map((l,i)=> SONG.intro + i*barLen);
+}
+
+/* 글로켄슈필/뮤직박스 느낌 */
+function glock(ctx, dest, midi, when, dur, vol){
+  const f = midiToFreq(midi);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+dur);
+  g.connect(dest);
+  const o1 = ctx.createOscillator(); o1.type='sine'; o1.frequency.setValueAtTime(f, when);
+  o1.connect(g); o1.start(when); o1.stop(when+dur+0.03);
+  const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.0001, when);
+  g2.gain.exponentialRampToValueAtTime(vol*0.34, when+0.006);
+  g2.gain.exponentialRampToValueAtTime(0.0001, when+dur*0.55);
+  g2.connect(dest);
+  const o2 = ctx.createOscillator(); o2.type='sine'; o2.frequency.setValueAtTime(f*3, when);
+  o2.connect(g2); o2.start(when); o2.stop(when+dur*0.6);
+  const g3 = ctx.createGain(); g3.gain.setValueAtTime(0.0001, when);
+  g3.gain.exponentialRampToValueAtTime(vol*0.16, when+0.006);
+  g3.gain.exponentialRampToValueAtTime(0.0001, when+dur*0.3);
+  g3.connect(dest);
+  const o3 = ctx.createOscillator(); o3.type='triangle'; o3.frequency.setValueAtTime(f*2, when);
+  o3.connect(g3); o3.start(when); o3.stop(when+dur*0.35);
+  state.songNotes++;
+}
+function clap(ctx, dest, when, vol){
+  const s = noise(ctx);
+  const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1800; bp.Q.value=1.2;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when+0.005);
+  g.gain.exponentialRampToValueAtTime(0.0001, when+0.11);
+  s.connect(bp); bp.connect(g); g.connect(dest);
+  s.start(when); s.stop(when+0.13);
+  state.songNotes++;
+}
 
 function playSong(seconds){
   const ctx = getCtx();
@@ -1752,32 +1893,43 @@ function playSong(seconds){
   const spb = 60/SONG.bpm;
   const eighth = spb/2;
   const barLen = spb*4;
-  const total = seconds - 0.12;
+  const total = seconds - 0.15;
 
-  [84,88,91,96].forEach((m,i)=> marimba(ctx,out,m,t0+i*0.07,0.5,0.16));
+  // 인트로 — 아기 코끼리 팡파르
+  [72,76,79,84].forEach((m,i)=> glock(ctx,out,m,t0+i*0.11,0.45,0.2));
+  elephantChime(0.55);
 
-  let bar = 0;
-  while(bar*barLen < total){
-    const bt = t0 + bar*barLen;
-    const phrase = bar % SONG.melody.length;
-    SONG.melody[phrase].forEach((m,i)=>{
-      if(m===null) return;
-      const when = bt + i*eighth;
+  const melStart = t0 + SONG.intro;
+  SONG.lines.forEach((line, li)=>{
+    const bt = melStart + li*barLen;
+    if(bt - t0 > total) return;
+    let t = bt;
+    line.mel.forEach(([m,d])=>{
+      const when = t;
+      t += d*eighth;
       if(when - t0 > total) return;
-      marimba(ctx,out,m,when,0.34,0.26);
-      if(i%4===2) marimba(ctx,out,m+12,when+0.004,0.2,0.07);
+      glock(ctx,out,m,when,0.36,0.3);
+      if(d>=2) glock(ctx,out,m+12,when+0.05,0.22,0.09);
     });
-    const chord = SONG.chord[phrase];
-    bassNote(ctx,out,chord[0]-12,bt,0.42,0.22);
-    bassNote(ctx,out,chord[0]-12,bt+spb*2,0.38,0.19);
-    chord.forEach(m=>marimba(ctx,out,m+12,bt+spb,0.16,0.055));
+    const chord = line.chord;
+    bassNote(ctx,out,chord[0]-12,bt,0.42,0.24);
+    bassNote(ctx,out,chord[0]-12,bt+spb*2,0.38,0.21);
+    chord.forEach(m=> glock(ctx,out,m+12,bt+spb,0.2,0.07));
+    chord.forEach(m=> glock(ctx,out,m+12,bt+spb*3,0.2,0.07));
     for(let i=0;i<8;i++){
       const when = bt+i*eighth;
       if(when-t0>total) break;
-      shaker(ctx,out,when, i%2? 0.075:0.04);
+      shaker(ctx,out,when, i%2? 0.07:0.035);
     }
-    kick(ctx,out,bt,0.32); kick(ctx,out,bt+spb*2,0.26);
-    bar++;
+    kick(ctx,out,bt,0.3); kick(ctx,out,bt+spb*2,0.24);
+    clap(ctx,out,bt+spb,0.085); clap(ctx,out,bt+spb*3,0.085);
+  });
+
+  // 마무리 — 반짝반짝 화음
+  const endT = melStart + SONG.lines.length*barLen;
+  if(endT - t0 < total){
+    [72,76,79,84].forEach((m,i)=> glock(ctx,out,m,endT+i*0.06,1.0,0.22));
+    bassNote(ctx,out,48,endT,0.6,0.22);
   }
   return {ok:true, contextState:ctx.state, duration:seconds};
 }
@@ -1795,6 +1947,55 @@ function stopSong(){
 function unlockAudio(){
   const ctx = getCtx();
   if(ctx && ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
+}
+
+/* ---------- 가사 · 노래 소리 줄이기(ducking) ---------- */
+function duckMusic(on){
+  state.musicDuck = !!on;
+  if(on) VoiceLog.ducks++;
+  if(!audioCtx || !masterGain) return;
+  try{
+    const now = audioCtx.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(Math.max(masterGain.gain.value, 0.0001), now);
+    masterGain.gain.exponentialRampToValueAtTime(on? 0.42 : 0.9, now + (on? 0.12 : 0.3));
+  }catch(e){}
+}
+function buildLyrics(){
+  if(!el.lyrics) return;
+  el.lyrics.innerHTML = '';
+  SONG.lines.forEach((line, i)=>{
+    const s = document.createElement('span');
+    s.className = 'line';
+    s.dataset.line = String(i);
+    s.textContent = line.text;
+    el.lyrics.appendChild(s);
+  });
+}
+function setLyric(i){
+  state.lyricIndex = i;
+  if(!el.lyrics) return;
+  const lines = el.lyrics.querySelectorAll('.line');
+  for(let k=0;k<lines.length;k++) lines[k].classList.toggle('on', k===i);
+}
+/* 가사 한 줄을 아기코끼리 목소리로 노래하듯 읽기 (앞 음성은 끊지 않는다) */
+function chantLine(text){
+  if(!window.speechSynthesis || !text) return false;
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
+    const v = pickVoice('ko-KR');
+    if(v) u.voice = v;
+    u.rate = 1.0; u.pitch = 1.7; u.volume = 1;
+    VoiceLog.last = { text:String(text), lang:'ko-KR', rate:1.0, pitch:1.7,
+                      voice:v? v.name : '', at:Date.now(), chant:true };
+    VoiceLog.spoken.push(VoiceLog.last);
+    u.onstart = ()=> duckMusic(true);
+    u.onend = ()=> duckMusic(false);
+    u.onerror = ()=> duckMusic(false);
+    window.speechSynthesis.speak(u);
+    return true;
+  }catch(e){ return false; }
 }
 
 /* ============================================================
@@ -1825,18 +2026,42 @@ function levenshtein(a,b){
   }
   return prev[n];
 }
+/* 한글 음절의 첫소리·가운뎃소리 — 비슷한 발음인지 판단에 쓴다 */
+const CHO_LETTERS = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+const JUNG_LETTERS = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ';
+function hangulParts(ch){
+  const c = String(ch).charCodeAt(0);
+  if(!(c >= 0xAC00 && c <= 0xD7A3)) return null;
+  const i = c - 0xAC00;
+  return { cho: CHO_LETTERS.charAt(Math.floor(i/588)), jung: JUNG_LETTERS.charAt(Math.floor((i%588)/28)) };
+}
+/* 자리마다 다른 글자가 '비슷한 소리'인지 (첫소리나 모음 중 하나는 같아야) */
+function softDiff(h, a){
+  if(h.length !== a.length) return true;
+  for(let i=0;i<h.length;i++){
+    if(h.charAt(i) === a.charAt(i)) continue;
+    const p = hangulParts(h.charAt(i)), q = hangulParts(a.charAt(i));
+    if(!p || !q) return false;
+    if(p.cho !== q.cho && p.jung !== q.jung) return false;
+  }
+  return true;
+}
 function matchesItem(heard, item){
   const h = normalize(heard);
   if(!h) return null;
+  const koH = /[\uAC00-\uD7A3]/.test(h);
   for(const raw of item.say){
     const a = normalize(raw);
     if(!a) continue;
     if(h===a) return raw;
-    if(a.length>=2 && h.indexOf(a)>=0) return raw;
-    if(a.length>=2 && h.length>=1 && a.indexOf(h)===0 && h.length>=Math.min(2,a.length-1)) return raw;
-    // 한글 발음은 한 글자 차이까지 너그럽게 (영문 철자 이름은 정확히)
-    if(/[\uAC00-\uD7A3]/.test(a) && /[\uAC00-\uD7A3]/.test(h) &&
-       a.length>=2 && h.length>=2 && Math.abs(a.length-h.length)<=1 && levenshtein(h,a)<=1) return raw;
+    if(a.length>=2 && h.indexOf(a)>=0) return raw;                                  // 문장 속에 들어 있어도
+    if(a.length>=2 && a.indexOf(h)===0 && h.length>=Math.min(2, a.length-1)) return raw; // 앞부분만 또박
+    if(h.length===1 && a[0]===h) return raw;                                        // 한 글자만 ("기", "니")
+    if(koH && /[\uAC00-\uD7A3]/.test(a) && a.length>=2){
+      // 한글 발음은 한두 글자 차이까지 너그럽게 (영문 철자 이름은 정확히)
+      if(h.length>=2 && Math.abs(a.length-h.length)<=1 && levenshtein(h,a)<=1 && softDiff(h,a)) return raw;
+      if(a.length>=4 && h.length>=2 && Math.abs(a.length-h.length)<=1 && levenshtein(h,a)<=2) return raw;
+    }
   }
   const tokens = String(heard).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(Boolean);
   if(tokens.length>1){
@@ -1859,6 +2084,11 @@ let recog = null;
 let recTimer = null;
 let recGeneration = 0;
 let judgeToken = 0;
+const SR_MAX_ALTERNATIVES = 10;
+const SR_LISTEN_MS = 6000;
+const SR_RETRY_MS = 5200;
+const srConfig = { lang:'', continuous:false, interimResults:true, maxAlternatives:SR_MAX_ALTERNATIVES };
+let srSession = null;
 function srAvailable(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
 function showSRNotice(msg){
   if(msg) el.srNoticeText.innerHTML = msg;
@@ -1880,6 +2110,8 @@ function stopRecognition(){
   if(recTimer){ clearTimeout(recTimer); recTimer=null; }
   if(r){ try{ r.onresult=null; r.onerror=null; r.onend=null; r.abort(); }catch(e){} }
   if(whisperStream) stopWhisperTracks();
+  recGeneration++;
+  srSession = null;
   setListening(false);
 }
 
@@ -1938,63 +2170,88 @@ function evaluateTranscripts(texts){
 }
 function currentLang(){ return MODES[state.mode].lang; }
 
-function startListening(){
-  unlockAudio();
-  if(state.celebrating) return;
-  hideFeedback();
-  stopRecognition();
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){
-    state.srError='unsupported';
-    if(gptHasKey() && GPT.whisper && whisperAvailable()){
-      startWhisperListening();
-      return;
+/* 인식 결과 → 후보 문장들 (모든 결과 × 모든 대안, 중간 결과 포함) */
+function collectSRTexts(ev){
+  const texts = [], interim = [];
+  const rs = (ev && ev.results) ? ev.results : [];
+  for(let i=0;i<rs.length;i++){
+    const res = rs[i];
+    if(!res) continue;
+    const n = res.length || 0;
+    for(let k=0;k<n;k++){
+      const alt = res[k];
+      const t = alt && alt.transcript ? String(alt.transcript).trim() : '';
+      if(!t) continue;
+      texts.push(t);
+      if(!res.isFinal) interim.push(t);
     }
-    showSRNotice();
-    gentlePrompt('마이크를 쓸 수 없어요', '부모님이 아래 <b>정답</b> 단추를 눌러 주세요.', 'retry');
-    return;
   }
-  const myGen = ++recGeneration;
+  const last = rs.length ? rs[rs.length-1] : null;
+  return { texts:texts, interim:interim, final: !!(last && last.isFinal) };
+}
+
+/* 대안 하나라도 맞으면 바로 정답! */
+function handleSRResult(ev){
+  const s = srSession;
+  if(!s || s.gen !== recGeneration || s.finished) return;
+  const got = collectSRTexts(ev);
+  if(got.interim.length && el.hearing.classList.contains('on')){
+    el.hearingTxt.textContent = '“' + got.interim[0] + '”';
+  }
+  if(!got.texts.length) return;
+  s.gotResult = true;
+  s.texts = s.texts.concat(got.texts);
+  const item = currentItem();
+  const hit = got.texts.find(t=> matchesItem(t, item));
+  if(hit){ s.finished = true; evaluateTranscripts(got.texts); return; }
+  if(got.final){ s.finished = true; evaluateTranscripts(got.texts); }
+}
+
+/* 한 번 더 들어 보기 (아이가 잠깐 멈칫해도 끊지 않는다) */
+function srSoftRetry(myGen){
+  if(myGen !== recGeneration) return;
+  state.srSoftRetries++;
+  if(recTimer){ clearTimeout(recTimer); recTimer = null; }
+  const r = recog; recog = null;
+  if(r){ try{ r.onresult=null; r.onerror=null; r.onend=null; r.abort(); }catch(e){} }
+  el.hearing.classList.add('on');
+  el.hearingTxt.textContent = '조금만 더 듣고 있을게요…';
+  setTimeout(()=>{
+    if(myGen !== recGeneration || state.celebrating) return;
+    beginRecognition(1, myGen);
+  }, 240);
+}
+
+function beginRecognition(soft, myGen){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ showSRNotice(); return; }
   let r;
   try{ r = new SR(); }catch(e){ showSRNotice(); return; }
   recog = r;
   r.lang = currentLang();
   r.continuous = false;
   r.interimResults = true;
-  r.maxAlternatives = 5;
-  let finished = false;
-
-  const finishWith = (texts)=>{
-    if(finished) return;
-    finished = true;
-    evaluateTranscripts(texts);
-  };
+  r.maxAlternatives = SR_MAX_ALTERNATIVES;
+  srConfig.lang = r.lang;
+  srConfig.continuous = r.continuous;
+  srConfig.interimResults = r.interimResults;
+  srConfig.maxAlternatives = r.maxAlternatives;
+  const s = { gen:myGen, finished:false, gotResult:false, soft:soft||0, texts:[] };
+  srSession = s;
 
   r.onstart = ()=>{ if(myGen===recGeneration) setListening(true); };
-  r.onresult = (ev)=>{
-    if(myGen!==recGeneration) return;
-    const texts = [];
-    let interim = '';
-    for(let i=ev.resultIndex; i<ev.results.length; i++){
-      const res = ev.results[i];
-      for(let k=0;k<res.length;k++){
-        const t = res[k] && res[k].transcript ? res[k].transcript.trim() : '';
-        if(t) texts.push(t);
-        if(!res.isFinal && t && !interim) interim = t;
-      }
-    }
-    if(interim){ el.hearingTxt.textContent = '“' + interim + '”'; }
-    const item = currentItem();
-    const hit = texts.find(t=>matchesItem(t,item));
-    if(hit){ finishWith(texts); return; }
-    const last = ev.results[ev.results.length-1];
-    if(last && last.isFinal) finishWith(texts);
-  };
+  r.onresult = (ev)=>{ if(myGen!==recGeneration) return; handleSRResult(ev); };
   r.onerror = (ev)=>{
     if(myGen!==recGeneration) return;
     const err = ev && ev.error ? ev.error : 'unknown';
     state.srError = err;
-    finished = true;
+    if(s.finished) return;
+    if(err==='no-speech' && !s.gotResult && s.soft < 1){
+      s.finished = true;
+      srSoftRetry(myGen);
+      return;
+    }
+    s.finished = true;
     stopRecognition();
     if(err==='not-allowed' || err==='service-not-allowed'){
       showSRNotice('마이크 사용이 막혀 있어요. 브라우저 주소창의 마이크 허용을 켜거나, 아래 <b>부모님 도움</b>의 <b>정답</b>을 눌러 주세요.');
@@ -2017,8 +2274,14 @@ function startListening(){
   };
   r.onend = ()=>{
     if(myGen!==recGeneration) return;
-    setListening(false);
+    const wasFinished = s.finished;
+    s.finished = true;
     recog = null;
+    setListening(false);
+    if(wasFinished) return;
+    if(s.gotResult){ evaluateTranscripts(s.texts); return; }
+    if(s.soft < 1){ srSoftRetry(myGen); return; }
+    gentlePrompt('하나도 못 들었어요', '조금 더 크게, 천천히 말해 볼까요?', 'retry');
   };
 
   try{
@@ -2030,9 +2293,30 @@ function startListening(){
     gentlePrompt('마이크를 켤 수 없어요', '부모님이 <b>정답</b>을 눌러 주세요.', 'retry');
     return;
   }
+  if(recTimer){ clearTimeout(recTimer); recTimer = null; }
   recTimer = setTimeout(()=>{
-    if(recog){ try{ recog.stop(); }catch(e){} }
-  }, 7000);
+    if(recog && myGen===recGeneration){ try{ recog.stop(); }catch(e){} }
+  }, soft ? SR_RETRY_MS : SR_LISTEN_MS);
+}
+
+function startListening(){
+  unlockAudio();
+  if(state.celebrating) return;
+  hideFeedback();
+  stopRecognition();
+  state.srSoftRetries = 0;
+  if(!srAvailable()){
+    state.srError='unsupported';
+    if(gptHasKey() && GPT.whisper && whisperAvailable()){
+      startWhisperListening();
+      return;
+    }
+    showSRNotice();
+    gentlePrompt('마이크를 쓸 수 없어요', '부모님이 아래 <b>정답</b> 단추를 눌러 주세요.', 'retry');
+    return;
+  }
+  recGeneration++;
+  beginRecognition(0, recGeneration);
 }
 
 /* ============================================================
@@ -2183,6 +2467,11 @@ function buildConfetti(){
   }
 }
 let noteTimer = null;
+let lyricTimers = [];
+function clearLyricTimers(){
+  lyricTimers.forEach(t=> clearTimeout(t));
+  lyricTimers = [];
+}
 function startNotes(){
   stopNotes();
   const glyphs = ['♪','♫','♩','♬','✦','★'];
@@ -2239,7 +2528,9 @@ function celebrate(item, opts){
   el.songFill.style.width = '100%';
   el.songNum.textContent = '10';
   el.btnSkip.disabled = false;
-  el.danceCaption.textContent = '🎵 코끼리 축하송이 나오고 있어요';
+  el.danceCaption.textContent = '🎵 코끼리 축하송 — 같이 따라 불러요!';
+  buildLyrics();
+  setLyric(-1);
 
   buildConfetti();
   startNotes();
@@ -2248,12 +2539,24 @@ function celebrate(item, opts){
   state.songPlaying = !!(res && res.ok);
 
   if(praise){
-    setTimeout(()=>{ if(state.celebrating) say(praise, 'ko-KR', {rate:0.86, pitch:1.18}); }, 140);
+    setTimeout(()=>{ if(state.celebrating) say(praise, 'ko-KR', {rate:0.86, pitch:1.42}); }, 140);
   }else if(state.mode==='alphabet'){
-    setTimeout(()=>{ if(state.celebrating) say(item.ch, 'en-US', {rate:0.75, pitch:1.2}); }, 120);
+    setTimeout(()=>{ if(state.celebrating) say(item.ch, 'en-US', {rate:0.78, pitch:1.56}); }, 120);
   }else{
-    setTimeout(()=>{ if(state.celebrating) say(item.sub, 'ko-KR', {rate:0.8, pitch:1.25}); }, 120);
+    setTimeout(()=>{ if(state.celebrating) say(item.sub, 'ko-KR', {rate:0.82, pitch:1.6}); }, 120);
   }
+
+  // 가사 한 줄씩 노래와 함께 반짝이며 따라 부르기
+  clearLyricTimers();
+  lyricStartTimes().forEach((at, i)=>{
+    lyricTimers.push(setTimeout(()=>{
+      if(!state.celebrating) return;
+      setLyric(i);
+      chantLine(SONG.lines[i].text);
+      duckMusic(true);
+      lyricTimers.push(setTimeout(()=>{ if(state.celebrating) duckMusic(false); }, 1450));
+    }, at*1000));
+  });
 
   const start = performance.now();
   const DUR = 10000;
@@ -2279,6 +2582,9 @@ function finishCelebration(advance, silent){
   state.celebrating = false;
   if(celebRaf){ cancelAnimationFrame(celebRaf); celebRaf=null; }
   if(celebTimer){ clearTimeout(celebTimer); celebTimer=null; }
+  clearLyricTimers();
+  setLyric(-1);
+  duckMusic(false);
   stopNotes();
   stopSong();
   el.overlay.classList.remove('show');
@@ -2406,6 +2712,30 @@ ToddlerApp.current = ()=>{ const it=currentItem(); return {ch:it.ch, sub:it.sub,
 ToddlerApp.stars = ()=> state.stars;
 ToddlerApp.setStars = (n)=>{ state.stars = Math.max(0, n|0); el.starNum.textContent=String(state.stars); saveStore(); };
 ToddlerApp.hasSR = srAvailable;
+ToddlerApp.speak = speakCurrent;
+ToddlerApp.voice = {
+  specs: VOICE_CHAR,
+  last: ()=> VoiceLog.last,
+  spoken: ()=> VoiceLog.spoken.slice(),
+  chimes: ()=> VoiceLog.chimes,
+  chimeReq: ()=> VoiceLog.chimeReq,
+  ducks: ()=> VoiceLog.ducks,
+  pick: pickVoice,
+  chime: (l)=> elephantChime(l)
+};
+ToddlerApp.song = {
+  lines: SONG.lines.map(l=> l.text),
+  lyricTimes: lyricStartTimes,
+  state: ()=> ({ playing:state.songPlaying, notes:state.songNotes, lyric:state.lyricIndex, duck:state.musicDuck }),
+  duck: duckMusic
+};
+ToddlerApp.sr = {
+  config: srConfig,
+  softRetries: ()=> state.srSoftRetries,
+  collect: collectSRTexts,
+  handle: (ev)=> handleSRResult(ev),
+  session: ()=> srSession
+};
 ToddlerApp.reset = ()=>{ state.index = {consonant:0, vowel:0, alphabet:0}; state.attempts=0; render(true); };
 ToddlerApp.gpt = {
   state: GPT,
@@ -2434,6 +2764,7 @@ ToddlerApp.gpt = {
 loadStore();
 gptLoad();
 setTheme(state.theme);
+buildLyrics();
 render(false);
 renderGpt();
 if(!srAvailable()){
