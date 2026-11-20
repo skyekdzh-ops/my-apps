@@ -2258,7 +2258,7 @@
       deleteMeasuresAt(i, 1);
       return;
     } else if (act === 'piano'){
-      openMeasureEditor(i);
+      openMeasureEditor(i, { focusPiano: true });
       return;
     } else if (act === 'ins-before' || act === 'ins-after'){
       openAddMeasure({ mode:(act === 'ins-before' ? 'before' : 'after'), index: i + 1, count: 1, focusNew: true });
@@ -4068,8 +4068,9 @@
     updateMM();
   }
 
-  function openMeasureEditor(i){
+  function openMeasureEditor(i, opts){
     if (!(i >= 0 && i < state.measures.length)) return;
+    opts = opts || {};
     if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
     closeInlineChord();
     mmIndex = i;
@@ -4080,6 +4081,14 @@
     $('mmNext').disabled = (i >= state.measures.length - 1);
     fillMM();
     $('measureModal').hidden = false;
+    if (opts.focusPiano){
+      /* 🎹 건반으로 열었을 때는 긴 창을 굳이 스크롤하지 않아도 되게 건반을 보여 줍니다 */
+      setTimeout(function(){
+        var g = $('mmPianoGroup');
+        if (g && g.scrollIntoView) g.scrollIntoView({ block:'center' });
+      }, 80);
+      return;
+    }
     setTimeout(function(){ try{ $('mmBeat1').focus(); $('mmBeat1').select(); }catch(e){} }, 80);
   }
 
