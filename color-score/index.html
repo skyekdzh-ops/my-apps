@@ -617,14 +617,16 @@
   .toast{
     position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));z-index:80;
     transform:translate(-50%,14px);opacity:0;pointer-events:none;
-    display:flex;align-items:center;gap:10px;
+    display:flex;flex-direction:column;align-items:stretch;gap:7px;
     background:rgba(34,30,26,.94);color:#FFF7E9;
     padding:11px 14px;border-radius:13px;font-size:12.5px;font-weight:600;
     max-width:min(92vw,420px);box-shadow:0 10px 26px rgba(0,0,0,.24);
     transition:opacity .2s ease,transform .2s ease;
+    line-height:1.5;
   }
   .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
   .toast button{
+    align-self:flex-end;
     border:0;background:none;color:#FFD8A0;font-size:12.5px;font-weight:800;
     text-decoration:underline;cursor:pointer;padding:0;white-space:nowrap;
   }
@@ -3057,10 +3059,10 @@
     var k = KEYS[state.key] || KEYS.C;
     var tail = ' — 1도 ' + k.I + ' · 4도 ' + k.IV + ' · 5도 ' + k.V;
     if (info && info.prev && info.shift){
-      var msg = info.to + '장조로 바꾸면서 멜로디도 ' + Math.abs(info.shift) + '반음 ' +
+      var msg = info.to + '장조로 바꾸고 멜로디도 ' + Math.abs(info.shift) + '반음 ' +
                 (info.shift > 0 ? '올려' : '내려') + ' 전조했어요' +
-                (info.moved ? ' (' + info.moved + '마디)' : '');
-      toast(msg + tail, '되돌리기', function(){ restore(info.prev); });
+                (info.moved ? ' · ' + info.moved + '마디' : '');
+      toast(msg, '되돌리기', function(){ restore(info.prev); });
       return;
     }
     toast(state.key + '장조로 바꿨어요' + tail);
