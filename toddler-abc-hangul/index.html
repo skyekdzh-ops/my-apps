@@ -323,6 +323,51 @@ html[data-theme="mono"] #btnListen.listening .circle{animation:micPulseMono 1.15
   0%,100%{transform:scale(1);box-shadow:0 6px 0 #000,0 0 0 0 rgba(0,0,0,.30)}
   50%{transform:scale(1.06);box-shadow:0 6px 0 #000,0 0 0 13px rgba(0,0,0,0)}
 }
+/* ---------- 🎙️ 내 목소리 녹음 버튼 ---------- */
+#btnRecord .circle{background:var(--yellow);color:var(--ink);box-shadow:0 5px 0 var(--ink)}
+html[data-theme="mono"] #btnRecord .circle{background:#fff;color:#000;border-width:3.5px;box-shadow:0 5px 0 #000}
+#btnRecord:active .circle{box-shadow:0 1px 0 var(--ink)}
+html[data-theme="mono"] #btnRecord:active .circle{box-shadow:0 1px 0 #000}
+#btnRecord.saved .circle{background:var(--green-soft);border-style:dashed}
+html[data-theme="mono"] #btnRecord.saved .circle{background:#fff;border-style:solid}
+html[data-theme="mono"] #btnRecord .circle{filter:grayscale(1) contrast(1.3)}
+#btnRecord.saved .label{color:var(--green)}
+html[data-theme="mono"] #btnRecord.saved .label{color:#000}
+#btnRecord.recording .circle{
+  background:var(--yellow);color:var(--ink);animation:recPulse 1.05s ease-in-out infinite;
+}
+html[data-theme="mono"] #btnRecord.recording .circle{background:#fff;color:#000;animation:recPulseMono 1.05s ease-in-out infinite}
+#btnRecord.recording .label{color:var(--red)}
+html[data-theme="mono"] #btnRecord.recording .label{color:#000}
+@keyframes recPulse{
+  0%,100%{transform:scale(1);box-shadow:0 5px 0 var(--ink),0 0 0 0 rgba(232,74,58,.45)}
+  50%{transform:scale(1.06);box-shadow:0 5px 0 var(--ink),0 0 0 16px rgba(232,74,58,0)}
+}
+@keyframes recPulseMono{
+  0%,100%{transform:scale(1);box-shadow:0 5px 0 #000,0 0 0 0 rgba(0,0,0,.28)}
+  50%{transform:scale(1.06);box-shadow:0 5px 0 #000,0 0 0 13px rgba(0,0,0,0)}
+}
+
+/* 저장된 '내 목소리' 표시 — 카드 위쪽 작은 배지 + 지우기 */
+.rec-chip{
+  display:inline-flex;align-items:center;gap:3px;margin-right:auto;
+  padding:1px 2px 1px 9px;border-radius:999px;white-space:nowrap;
+  background:var(--green-soft);border:2.5px solid var(--ink);box-shadow:0 2.5px 0 var(--ink);
+  font-size:10.5px;font-weight:900;color:var(--ink);letter-spacing:-.02em;
+  animation:chipIn .32s cubic-bezier(.2,1.5,.4,1);
+}
+.rec-chip[hidden]{display:none}
+html[data-theme="mono"] .rec-chip{background:#fff;color:#000;box-shadow:0 2.5px 0 #000}
+.rec-chip .rc-txt{line-height:1.25}
+.rec-chip .rc-del{
+  width:26px;height:26px;border-radius:50%;display:grid;place-items:center;line-height:1;
+  font-size:13px;background:var(--card);border:2px solid var(--ink);box-shadow:0 1.5px 0 var(--ink);
+  transition:transform .12s ease;
+}
+html[data-theme="mono"] .rec-chip .rc-del{background:#fff;box-shadow:0 1.5px 0 #000;filter:grayscale(1)}
+.rec-chip .rc-del:active{transform:translateY(1.5px);box-shadow:none}
+@keyframes chipIn{0%{transform:scale(.55);opacity:0}100%{transform:scale(1);opacity:1}}
+
 .mic-ico{display:block;width:1em;height:1em}
 .mic-ico svg{width:100%;height:100%;display:block}
 
@@ -896,6 +941,10 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
 
       <div class="stage-top">
         <span class="counter" id="counter">1 / 14</span>
+        <span class="rec-chip" id="recChip" hidden>
+          <span class="rc-txt" id="recChipTxt">내 목소리</span>
+          <button class="rc-del" id="btnRecClear" type="button" aria-label="내 목소리 녹음 지우기" title="내 목소리 녹음 지우기">🗑️</button>
+        </span>
         <div class="stars" id="stars" title="정답 스티커">
           <span class="star-glyph" aria-hidden="true">★</span><span id="starNum">0</span>
         </div>
@@ -926,6 +975,10 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
             <span class="mic-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3" fill="currentColor" stroke="none"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/><path d="M8.5 21h7"/></svg></span>
           </span>
           <span class="label">따라 말해요</span>
+        </button>
+        <button class="act" id="btnRecord" type="button" aria-label="내 목소리로 녹음하기" aria-pressed="false">
+          <span class="circle" aria-hidden="true"><span id="recIco">🎙️</span></span>
+          <span class="label" id="recBtnLabel">목소리 녹음</span>
         </button>
       </div>
 
@@ -1209,6 +1262,8 @@ const el = {
   counter:$('counter'), stars:$('stars'), starNum:$('starNum'),
   hearing:$('hearing'), hearingTxt:$('hearingTxt'),
   btnSpeak:$('btnSpeak'), btnListen:$('btnListen'),
+  btnRecord:$('btnRecord'), recBtnLabel:$('recBtnLabel'), recIco:$('recIco'),
+  recChip:$('recChip'), btnRecClear:$('btnRecClear'),
   feedback:$('feedback'), fbTitle:$('fbTitle'), fbHeard:$('fbHeard'), fbHear:$('fbHear'), fbRetry:$('fbRetry'),
   srNotice:$('srNotice'), srNoticeText:$('srNoticeText'),
   pbCorrect:$('pbCorrect'), pbRetry:$('pbRetry'),
@@ -1549,12 +1604,366 @@ function elephantChime(level){
 }
 function speakCurrent(){
   const item = currentItem();
-  if(state.mode==='alphabet'){
+  const key = recKeyFor(item, state.mode);
+  // 글자마다 저장해 둔 '내 목소리'가 있으면 그것부터 들려준다.
+  if(Rec.cache.has(key) && recPlay(key)) return;
+  recSpeakBuiltin(key);            // 없으면(또는 바로 재생할 수 없으면) 내장 목소리
+}
+
+/* ============================================================
+   6-c. 🎙️ 내 목소리 녹음 — 글자마다 엄마·아빠 목소리를 담아 들려준다
+   · 저장: IndexedDB 글자별(모드:글자) → 새로고침·홈화면 PWA 실행에도 유지
+     (사생활 보호 모드처럼 IndexedDB를 못 쓰면 메모리에만 저장)
+   · iOS Safari: audio/mp4로 녹음, 정지 즉시 마이크 반납 → '따라 말해요'와 충돌 없음
+   · 재생: 탭 제스처 안에서 곧바로 new Audio(blob).play() → iOS 자동재생 정책 통과
+     실패하면 조용히 내장 목소리(speak)로 되돌아간다.
+   ============================================================ */
+const REC_DB_NAME = 'toddlerSpeak.voice';
+const REC_DB_VER = 1;
+const REC_STORE = 'recordings';
+const REC_MAX_MS = 5000;      // 5초에서 자동 정지 (아이가 켜 둔 채 잊어도 안전)
+const REC_MIN_MS = 300;       // 너무 짧으면 저장하지 않음
+const REC_TICK_MS = 200;      // 남은 시간 표시 갱신
+
+const Rec = {
+  cache:new Map(),        // key -> {blob, url, mime, at}
+  mem:false,              // IndexedDB 대신 메모리에만 저장
+  ready:false, booted:false, lastError:null,
+  recording:false, saving:false, startedAt:0, finishedAt:0, recKey:null,
+  stream:null, recorder:null, chunks:[],
+  tickTimer:null, stopTimer:null, guardTimer:null,
+  player:null, playToken:0, played:null, lastSaved:null,
+  autoStopped:0, discarded:0
+};
+
+function recSupported(){
+  return !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+}
+function recPickMime(){
+  const MR = window.MediaRecorder;
+  if(!MR || typeof MR.isTypeSupported !== 'function') return '';
+  // iOS Safari → audio/mp4 · Chrome/Firefox → webm(opus) · 기본 생성자 폴백
+  const cands = ['audio/mp4', 'audio/mp4;codecs=mp4a.40.2', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'];
+  for(let i=0;i<cands.length;i++){
+    try{ if(MR.isTypeSupported(cands[i])) return cands[i]; }catch(e){}
+  }
+  return '';
+}
+function recKeyFor(item, mode){
+  const it = item || currentItem();
+  const m = mode || state.mode;
+  return m + ':' + (it && it.ch ? it.ch : '');
+}
+function recItemByKey(key){
+  const s = String(key || '');
+  const i = s.indexOf(':');
+  const mode = i > 0 ? s.slice(0, i) : state.mode;
+  const ch = i > 0 ? s.slice(i + 1) : s;
+  const m = MODES[mode];
+  if(!m) return null;
+  for(let k=0;k<m.items.length;k++){ if(m.items[k].ch === ch) return {item:m.items[k], mode:mode}; }
+  return null;
+}
+function recHas(key){ return Rec.cache.has(key || recKeyFor()); }
+function recRemainSec(){
+  const left = REC_MAX_MS - (Date.now() - Rec.startedAt);
+  return Math.max(0, Math.ceil(left / 1000));
+}
+
+/* ---------- IndexedDB (실패하면 메모리 저장으로) ---------- */
+let recDbP = null;
+function recDbOpen(){
+  if(recDbP) return recDbP;
+  recDbP = new Promise((res, rej)=>{
+    let req = null;
+    try{ req = window.indexedDB.open(REC_DB_NAME, REC_DB_VER); }
+    catch(e){ recDbP = null; rej(e); return; }
+    let settled = false;
+    const fail = (e)=>{ if(settled) return; settled = true; recDbP = null; rej(e || new Error('idb')); };
+    req.onupgradeneeded = ()=>{
+      try{
+        const db = req.result;
+        if(db && !db.objectStoreNames.contains(REC_STORE)) db.createObjectStore(REC_STORE, {keyPath:'key'});
+      }catch(e){}
+    };
+    req.onsuccess = ()=>{ if(settled) return; settled = true; res(req.result); };
+    req.onerror = ()=>{ fail(req.error); };
+    req.onblocked = ()=>{ fail(new Error('idb-blocked')); };
+    setTimeout(()=>{ fail(new Error('idb-timeout')); }, 2500);
+  });
+  return recDbP;
+}
+function recDbRun(mode, pick){
+  return recDbOpen().then(db=> new Promise((res, rej)=>{
+    let tx = null;
+    try{ tx = db.transaction(REC_STORE, mode); }
+    catch(e){ rej(e); return; }
+    let req = null, out = null;
+    try{ req = pick(tx.objectStore(REC_STORE)); }
+    catch(e){ rej(e); return; }
+    if(req) req.onsuccess = ()=>{ out = req.result; };
+    tx.oncomplete = ()=>{ res(out); };
+    tx.onerror = ()=>{ rej(tx.error || new Error('idb-tx')); };
+    tx.onabort = ()=>{ rej(tx.error || new Error('idb-abort')); };
+  }));
+}
+function recObjectUrl(blob){
+  try{ return URL.createObjectURL(blob); }catch(e){ return ''; }
+}
+function recCachePut(key, row){
+  const old = Rec.cache.get(key);
+  if(old && old.url){ try{ URL.revokeObjectURL(old.url); }catch(e){} }
+  Rec.cache.set(key, {
+    blob:row.blob, url:recObjectUrl(row.blob),
+    mime:row.mime || (row.blob && row.blob.type) || '', at:row.at || Date.now()
+  });
+}
+function recCacheDrop(key){
+  const old = Rec.cache.get(key);
+  if(old && old.url){ try{ URL.revokeObjectURL(old.url); }catch(e){} }
+  Rec.cache.delete(key);
+}
+
+Rec.boot = function(){
+  if(Rec.booted) return Promise.resolve();
+  Rec.booted = true;
+  const finish = ()=>{ Rec.ready = true; Rec.syncUI(); };
+  if(!window.indexedDB){ Rec.mem = true; Rec.lastError = 'no-indexeddb'; finish(); return Promise.resolve(); }
+  return recDbRun('readonly', s=> s.getAll()).then(rows=>{
+    (rows || []).forEach(row=>{ if(row && row.key && row.blob) recCachePut(row.key, row); });
+    finish();
+  }).catch(e=>{
+    Rec.mem = true;
+    Rec.lastError = 'open:' + String((e && e.message) || e);
+    finish();
+  });
+};
+
+/* ---------- 저장 · 지우기 ---------- */
+Rec.save = function(key, blob, mime){
+  const k = key || recKeyFor();
+  if(!blob || !blob.size) return Promise.resolve(false);
+  const row = { key:k, blob:blob, mime:mime || blob.type || '', at:Date.now() };
+  recCachePut(k, row);                 // 곧바로 재생할 수 있게 메모리에 먼저
+  Rec.lastSaved = { key:k, size:blob.size, mime:row.mime, at:row.at };
+  Rec.syncUI();
+  if(Rec.mem) return Promise.resolve(true);
+  return recDbRun('readwrite', s=> s.put(row)).then(()=>{ Rec.syncUI(); return true; }).catch(e=>{
+    Rec.mem = true;                    // 저장 실패 → 이번 세션은 메모리에
+    Rec.lastError = 'put:' + String((e && e.message) || e);
+    Rec.syncUI();
+    return false;
+  });
+};
+Rec.clear = function(key){
+  const k = key || recRecKeySafe();
+  recCacheDrop(k);
+  if(Rec.played && Rec.played.key === k) Rec.played = null;
+  Rec.syncUI();
+  if(Rec.mem) return Promise.resolve(true);
+  return recDbRun('readwrite', s=> s.delete(k)).then(()=>true).catch(e=>{
+    Rec.lastError = 'del:' + String((e && e.message) || e);
+    return false;
+  });
+};
+function recRecKeySafe(){ try{ return recKeyFor(); }catch(e){ return ''; } }
+
+/* ---------- 재생 ---------- */
+function recSpeakBuiltin(key){
+  const hit = key ? recItemByKey(key) : null;
+  const item = hit ? hit.item : currentItem();
+  const mode = hit ? hit.mode : state.mode;
+  if(mode === 'alphabet'){
     say(item.ch + '. ' + item.ch, 'en-US', {rate:0.95, pitch:1.34, chime:true});
   }else{
     say(item.sub, 'ko-KR', {rate:0.94, pitch:1.35, chime:true});
   }
 }
+function recPlay(key){
+  const k = key || recKeyFor();
+  const e = Rec.cache.get(k);
+  if(!e || !e.url) return false;
+  cancelSpeech();
+  try{ if(gptAudio) gptAudio.pause(); }catch(err){}
+  let a = Rec.player;
+  if(!a){
+    try{ a = new Audio(); a.preload = 'auto'; }catch(err){ return false; }
+    Rec.player = a;
+  }
+  Rec.playToken++;
+  const token = Rec.playToken;
+  let done = false;
+  const settle = (kind)=>{
+    if(done || token !== Rec.playToken) return;
+    done = true;
+    Rec.played = { key:k, kind:kind, at:Date.now() };
+    if(kind !== 'custom') recSpeakBuiltin(k);      // 재생 실패 → 내장 목소리로
+  };
+  try{ a.pause(); }catch(err){}
+  a.onended = ()=>{ settle('custom'); };
+  a.onerror = ()=>{ settle('fail'); };
+  try{ a.src = e.url; }catch(err){ settle('fail'); return true; }
+  let p = null;
+  try{ p = a.play(); }catch(err){ settle('fail'); return true; }
+  if(p && typeof p.catch === 'function'){
+    p.then(()=>{ if(!done && token === Rec.playToken) settle('custom'); }).catch(()=>{ settle('fail'); });
+  }
+  // 일부 iOS 버전은 ended를 늦게 주기도 한다 — 소리가 나고 있으면 성공으로 본다
+  setTimeout(()=>{ if(!done && token === Rec.playToken && a && a.paused === false) settle('custom'); }, 900);
+  return true;
+}
+function recStopPlayer(){
+  Rec.playToken++;
+  const a = Rec.player;
+  if(!a) return;
+  try{ a.pause(); }catch(e){}
+  try{ a.onended = null; a.onerror = null; }catch(e){}
+}
+
+/* ---------- 녹음 ---------- */
+function recStopTracks(stream){
+  try{
+    const s = stream || Rec.stream;
+    if(s && s.getTracks) s.getTracks().forEach(t=>{ try{ t.stop(); }catch(e){} });
+  }catch(e){}
+}
+function recClearTimers(){
+  if(Rec.tickTimer){ clearInterval(Rec.tickTimer); Rec.tickTimer = null; }
+  if(Rec.stopTimer){ clearTimeout(Rec.stopTimer); Rec.stopTimer = null; }
+  if(Rec.guardTimer){ clearTimeout(Rec.guardTimer); Rec.guardTimer = null; }
+}
+function recFinish(stream, rec, mime){
+  if(!Rec.recording && !Rec.saving) { recStopTracks(stream); return; }
+  recStopTracks(stream);           // iOS: 마이크를 곧바로 놓아준다
+  recClearTimers();
+  Rec.recording = false;
+  Rec.saving = true;
+  Rec.stream = null; Rec.recorder = null;
+  Rec.finishedAt = Date.now();
+  const key = Rec.recKey || recRecKeySafe();
+  const type = (rec && rec.mimeType) || mime || 'audio/webm';
+  const chunks = Rec.chunks || [];
+  Rec.chunks = [];
+  const dur = Rec.finishedAt - Rec.startedAt;
+  let blob = null;
+  try{ blob = new Blob(chunks, {type:type}); }catch(e){ blob = null; }
+  Rec.saving = false;
+  if(!blob || !blob.size || dur < REC_MIN_MS){
+    Rec.discarded++;
+    Rec.lastError = 'too-short';
+    Rec.syncUI();
+    gentlePrompt('잘 안 담겼어요', '조금 더 길게, 천천히 말해 볼까요?', 'retry');
+    return;
+  }
+  Rec.save(key, blob, type);
+  Rec.syncUI();
+}
+function recStop(){
+  if(!Rec.recording) return false;
+  const rec = Rec.recorder, stream = Rec.stream, mime = Rec.recorderMime || '';
+  let stopped = false;
+  try{
+    if(rec && rec.state && rec.state !== 'inactive'){ rec.stop(); stopped = true; }
+  }catch(e){}
+  if(!stopped){ recFinish(stream, rec, mime); return true; }
+  // onstop이 오지 않는 예외 상황 대비
+  const s = stream, r = rec, m = mime;
+  Rec.guardTimer = setTimeout(()=>{ if(Rec.recording) recFinish(s, r, m); }, 1500);
+  return true;
+}
+async function recStart(){
+  if(Rec.recording || Rec.saving) return false;
+  if(state.celebrating) return false;
+  if(!recSupported()){
+    Rec.lastError = 'unsupported';
+    Rec.syncUI();
+    gentlePrompt('여기서는 녹음을 못 해요', '아이폰 사파리나 크롬에서 열면 녹음할 수 있어요.', 'retry');
+    return false;
+  }
+  // 음성인식이 마이크를 잡고 있으면 먼저 놓아준다 (iOS 마이크 충돌)
+  if(state.listening){ try{ stopRecognition(); }catch(e){} }
+  cancelSpeech();
+  recStopPlayer();
+  hideFeedback();
+  const key = recKeyFor();
+  let stream = null;
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  }catch(e){
+    const name = String((e && (e.name || e.message)) || e);
+    Rec.lastError = 'mic:' + name;
+    Rec.syncUI();
+    if(/notallowed|permission|denied/i.test(name)){
+      showSRNotice('마이크 사용을 허용해 주세요. 아이폰은 <b>설정 &gt; Safari &gt; 마이크</b>에서 켤 수 있어요.');
+      gentlePrompt('마이크를 켤 수 없어요', '부모님이 마이크 허용을 확인해 주세요.', 'retry');
+    }else if(/notfound|devicesnotfound/i.test(name)){
+      showSRNotice('마이크를 찾지 못했어요. 마이크가 있는 기기에서 녹음할 수 있어요.');
+      gentlePrompt('마이크가 안 보여요', '부모님이 확인해 주세요.', 'retry');
+    }else{
+      gentlePrompt('마이크를 켤 수 없어요', '부모님이 마이크 허용을 확인해 주세요.', 'retry');
+    }
+    return false;
+  }
+  const mime = recPickMime();
+  let rec = null;
+  try{
+    rec = mime ? new window.MediaRecorder(stream, {mimeType:mime}) : new window.MediaRecorder(stream);
+  }catch(e){
+    try{ rec = new window.MediaRecorder(stream); }
+    catch(e2){
+      recStopTracks(stream);
+      Rec.lastError = 'recorder:' + String((e2 && e2.message) || e2);
+      Rec.syncUI();
+      gentlePrompt('녹음을 시작할 수 없어요', '부모님이 다시 해 주세요.', 'retry');
+      return false;
+    }
+  }
+  Rec.stream = stream;
+  Rec.recorder = rec;
+  Rec.recorderMime = mime;
+  Rec.chunks = [];
+  Rec.recKey = key;
+  Rec.autoStopped = 0;
+  rec.ondataavailable = (ev)=>{ if(ev && ev.data && ev.data.size) Rec.chunks.push(ev.data); };
+  rec.onerror = (ev)=>{ Rec.lastError = 'rec:' + String((ev && ev.error && (ev.error.name || ev.error.message)) || 'error'); };
+  rec.onstop = ()=>{ recFinish(stream, rec, mime); };
+  try{ rec.start(); }
+  catch(e){
+    recStopTracks(stream);
+    Rec.stream = null; Rec.recorder = null; Rec.recKey = null;
+    Rec.lastError = 'start:' + String((e && e.message) || e);
+    Rec.syncUI();
+    gentlePrompt('녹음을 시작할 수 없어요', '부모님이 다시 해 주세요.', 'retry');
+    return false;
+  }
+  Rec.recording = true;
+  Rec.startedAt = Date.now();
+  Rec.syncUI();
+  Rec.tickTimer = setInterval(()=>{ Rec.syncUI(); }, REC_TICK_MS);
+  Rec.stopTimer = setTimeout(()=>{ Rec.autoStopped++; recStop(); }, REC_MAX_MS);
+  return true;
+}
+
+/* ---------- 화면 반영 ---------- */
+Rec.syncUI = function(){
+  const btn = el.btnRecord;
+  if(!btn) return;
+  let key = '';
+  try{ key = recKeyFor(); }catch(e){ key = ''; }
+  const has = !!key && Rec.cache.has(key);
+  const rec = !!Rec.recording;
+  btn.classList.toggle('recording', rec);
+  btn.classList.toggle('saved', has && !rec);
+  btn.setAttribute('aria-pressed', rec ? 'true' : 'false');
+  btn.setAttribute('aria-label', rec ? '녹음 끝내기'
+    : (has ? '내 목소리 다시 녹음하기' : '내 목소리로 녹음하기'));
+  if(el.recBtnLabel){
+    el.recBtnLabel.textContent = rec ? ('녹음 끝 ' + recRemainSec())
+      : (has ? '다시 녹음' : '목소리 녹음');
+  }
+  if(el.recIco) el.recIco.textContent = rec ? '⏹️' : '🎙️';
+  if(el.recChip) el.recChip.hidden = !has || rec;
+};
 
 /* ============================================================
    6-b. OpenAI(GPT) 연동 — 선택 사항, 키가 없으면 조용히 기본 모드
@@ -2073,27 +2482,286 @@ function piano(ctx, dest, midi, when, dur, vol){
   state.songNotes++;
 }
 
+/* ============================================================
+   🐘 코끼리가 진짜로 노래한다 — 한국어 음절 포먼트 가창 합성기
+   · 가사 음절마다 초성(자음)·중성(모음)·종성을 풀어서
+     성대 음원(톱니파+사각파, 5Hz 비브라토)을 F1·F2·F3 대역 통과 필터로
+     '아/어/오/우/으/이' 모양으로 빚어 정확한 멜로디 음정으로 노래한다.
+   · 어린 아기 코끼리 목소리 = 어른 포먼트 × 1.25 (짧은 발성관)
+   · 자음은 짧은 소음 버스트(ㅉ·ㅈ·ㅊ 파찰음, ㄱ·ㅋ 파열음, ㅁ·ㄴ 콧소리,
+     ㅃ·ㅍ 입김, ㅅ·ㅆ 마찰음)를 음절 앞에 붙여 말이 들리게 한다.
+   · 외부 라이브러리 없이 Web Audio만으로 · 오프라인/아이폰 사파리 모두 동작
+   ============================================================ */
+const HANGUL_ONSETS = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const HANGUL_VOWELS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const HANGUL_CODAS  = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+/* 어른 한국어 모음 포먼트(F1·F2·F3, Hz) */
+const VOWEL_FORMANTS = {
+  'ㅏ':[730,1090,2440], 'ㅐ':[530,1840,2480], 'ㅔ':[480,1720,2520],
+  'ㅓ':[520,1000,2400], 'ㅗ':[430,830,2350],  'ㅜ':[330,700,2300],
+  'ㅡ':[330,1350,2300], 'ㅣ':[280,2250,2950],  'ㅚ':[430,830,2350], 'ㅟ':[330,700,2300]
+};
+/* 이중모음: 시작 모음 → 도착 모음으로 포먼트가 미끄러진다 */
+const VOWEL_FROM = { 'ㅑ':'ㅣ','ㅕ':'ㅣ','ㅛ':'ㅜ','ㅠ':'ㅜ','ㅒ':'ㅣ','ㅖ':'ㅣ','ㅘ':'ㅗ','ㅝ':'ㅜ','ㅙ':'ㅗ','ㅞ':'ㅜ','ㅢ':'ㅡ','ㅚ':'ㅗ','ㅟ':'ㅜ' };
+const VOWEL_TO   = { 'ㅑ':'ㅏ','ㅕ':'ㅓ','ㅛ':'ㅗ','ㅠ':'ㅜ','ㅒ':'ㅐ','ㅖ':'ㅔ','ㅘ':'ㅏ','ㅝ':'ㅓ','ㅙ':'ㅐ','ㅞ':'ㅔ','ㅢ':'ㅣ','ㅚ':'ㅣ','ㅟ':'ㅣ' };
+const CHILD_FORMANT_SCALE = 1.25;      // 아기 코끼리 = 발성관이 짧아 포먼트가 위로
+const SING_LEAD_VOL = 0.34;            // 리드(노래) 음량 — 반주보다 앞에
+const SING_TRIM = 2.4;                 // 포먼트 필터를 지나며 작아지는 소리를 키워 준다
+const singNoiseCache = new WeakMap();
+
+function vowelFormants(v){
+  const key = VOWEL_TO[v] || v;
+  const base = VOWEL_FORMANTS[key] || VOWEL_FORMANTS['ㅏ'];
+  const s = CHILD_FORMANT_SCALE;
+  return { f1:base[0]*s, f2:base[1]*s, f3:base[2]*s };
+}
+function onsetKind(o){
+  if(!o) return 'null';
+  if(o === 'ㅇ') return 'null';
+  if('ㅁㄴ'.indexOf(o) >= 0) return 'nasal';
+  if(o === 'ㄹ') return 'liquid';
+  if('ㅅㅆ'.indexOf(o) >= 0) return 'fric';
+  if(o === 'ㅎ') return 'breath';
+  if('ㅈㅉㅊ'.indexOf(o) >= 0) return 'affricate';
+  if('ㅋㅌㅍ'.indexOf(o) >= 0) return 'aspirate';
+  if('ㄲㄸㅃ'.indexOf(o) >= 0) return 'tense';
+  return 'plain';                      // ㄱ ㄷ ㅂ
+}
+function codaKind(c){
+  if(!c) return 'none';
+  if('ㄴㅁㅇ'.indexOf(c) >= 0) return 'nasal';
+  if(c === 'ㄹ') return 'liquid';
+  return 'stop';
+}
+/* '짝!' '우!' 같은 가사 토막 → {text, onset, vowel, coda, ...} */
+function syllableParts(syl){
+  const raw = String(syl == null ? '' : syl);
+  const m = raw.match(/[\uAC00-\uD7A3]/);
+  if(!m) return null;
+  const code = m[0].charCodeAt(0) - 0xAC00;
+  const oi = Math.floor(code / 588);
+  const vi = Math.floor((code % 588) / 28);
+  const ci = code % 28;
+  const onset = HANGUL_ONSETS[oi] || '';
+  const vowel = HANGUL_VOWELS[vi] || 'ㅏ';
+  const coda = HANGUL_CODAS[ci] || '';
+  return {
+    text:m[0], raw:raw, onset:onset, vowel:vowel, coda:coda,
+    onsetKind:onsetKind(onset), codaKind:codaKind(coda),
+    gloss:vowel
+  };
+}
+/* 자음 소음용 화이트노이즈 — ctx마다 하나만 만들어 재사용(결정적) */
+function singNoiseBuffer(ctx){
+  let b = singNoiseCache.get(ctx);
+  if(b) return b;
+  const n = Math.max(1, Math.ceil(ctx.sampleRate * 0.5));
+  b = ctx.createBuffer(1, n, ctx.sampleRate);
+  const d = b.getChannelData(0);
+  let seed = 20261120;
+  for(let i=0;i<n;i++){
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    d[i] = ((seed / 0x3fffffff) - 1) * 0.9;
+  }
+  singNoiseCache.set(ctx, b);
+  return b;
+}
+/* 짧은 소음 버스트 — 파열음·마찰음·파찰음의 'ㅉ' 'ㅅ' 'ㅋ' 소리 */
+function singNoiseBurst(ctx, dest, at, dur, freq, q, vol){
+  const buf = singNoiseBuffer(ctx);
+  const s = ctx.createBufferSource();
+  s.buffer = buf;
+  s.playbackRate.value = 1;
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass';
+  bp.frequency.value = Math.min(freq, ctx.sampleRate * 0.42); bp.Q.value = q;
+  const shape = ctx.createBiquadFilter(); shape.type = 'lowpass';
+  shape.frequency.value = Math.min(7800, ctx.sampleRate * 0.42);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, at);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), at + Math.min(0.006, dur * 0.3));
+  g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+  s.connect(bp); bp.connect(shape); shape.connect(g); g.connect(dest);
+  s.start(at, 0, Math.min(0.5, dur + 0.03));
+  s.stop(at + dur + 0.03);
+}
+/* 콧소리(ㅁ·ㄴ) — 낮게 웅웅거리는 머뭄 */
+function singMurmur(ctx, dest, at, dur, f, vol){
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, at);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), at + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+  g.connect(dest);
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 620; lp.Q.value = 3.4;
+  lp.connect(g);
+  const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(f, at);
+  const og = ctx.createGain(); og.gain.value = 0.5;
+  o.connect(og); og.connect(lp);
+  o.start(at); o.stop(at + dur + 0.03);
+}
+/* 초성 자음 — 모음이 시작되기 직전에 짧게 */
+function singOnset(ctx, dest, parts, f, voiceAt, vol){
+  const kind = parts.onsetKind;
+  if(kind === 'null') return;
+  const o = parts.onset;
+  if(kind === 'nasal'){                       // ㅁ · ㄴ
+    singMurmur(ctx, dest, Math.max(0, voiceAt - 0.055), 0.06, f, vol * 0.30);
+    return;
+  }
+  if(kind === 'liquid'){                      // ㄹ — 혀를 짧게 튕기는 소리
+    singMurmur(ctx, dest, Math.max(0, voiceAt - 0.045), 0.032, f * 1.02, vol * 0.22);
+    singMurmur(ctx, dest, Math.max(0, voiceAt - 0.018), 0.026, f, vol * 0.18);
+    return;
+  }
+  if(kind === 'fric'){                        // ㅅ · ㅆ — 사각거리는 마찰음
+    const sib = o === 'ㅆ' ? vol * 0.34 : vol * 0.26;
+    singNoiseBurst(ctx, dest, Math.max(0, voiceAt - 0.075), 0.075, 5200, 2.4, sib);
+    return;
+  }
+  if(kind === 'breath'){                      // ㅎ — 부드러운 숨결
+    singNoiseBurst(ctx, dest, Math.max(0, voiceAt - 0.055), 0.055, 1400, 0.9, vol * 0.20);
+    return;
+  }
+  if(kind === 'affricate'){                   // ㅈ · ㅉ · ㅊ — '짝!' 의 그 소리
+    const strong = o === 'ㅉ' || o === 'ㅊ';
+    const d = strong ? 0.055 : 0.038;
+    singNoiseBurst(ctx, dest, Math.max(0, voiceAt - d - 0.008), d, strong ? 3400 : 2900, 1.9, vol * (strong ? 0.40 : 0.30));
+    singNoiseBurst(ctx, dest, Math.max(0, voiceAt - 0.018), 0.02, 1900, 1.4, vol * 0.16);
+    return;
+  }
+  if(kind === 'aspirate'){                    // ㅋ · ㅌ · ㅍ — 세게 터지는 숨
+    const center = o === 'ㅋ' ? 1600 : (o === 'ㅌ' ? 3000 : 900);
+    singNoiseBurst(ctx, dest, Math.max(0, voiceAt - 0.042), 0.044, center, 1.3, vol * 0.34);
+    return;
+  }
+  if(kind === 'tense'){                       // ㄲ · ㄸ · ㅃ — 짧고 단단하게
+    const center = o === 'ㄲ' ? 1700 : (o === 'ㄸ' ? 3200 : 800);
+    singNoiseBurst(ctx, dest, Math.max(0, voiceAt - 0.030), 0.026, center, 1.5, vol * 0.40);
+    return;
+  }
+  // ㄱ · ㄷ · ㅂ — 짧은 파열
+  const center = o === 'ㄱ' ? 1500 : (o === 'ㄷ' ? 2800 : 800);
+  singNoiseBurst(ctx, dest, Math.max(0, voiceAt - 0.026), 0.024, center, 1.6, vol * 0.30);
+}
+/* 노래하는 아기 코끼리 — 한 음절을 멜로디 음정 위에서 노래한다 */
+function singSyllable(ctx, dest, syl, midi, when, dur, vol){
+  const parts = syllableParts(syl);
+  const level = (vol == null ? SING_LEAD_VOL : vol) * SING_TRIM;
+  const f = midiToFreq(midi);
+  if(!parts){                       // 한글이 아니면 예전처럼 악기 음색으로
+    leadVoice(ctx, dest, midi, when, dur, vol);
+    return parts;
+  }
+  const noteDur = Math.max(0.18, dur * 0.98);
+  const end = when + noteDur;
+  const vEnd = parts.codaKind === 'none' ? end : end - Math.min(0.06, noteDur * 0.22);
+
+  /* 1) 성대 음원 — 아기 코끼리의 톱니파 성대 + 살짝 사각파 */
+  const src = ctx.createOscillator(); src.type = 'sawtooth';
+  const src2 = ctx.createOscillator(); src2.type = 'square';
+  const srcG = ctx.createGain(); srcG.gain.value = 0.52;
+  const src2G = ctx.createGain(); src2G.gain.value = 0.15;
+  src.connect(srcG); src2.connect(src2G);
+  // 살짝 낮게 시작해 음정으로 미끄러지는 어택(아이가 노래할 때처럼)
+  src.frequency.setValueAtTime(f * 0.982, when);
+  src.frequency.exponentialRampToValueAtTime(f, when + 0.045);
+  src2.frequency.setValueAtTime(f * 0.982 * 1.001, when);
+  src2.frequency.exponentialRampToValueAtTime(f * 1.001, when + 0.045);
+  // 5Hz 비브라토 (살짝 늦게 붙는다) — 음정 흔들림 0.55% 이내
+  const lfo = ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 5.0;
+  const lfoG = ctx.createGain();
+  lfoG.gain.setValueAtTime(0, when);
+  lfoG.gain.linearRampToValueAtTime(f * 0.0055, when + Math.min(0.22, noteDur * 0.7));
+  lfo.connect(lfoG); lfoG.connect(src.frequency); lfoG.connect(src2.frequency);
+
+  /* 2) 모음 포먼트 F1·F2·F3 — '아'는 입을 크게, '이'는 옆으로 */
+  const to = vowelFormants(parts.vowel);
+  const fromV = VOWEL_FROM[parts.vowel] ? vowelFormants(VOWEL_FROM[parts.vowel]) : null;
+  const f1 = ctx.createBiquadFilter(); f1.type = 'bandpass'; f1.Q.value = Math.max(3.2, to.f1 / 95);
+  const f2 = ctx.createBiquadFilter(); f2.type = 'bandpass'; f2.Q.value = Math.max(4.0, to.f2 / 125);
+  const f3 = ctx.createBiquadFilter(); f3.type = 'bandpass'; f3.Q.value = Math.max(5.0, to.f3 / 190);
+  const g1 = ctx.createGain(); g1.gain.value = 1.00;
+  const g2 = ctx.createGain(); g2.gain.value = 0.60;
+  const g3 = ctx.createGain(); g3.gain.value = 0.26;
+  const glide = Math.min(0.16, noteDur * 0.55);
+  [[f1,to.f1,fromV && fromV.f1],[f2,to.f2,fromV && fromV.f2],[f3,to.f3,fromV && fromV.f3]].forEach(([flt,toHz,fromHz])=>{
+    if(fromHz){
+      flt.frequency.setValueAtTime(fromHz, when);
+      flt.frequency.exponentialRampToValueAtTime(toHz, when + glide);
+    }else{
+      flt.frequency.setValueAtTime(toHz, when);
+    }
+  });
+  // 종성이 콧소리(ㄴ·ㅁ·ㅇ)면 끝에서 입을 닫아 F1을 낮춘다
+  if(parts.codaKind === 'nasal'){
+    f1.frequency.setValueAtTime(to.f1, vEnd);
+    f1.frequency.exponentialRampToValueAtTime(300, end - 0.012);
+    f2.frequency.setValueAtTime(to.f2, vEnd);
+    f2.frequency.exponentialRampToValueAtTime(900, end - 0.012);
+  }
+  srcG.connect(f1); src2G.connect(f1); f1.connect(g1);
+  srcG.connect(f2); src2G.connect(f2); f2.connect(g2);
+  srcG.connect(f3); src2G.connect(f3); f3.connect(g3);
+
+  /* 3) 몸통(기본음) — 포먼트에 가려지지 않게 낮은 길로 조금 */
+  const body = ctx.createBiquadFilter(); body.type = 'lowpass';
+  body.frequency.setValueAtTime(Math.min(1500, Math.max(700, f * 1.6)), when);
+  body.Q.value = 0.9;
+  const bodyG = ctx.createGain(); bodyG.gain.value = 0.34;
+  srcG.connect(body); body.connect(bodyG);
+
+  /* 4) 음량 엔벨로프 — 아이가 노래하듯 부드럽게 붙고 마지막에 살짝 사라진다 */
+  const voice = ctx.createGain();
+  voice.gain.setValueAtTime(0.0001, when);
+  voice.gain.exponentialRampToValueAtTime(level, when + 0.020);
+  voice.gain.setValueAtTime(level * 0.94, when + Math.max(0.05, noteDur * 0.55));
+  if(parts.codaKind === 'stop'){
+    voice.gain.setValueAtTime(level * 0.62, vEnd);
+    voice.gain.exponentialRampToValueAtTime(level * 0.14, end - 0.014);
+    voice.gain.exponentialRampToValueAtTime(0.0001, end);
+  }else{
+    voice.gain.exponentialRampToValueAtTime(0.0001, end + 0.02);
+  }
+  [g1, g2, g3, bodyG].forEach(g=> g.connect(voice));
+  voice.connect(dest);
+
+  /* 5) 초성 자음 — 음절 앞 짧은 소리 */
+  singOnset(ctx, dest, parts, f, when, level);
+
+  /* 6) 종성이 막힌 소리(ㄱ·ㄷ·ㅂ·ㅅ…)면 끝에 짧은 막음 */
+  if(parts.codaKind === 'stop'){
+    singNoiseBurst(ctx, dest, Math.max(when, end - 0.030), 0.024, 1800, 1.1, level * 0.10);
+  }
+
+  const tail = end + 0.06;
+  src.start(when); src.stop(tail);
+  src2.start(when); src2.stop(tail);
+  lfo.start(when); lfo.stop(tail);
+  state.songNotes++;
+  state.songLead++;
+  return parts;
+}
+
 /* 반주 한 마디 — 쿵(1박 베이스) · 짝(2박 화음) · 쿵(3박 베이스) · 짝(4박 화음)
    + 마림바 알베르티(도-솔-미-솔)로 동요 반주를 채운다 */
 function compBar(ctx, dest, bar, bt, plan, t0){
   const spb = SONG.spb;
   [0,2].forEach(b=>{
     const when = bt + b*spb;
-    bassNote(ctx, dest, bar[0], when, 0.42, 0.22);
-    plan.push({kind:'bass', midi:bar[0], at:+(when-t0).toFixed(3), dur:0.42, vol:0.22});
+    bassNote(ctx, dest, bar[0], when, 0.42, 0.19);
+    plan.push({kind:'bass', midi:bar[0], at:+(when-t0).toFixed(3), dur:0.42, vol:0.19});
   });
   [1,3].forEach(b=>{
     const when = bt + b*spb;
     bar.slice(1).forEach(m=>{
-      piano(ctx, dest, m, when, 0.30, 0.055);
-      plan.push({kind:'chord', midi:m, at:+(when-t0).toFixed(3), dur:0.30, vol:0.055});
+      piano(ctx, dest, m, when, 0.30, 0.045);
+      plan.push({kind:'chord', midi:m, at:+(when-t0).toFixed(3), dur:0.30, vol:0.045});
     });
   });
   const alb = [bar[1], bar[3], bar[2], bar[3], bar[1], bar[3], bar[2], bar[3]];
   alb.forEach((m,i)=>{
     const when = bt + i*SONG.unit;
-    marimba(ctx, dest, m, when, 0.16, 0.035);
-    plan.push({kind:'alberti', midi:m, at:+(when-t0).toFixed(3), dur:0.16, vol:0.035});
+    marimba(ctx, dest, m, when, 0.16, 0.028);
+    plan.push({kind:'alberti', midi:m, at:+(when-t0).toFixed(3), dur:0.16, vol:0.028});
   });
 }
 
@@ -2117,12 +2785,15 @@ function scheduleSong(ctx, dest, t0, seconds){
       const dur = d*SONG.unit;
       t += dur;
       if(when - t0 > total) return;
-      // 노래하는 리드 — 가장 앞에서 또렷하게
-      leadVoice(ctx, dest, m, when, dur*0.96, 0.34);
-      plan.push({kind:'lead', midi:m, at:+(when-t0).toFixed(3), dur:+(dur*0.96).toFixed(3), vol:0.34, line:li, syl:k});
+      // 🐘 노래하는 아기 코끼리 — 가사 음절을 멜로디 음정으로 직접 부른다
+      const sylText = (line.syl && line.syl[k] != null) ? line.syl[k] : '';
+      const sung = singSyllable(ctx, dest, sylText, m, when, dur*0.96, SING_LEAD_VOL);
+      plan.push({kind:'lead', midi:m, at:+(when-t0).toFixed(3), dur:+(dur*0.96).toFixed(3), vol:SING_LEAD_VOL,
+                 line:li, syl:k, sung:sylText, voice:'formant',
+                 vowel:(sung && sung.vowel) || '', onset:(sung && sung.onset) || '', coda:(sung && sung.coda) || ''});
       // 맑은 글로켄슈필이 같은 선율을 살짝 겹친다(뮤직박스)
-      glock(ctx, dest, m, when, Math.min(0.32, dur*1.1), 0.05);
-      plan.push({kind:'glock', midi:m, at:+(when-t0).toFixed(3), dur:0.32, vol:0.05});
+      glock(ctx, dest, m, when, Math.min(0.32, dur*1.1), 0.042);
+      plan.push({kind:'glock', midi:m, at:+(when-t0).toFixed(3), dur:0.32, vol:0.042});
     });
   });
   // 마무리 — 도미솔도 화음 팡파르
@@ -2133,9 +2804,9 @@ function scheduleSong(ctx, dest, t0, seconds){
       glock(ctx, dest, m, at, 0.9, 0.13);
       plan.push({kind:'end', midi:m, at:+(at-t0).toFixed(3), dur:0.9, vol:0.13});
     });
-    bassNote(ctx, dest, 48, endT, 0.85, 0.22);
-    plan.push({kind:'bass', midi:48, at:+(endT-t0).toFixed(3), dur:0.85, vol:0.22});
-    [60,64,67].forEach(m=> piano(ctx, dest, m, endT, 0.9, 0.055));
+    bassNote(ctx, dest, 48, endT, 0.85, 0.19);
+    plan.push({kind:'bass', midi:48, at:+(endT-t0).toFixed(3), dur:0.85, vol:0.19});
+    [60,64,67].forEach(m=> piano(ctx, dest, m, endT, 0.9, 0.045));
   }
   return plan;
 }
@@ -2344,6 +3015,7 @@ function stopRecognition(){
   if(recTimer){ clearTimeout(recTimer); recTimer=null; }
   if(r){ try{ r.onresult=null; r.onerror=null; r.onend=null; r.abort(); }catch(e){} }
   if(whisperStream) stopWhisperTracks();
+  if(Rec.recording) { try{ recStop(); }catch(e){} }
   recGeneration++;
   srSession = null;
   setListening(false);
@@ -2598,6 +3270,7 @@ function render(animate){
     void el.letter.offsetWidth;
     el.letter.classList.add('swap');
   }
+  try{ Rec.syncUI(); }catch(e){}
 }
 function setMode(mode, opts){
   if(ORDER.indexOf(mode)<0) return;
@@ -2839,6 +3512,16 @@ el.btnListen.addEventListener('click', ()=>{
   if(state.listening){ stopRecognition(); return; }
   startListening();
 });
+el.btnRecord.addEventListener('click', ()=>{
+  unlockAudio();
+  if(Rec.recording){ recStop(); return; }
+  recStart();
+});
+el.btnRecClear.addEventListener('click', (ev)=>{
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+  Rec.clear(recRecKeySafe());
+  hideFeedback();
+});
 el.btnPrev.addEventListener('click', ()=> prev());
 el.btnNext.addEventListener('click', ()=> next());
 el.btnRandom.addEventListener('click', ()=> random());
@@ -2919,6 +3602,7 @@ document.addEventListener('keydown', (e)=>{
 document.addEventListener('visibilitychange', ()=>{
   if(document.hidden){
     stopRecognition();
+    if(Rec.recording) recStop();
     stopSong();
     cancelSpeech();
   }
@@ -2983,12 +3667,58 @@ ToddlerApp.song = {
                  lyric:state.lyricIndex, syl:state.lyricSyl, duck:state.musicDuck }),
   duck: duckMusic
 };
+/* 🐘 노래하는 코끼리 목소리 훅 (테스트용) */
+ToddlerApp.song.vocal = {
+  scale: CHILD_FORMANT_SCALE,
+  formants: (v)=> vowelFormants(v),
+  parts: (syl)=> syllableParts(syl),
+  onsetKind: onsetKind,
+  codaKind: codaKind,
+  vowels: Object.keys(VOWEL_FORMANTS),
+  leadVol: SING_LEAD_VOL,
+  notes: ()=> (state.songPlan || []).filter(e=> e.kind === 'lead')
+    .map(e=> ({ at:e.at, midi:e.midi, sung:e.sung, vowel:e.vowel, onset:e.onset, coda:e.coda, voice:e.voice })),
+  sing: (syl, midi, dur)=> { const ctx = getCtx(); if(!ctx) return null; return !!singSyllable(ctx, ctx.destination, syl, midi, ctx.currentTime + 0.02, dur || 0.24, SING_LEAD_VOL); },
+  /* 오프라인 렌더 — 한 음절만 따로 그려서 모음 포먼트를 검사할 수 있다 */
+  render: async (syl, midi, secs)=>{
+    const sr = 22050, sec = secs || 0.5;
+    const OC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    if(!OC) return null;
+    const oc = new OC(1, Math.floor(sr * sec), sr);
+    singSyllable(oc, oc.destination, syl, midi || 79, 0.02, 0.24, SING_LEAD_VOL);
+    const buf = await oc.startRendering();
+    return Array.from(buf.getChannelData(0));
+  }
+};
 ToddlerApp.sr = {
   config: srConfig,
   softRetries: ()=> state.srSoftRetries,
   collect: collectSRTexts,
   handle: (ev)=> handleSRResult(ev),
   session: ()=> srSession
+};
+/* 🎙️ 내 목소리 녹음 훅 (테스트용) */
+ToddlerApp.rec = {
+  supported: recSupported,
+  mime: recPickMime,
+  key: ()=> recKeyFor(),
+  has: (k)=> recHas(k),
+  keys: ()=> Array.from(Rec.cache.keys()),
+  size: (k)=>{ const e = Rec.cache.get(k || recKeyFor()); return e && e.blob ? e.blob.size : 0; },
+  played: ()=> Rec.played,
+  lastSaved: ()=> Rec.lastSaved,
+  start: ()=> recStart(),
+  stop: ()=> recStop(),
+  clear: (k)=> Rec.clear(k || recRecKeySafe()),
+  play: (k)=> recPlay(k || recRecKeySafe()),
+  /* 가짜 녹음 데이터 바로 넣기 (재생 실패·폴백 검증용) */
+  put: (k, bytes, type)=>{ Rec.save(k || recRecKeySafe(), new Blob([bytes || 'x'], {type:type || 'audio/wav'}), type || 'audio/wav'); },
+  state: ()=> ({
+    recording:Rec.recording, saving:Rec.saving, ready:Rec.ready, mem:Rec.mem, booted:Rec.booted,
+    key:Rec.recKey, remain:recRemainSec(), autoStopped:Rec.autoStopped, discarded:Rec.discarded,
+    lastError:Rec.lastError, playing:!!(Rec.player && Rec.player.paused === false),
+    endedAt:Rec.finishedAt
+  })
 };
 ToddlerApp.reset = ()=>{ state.index = {consonant:0, vowel:0, alphabet:0}; state.attempts=0; render(true); };
 ToddlerApp.gpt = {
@@ -3021,6 +3751,7 @@ setTheme(state.theme);
 buildLyrics();
 render(false);
 renderGpt();
+try{ Rec.boot(); }catch(e){ Rec.mem = true; Rec.ready = true; }
 if(!srAvailable()){
   showSRNotice('이 브라우저에서는 마이크 인식을 쓸 수 없어요. 아래 <b>부모님 도움</b>에서 <b>정답</b>을 눌러 주세요.');
 }else{
