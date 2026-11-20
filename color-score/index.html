@@ -314,7 +314,7 @@
   .addbar-top{display:flex;align-items:flex-start;gap:8px}
   .addbar-t{font-size:12px;font-weight:800;color:var(--ink-2);letter-spacing:-.01em;white-space:nowrap;padding-top:1px}
   .addbar-sum{flex:1;min-width:0;font-size:10.5px;color:var(--ink-3);font-weight:700;line-height:1.4;letter-spacing:-.01em}
-  .addbar-sum b{color:#5E4718;font-weight:800}
+  .addbar-sum b{color:#5E4718;font-weight:800;white-space:nowrap}
   .addbar-fold{
     flex:0 0 auto;border:0;background:none;color:var(--ink-3);font-size:11px;font-weight:800;
     padding:2px 2px 2px 6px;cursor:pointer;white-space:nowrap;letter-spacing:-.01em;
@@ -322,6 +322,13 @@
   .addbar-fold:active{opacity:.6}
   .addbar-body{margin-top:8px;display:flex;flex-direction:column;gap:6px}
   .addbar-body[hidden]{display:none}
+  .addbar-tabs{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:11px;background:#F2E9DA}
+  .addbar-tabs button{
+    flex:1 1 0;min-width:0;border:0;background:none;border-radius:9px;padding:6px 6px;min-height:30px;
+    font-size:12px;font-weight:800;color:var(--ink-3);letter-spacing:-.01em;cursor:pointer;white-space:nowrap;
+  }
+  .addbar-tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(70,52,24,.14)}
+  .addbar-tabs button:active{transform:scale(.98)}
   .addbar-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
   .addbar-lab{font-size:10.5px;font-weight:800;color:var(--ink-3);min-width:32px;letter-spacing:-.01em}
   .addbar-seg{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:11px;background:#F2E9DA}
@@ -349,6 +356,10 @@
   }
   .addbar-quick .aq.on{background:var(--ink);border-color:var(--ink);color:#FFF7E9}
   .addbar-go{margin-left:auto;min-height:38px;padding:8px 13px;font-size:13px;border-radius:11px}
+  .addbar-go.del{background:#fff;border-color:#E7C4BF;color:#B3261E}
+  .addbar-go.del:active{background:#FDF1EF}
+  .addbar-go[disabled]{opacity:.45;pointer-events:none}
+  .addbar-del-note{font-size:10.5px;font-weight:800;color:#B3261E;letter-spacing:-.01em}
   @media (max-width:430px){
     .addbar{padding:8px 10px 9px}
     .addbar-seg button{padding:6px 6px;font-size:11.5px}
@@ -382,6 +393,7 @@
   .sheet:not(.edit-all) .ms.edit-chords{grid-column:1 / -1}
   .sheet .inline-add{display:none;margin-top:12px}
   .sheet.edit-all .inline-add{display:flex}
+  .sheet.edit-all .inline-add.inline-del{background:#FFF7F5;border-color:#E7C4BF;color:#B3261E}
   @media print{ .sheet .inline-add{display:none !important} }
   .sheet.edit-all .ms-lyric{margin-top:4px}
   .sheet.edit-all .ms-lyric-input{margin-top:0}
@@ -641,6 +653,9 @@
     background:#fff;color:var(--ink-3);font-size:10.5px;font-weight:800;letter-spacing:-.02em;cursor:pointer;
   }
   .ms-inserts button:active{background:#F7F1E6}
+  .ms-inserts button.del{flex:0 1 auto;border-style:solid;border-color:#E7D4D0;color:#B3261E;background:#FFFBF9}
+  .ms-inserts button.del[aria-disabled="true"],.ms-inserts button.del.last{opacity:.45}
+  .ms-inserts button.del:active{background:#FDF1EF}
   .mm-insert{display:flex;gap:6px;margin-top:10px}
   .mm-insert .btn{flex:1 1 auto;min-height:36px;font-size:11.5px;letter-spacing:-.02em}
 
@@ -711,41 +726,72 @@
     </div>
 
     <!-- 악보 화면에서 바로 마디 넣기 — 모달 없이 위치·개수를 고르고 바로 추가 -->
-    <div class="addbar" id="addBar" role="group" aria-label="마디 추가">
+    <div class="addbar" id="addBar" role="group" aria-label="마디 관리">
       <div class="addbar-top">
-        <span class="addbar-t">＋ 마디 추가</span>
+        <span class="addbar-t" id="addBarTitle">＋ 마디 추가</span>
         <span class="addbar-sum" id="addBarSum" role="status" aria-live="polite">맨 뒤에 1마디</span>
         <button class="addbar-fold" id="addBarFold" type="button" aria-expanded="true" aria-controls="addBarBody">접기</button>
       </div>
       <div class="addbar-body" id="addBarBody">
-        <div class="addbar-line">
-          <span class="addbar-lab">어디에</span>
-          <div class="addbar-seg" id="addBarModes" role="group" aria-label="마디를 넣을 위치">
-            <button type="button" data-amode="start" aria-pressed="false">맨 앞</button>
-            <button type="button" data-amode="before" aria-pressed="false">마디 앞</button>
-            <button type="button" data-amode="after" aria-pressed="false">마디 뒤</button>
-            <button type="button" data-amode="end" class="active" aria-pressed="true">맨 뒤</button>
+        <div class="addbar-tabs" id="addBarTabs" role="group" aria-label="마디 추가와 삭제">
+          <button type="button" data-bartab="add" class="on" aria-pressed="true">＋ 추가</button>
+          <button type="button" data-bartab="del" aria-pressed="false">🗑 삭제</button>
+        </div>
+        <div id="addBarAddPane">
+          <div class="addbar-line">
+            <span class="addbar-lab">어디에</span>
+            <div class="addbar-seg" id="addBarModes" role="group" aria-label="마디를 넣을 위치">
+              <button type="button" data-amode="start" aria-pressed="false">맨 앞</button>
+              <button type="button" data-amode="before" aria-pressed="false">마디 앞</button>
+              <button type="button" data-amode="after" aria-pressed="false">마디 뒤</button>
+              <button type="button" data-amode="end" class="active" aria-pressed="true">맨 뒤</button>
+            </div>
+            <div class="addbar-step" id="addBarIdxLine" hidden>
+              <button type="button" class="icon-btn" id="addBarIdxDown" aria-label="기준 마디 번호 줄이기">−</button>
+              <input id="addBarIdx" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="기준 마디 번호">
+              <button type="button" class="icon-btn" id="addBarIdxUp" aria-label="기준 마디 번호 늘리기">+</button>
+              <span class="addbar-unit">번 마디</span>
+            </div>
           </div>
-          <div class="addbar-step" id="addBarIdxLine" hidden>
-            <button type="button" class="icon-btn" id="addBarIdxDown" aria-label="기준 마디 번호 줄이기">−</button>
-            <input id="addBarIdx" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="기준 마디 번호">
-            <button type="button" class="icon-btn" id="addBarIdxUp" aria-label="기준 마디 번호 늘리기">+</button>
-            <span class="addbar-unit">번 마디</span>
+          <div class="addbar-line">
+            <span class="addbar-lab">몇 마디</span>
+            <div class="addbar-quick" id="addBarQuick" role="group" aria-label="자주 쓰는 마디 수">
+              <button type="button" class="aq on" data-n="1" aria-pressed="true">1</button>
+              <button type="button" class="aq" data-n="2" aria-pressed="false">2</button>
+              <button type="button" class="aq" data-n="4" aria-pressed="false">4</button>
+            </div>
+            <div class="addbar-step">
+              <button type="button" class="icon-btn" id="addBarCntDown" aria-label="마디 수 줄이기">−</button>
+              <input id="addBarCnt" type="number" inputmode="numeric" min="1" max="99" step="1" value="1" aria-label="추가할 마디 수">
+              <button type="button" class="icon-btn" id="addBarCntUp" aria-label="마디 수 늘리기">+</button>
+            </div>
+            <button class="btn primary addbar-go" id="addBarGo" type="button">＋ 빈 마디 추가</button>
           </div>
         </div>
-        <div class="addbar-line">
-          <span class="addbar-lab">몇 마디</span>
-          <div class="addbar-quick" id="addBarQuick" role="group" aria-label="자주 쓰는 마디 수">
-            <button type="button" class="aq on" data-n="1" aria-pressed="true">1</button>
-            <button type="button" class="aq" data-n="2" aria-pressed="false">2</button>
-            <button type="button" class="aq" data-n="4" aria-pressed="false">4</button>
+        <div id="addBarDelPane" hidden>
+          <div class="addbar-line">
+            <span class="addbar-lab">어디</span>
+            <div class="addbar-step">
+              <button type="button" class="icon-btn" id="addBarDelIdxDown" aria-label="지울 첫 마디 번호 줄이기">−</button>
+              <input id="addBarDelIdx" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="지울 첫 마디 번호">
+              <button type="button" class="icon-btn" id="addBarDelIdxUp" aria-label="지울 첫 마디 번호 늘리기">+</button>
+            </div>
+            <span class="addbar-unit">번 마디부터</span>
           </div>
-          <div class="addbar-step">
-            <button type="button" class="icon-btn" id="addBarCntDown" aria-label="마디 수 줄이기">−</button>
-            <input id="addBarCnt" type="number" inputmode="numeric" min="1" max="99" step="1" value="1" aria-label="추가할 마디 수">
-            <button type="button" class="icon-btn" id="addBarCntUp" aria-label="마디 수 늘리기">+</button>
+          <div class="addbar-line">
+            <span class="addbar-lab">몇 마디</span>
+            <div class="addbar-quick" id="addBarDelQuick" role="group" aria-label="자주 쓰는 삭제 마디 수">
+              <button type="button" class="aq on" data-dn="1" aria-pressed="true">1</button>
+              <button type="button" class="aq" data-dn="2" aria-pressed="false">2</button>
+              <button type="button" class="aq" data-dn="4" aria-pressed="false">4</button>
+            </div>
+            <div class="addbar-step">
+              <button type="button" class="icon-btn" id="addBarDelCntDown" aria-label="삭제할 마디 수 줄이기">−</button>
+              <input id="addBarDelCnt" type="number" inputmode="numeric" min="1" max="99" step="1" value="1" aria-label="삭제할 마디 수">
+              <button type="button" class="icon-btn" id="addBarDelCntUp" aria-label="삭제할 마디 수 늘리기">+</button>
+            </div>
+            <button class="btn addbar-go del" id="addBarDelGo" type="button">🗑 마디 삭제</button>
           </div>
-          <button class="btn primary addbar-go" id="addBarGo" type="button">＋ 빈 마디 추가</button>
         </div>
       </div>
     </div>
@@ -1138,7 +1184,7 @@
       <div class="rule-row" style="color:var(--ink-3)">색이 있는 곳에서만 악기를 연주하고, 색이 없는 가사는 그냥 노래합니다.</div>
       <div class="rule-row" style="color:var(--ink-3)">중간 박자에 다른 화음이 오면 그 색으로 칠해집니다(예: 4도 → 1도).</div>
     </div>
-    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요. 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다.</p>
+    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요. 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭에서 <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다.</p>
     <p class="hint">‘멜로디 포함’을 켜면 악보에 음이름이 보이고, 들을 때 멜로디도 함께 연주됩니다. 이 악보는 이 브라우저에 자동 저장되고, JSON으로 내려받아 다른 기기로 옮길 수 있어요. 사진은 저장되지 않습니다.</p>
   </div>
 </div>
@@ -1671,11 +1717,15 @@
            '</div>';
   }
 
-  /* 바로 수정 모드에서 마디 사이에 바로 끼워 넣기 */
+  /* 바로 수정 모드에서 마디 사이에 바로 끼워 넣기 · 그 마디 바로 지우기 */
   function measureInsertHTML(i){
-    return '<div class="ms-edit inserts"><div class="ms-inserts" role="group" aria-label="이 자리에 마디 넣기">' +
+    var lastOne = (totalMeasures() <= 1);
+    return '<div class="ms-edit inserts"><div class="ms-inserts" role="group" aria-label="' + (i + 1) + '마디 고치기">' +
              '<button type="button" data-ins="before" aria-label="' + (i + 1) + '마디 앞에 마디 추가">＋ 앞에</button>' +
              '<button type="button" data-ins="after" aria-label="' + (i + 1) + '마디 뒤에 마디 추가">＋ 뒤에</button>' +
+             '<button type="button" class="del' + (lastOne ? ' last' : '') + '" data-del="1"' +
+               ' title="' + (lastOne ? '악보에는 최소 1마디가 남아야 해요' : '이 마디를 바로 지웁니다 (되돌리기 가능)') + '"' +
+               ' aria-label="' + (i + 1) + '마디 삭제">🗑 삭제</button>' +
            '</div></div>';
   }
 
@@ -2057,7 +2107,8 @@
     var act = btn.getAttribute('data-act');
 
     if (act === 'del'){
-      state.measures.splice(i, 1);
+      deleteMeasuresAt(i, 1);
+      return;
     } else if (act === 'ins-before' || act === 'ins-after'){
       openAddMeasure({ mode:(act === 'ins-before' ? 'before' : 'after'), index: i + 1, count: 1, focusNew: true });
       return;
@@ -2285,7 +2336,7 @@
      위치(맨 앞·마디 앞·마디 뒤·맨 뒤)와 개수(1·2·4·직접 입력)를
      지금 화면에서 고르고 ‘＋ 빈 마디 추가’를 누르면 즉시 삽입됩니다.
      ============================================================ */
-  var bar = { mode:'end', index:1, count:1 };
+  var bar = { mode:'end', index:1, count:1, tab:'add' };
 
   function barInsertAt(){
     var total = totalMeasures();
@@ -2339,6 +2390,7 @@
 
     $('addBarSum').innerHTML = barSummary();
     $('inlineAddMeasure').textContent = '＋ 빈 마디 추가 · ' + barWhereLabel() + ' ' + bar.count + '마디';
+    if (bar.tab === 'del') delSync(resetInputs);   /* 삭제 탭이 열려 있으면 삭제 쪽 미리보기·단추 상태를 갱신 */
   }
 
   /* 인라인 바에서 고른 자리에 빈 마디를 바로 넣기 */
@@ -2389,8 +2441,152 @@
     return n;
   }
 
-  $('addBarModes').addEventListener('click', function(e){
-    var btn = e.target.closest ? e.target.closest('button[data-amode]') : null;
+  /* ============================================================
+     DELETE MEASURES — 악보 화면(그리고 가사 편집)에서 바로 지우기
+     · 번호는 자동으로 다시 매겨지고, 지운 뒤 토스트 ‘되돌리기’로 복구합니다
+     · 악보에는 언제나 마지막 1마디가 남습니다
+     ============================================================ */
+  var delBar = { index:1, count:1 };
+
+  /* 지울 범위 계산 — 마지막 1마디는 남기고, 실제로 지울 개수를 돌려줍니다 */
+  function delRange(){
+    var total = totalMeasures();
+    var idx = clamp(parseInt(delBar.index, 10) || 1, 1, Math.max(1, total));
+    var want = clamp(parseInt(delBar.count, 10) || 1, 1, 99);
+    var n = Math.min(want, Math.max(0, total - idx + 1), Math.max(1, total - 1));
+    if (total <= 1) n = 0;
+    return { at: idx - 1, idx: idx, n: n, want: want, total: total };
+  }
+
+  function delSummaryText(r){
+    if (r.total <= 1) return '마지막 1마디는 지울 수 없어요 — 악보에는 <b>최소 1마디</b>가 남아야 합니다';
+    var first = r.idx, last = r.idx + r.n - 1;
+    var span = (r.n === 1) ? ('<b>' + first + '번</b> 마디') : ('<b>' + first + '~' + last + '번</b> ' + r.n + '마디');
+    var out = span + ' 지움 · 전체 <b>' + (r.total - r.n) + '마디</b>';
+    if (r.want > r.n) out += ' · 마지막 1마디는 남김';
+    return out;
+  }
+
+  /* 공용 삭제 — 악보 카드 · 인라인 바 · 가사 편집 탭 모두 이 함수를 씁니다 */
+  function deleteMeasuresAt(at, n){
+    var total = totalMeasures();
+    if (!total) return 0;
+    if (total <= 1){
+      toast('마지막 한 마디는 지울 수 없어요 — 악보에는 최소 1마디가 남아야 해요');
+      return 0;
+    }
+    if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
+    closeInlineChord();
+    at = clamp(parseInt(at, 10) || 0, 0, total - 1);
+    n = clamp(parseInt(n, 10) || 1, 1, 99);
+    n = Math.min(n, total - at, total - 1);
+    if (n < 1) return 0;
+
+    var prev = snapshot();
+    var first = at + 1, last = at + n;
+    state.measures.splice(at, n);
+    renderMeasureList();
+    renderSheet();
+    save();
+    barSync(true);
+
+    var label = (n === 1) ? (first + '번 마디') : (first + '~' + last + '번 마디 ' + n + '개');
+    toast(label + '를 지웠어요 — 전체 ' + totalMeasures() + '마디', '되돌리기', function(){
+      restore(prev);
+      barSync(true);
+    });
+    return n;
+  }
+
+  function delSync(resetInputs){
+    var r = delRange();
+    delBar.index = r.idx;
+    delBar.count = r.want;
+    if (resetInputs || document.activeElement !== $('addBarDelIdx'))
+      $('addBarDelIdx').value = String(r.idx);
+    $('addBarDelIdx').max = String(Math.max(1, r.total));
+    if (resetInputs || document.activeElement !== $('addBarDelCnt'))
+      $('addBarDelCnt').value = String(r.want);
+
+    var qs = $('addBarDelQuick').querySelectorAll('.aq');
+    for (var j = 0; j < qs.length; j++){
+      var qOn = (parseInt(qs[j].getAttribute('data-dn'), 10) === r.want);
+      qs[j].classList.toggle('on', qOn);
+      qs[j].setAttribute('aria-pressed', qOn ? 'true' : 'false');
+    }
+
+    $('addBarSum').innerHTML = delSummaryText(r);
+    var go = $('addBarDelGo');
+    go.disabled = (r.total <= 1);
+    go.setAttribute('aria-disabled', r.total <= 1 ? 'true' : 'false');
+    go.textContent = (r.n > 1) ? ('🗑 ' + r.n + '마디 삭제') : '🗑 마디 삭제';
+    $('inlineAddMeasure').textContent = (r.n >= 1)
+      ? ('🗑 ' + (r.n === 1 ? (r.idx + '번 마디 삭제') : (r.idx + '번부터 ' + r.n + '마디 삭제')))
+      : '🗑 지울 마디가 없어요';
+  }
+
+  function delBarGo(){
+    var r = delRange();
+    if (!r.n) return 0;
+    return deleteMeasuresAt(r.at, r.n);
+  }
+
+  /* 마디 추가 ↔ 마디 삭제 탭 */
+  function barTab(name){
+    bar.tab = (name === 'del') ? 'del' : 'add';
+    var del = (bar.tab === 'del');
+    $('addBarAddPane').hidden = del;
+    $('addBarDelPane').hidden = !del;
+    $('addBarTitle').textContent = del ? '🗑 마디 삭제' : '＋ 마디 추가';
+    var tabs = $('addBarTabs').querySelectorAll('button[data-bartab]');
+    for (var i = 0; i < tabs.length; i++){
+      var on = (tabs[i].getAttribute('data-bartab') === bar.tab);
+      tabs[i].classList.toggle('on', on);
+      tabs[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    $('inlineAddMeasure').classList.toggle('inline-del', del);
+    barSync(true);
+  }
+
+  $('addBarTabs').addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('button[data-bartab]') : null;
+    if (!btn) return;
+    if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
+    barTab(btn.getAttribute('data-bartab'));
+  });
+
+  $('addBarDelIdx').addEventListener('input', function(){ delBar.index = this.value; delSync(false); });
+  $('addBarDelIdx').addEventListener('change', function(){ delSync(true); });
+  $('addBarDelIdxDown').addEventListener('click', function(){
+    delBar.index = clamp((parseInt(delBar.index, 10) || 1) - 1, 1, Math.max(1, totalMeasures()));
+    delSync(true);
+  });
+  $('addBarDelIdxUp').addEventListener('click', function(){
+    delBar.index = clamp((parseInt(delBar.index, 10) || 1) + 1, 1, Math.max(1, totalMeasures()));
+    delSync(true);
+  });
+  $('addBarDelCnt').addEventListener('input', function(){ delBar.count = this.value; delSync(false); });
+  $('addBarDelCnt').addEventListener('change', function(){ delSync(true); });
+  $('addBarDelCntDown').addEventListener('click', function(){
+    delBar.count = clamp((parseInt(delBar.count, 10) || 1) - 1, 1, 99);
+    delSync(true);
+  });
+  $('addBarDelCntUp').addEventListener('click', function(){
+    delBar.count = clamp((parseInt(delBar.count, 10) || 1) + 1, 1, 99);
+    delSync(true);
+  });
+  $('addBarDelQuick').addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.aq') : null;
+    if (!btn) return;
+    delBar.count = parseInt(btn.getAttribute('data-dn'), 10) || 1;
+    delSync(true);
+  });
+  $('addBarDelGo').addEventListener('click', function(){
+    if (this.disabled) return;
+    delBarGo();
+  });
+
+  $('addBarModes').addEventListener('click', function(e){    var btn = e.target.closest ? e.target.closest('button[data-amode]') : null;
     if (!btn || btn.disabled) return;
     if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
     bar.mode = btn.getAttribute('data-amode');
@@ -3219,7 +3415,7 @@
   }
 
   var TIP_TAP = '마디를 누르면 <b>가사와 화성</b>을 바로 수정할 수 있어요 — 화성이 틀렸다면 그 자리에서 고치세요';
-  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>를 누르면 그 자리에 빈 마디가 바로 하나 들어가고, 여러 마디는 위쪽 <b>＋ 마디 추가</b>에서 개수를 고르세요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
+  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>를 누르면 그 자리에 빈 마디가 바로 하나 들어가고, <b>🗑 삭제</b>를 누르면 그 마디가 바로 지워집니다(지운 직후 되돌리기 가능). 여러 마디는 위쪽 <b>＋ 마디 추가 / 🗑 마디 삭제</b>에서 개수를 고르세요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
   function updateSheetTip(){
     var tip = $('sheetTip');
     if (!tip) return;
@@ -3331,8 +3527,9 @@
   $('inlineEditBtn').addEventListener('click', function(){ setInlineAll(!inline.all); });
 
   $('inlineAddMeasure').addEventListener('click', function(){
-    /* 악보 아래 단추도 모달 없이 바로 — 위쪽 인라인 바에서 고른 위치·개수대로 */
-    barAdd();
+    /* 악보 아래 단추는 지금 바의 탭을 그대로 따릅니다 — 추가 탭이면 추가, 삭제 탭이면 삭제 */
+    if (bar.tab === 'del') delBarGo();
+    else barAdd();
   });
 
   $('measureGrid').addEventListener('input', function(e){
@@ -3395,6 +3592,13 @@
     if (ins){
       var insCell = t.closest('.ms');
       if (insCell) barOneTap(msIndex(insCell), ins.getAttribute('data-ins'));
+      return;
+    }
+
+    var delBtn = t.closest('[data-del]');
+    if (delBtn){
+      var delCell = t.closest('.ms');
+      if (delCell) deleteMeasuresAt(msIndex(delCell), 1);
       return;
     }
 
@@ -3672,6 +3876,11 @@
     barState: bar,
     barSync: barSync,
     barOneTap: barOneTap,
+    barTab: barTab,
+    delState: delBar,
+    delSync: delSync,
+    delBarGo: delBarGo,
+    deleteMeasuresAt: deleteMeasuresAt,
     insertMeasures: function(at, n){ var k = insertMeasures(at, n); renderMeasureList(); renderSheet(); save(); barSync(); return k; },
     blankMeasure: BLANK_MEASURE,
     openInlineLyric: openInlineLyric,
@@ -3688,7 +3897,7 @@
     splitRest: splitRest,
     prompt: AI_PROMPT,
     schema: AI_SCHEMA,
-    version: '3.2.0'
+    version: '3.3.0'
   };
 
   if (document.readyState === 'loading'){
