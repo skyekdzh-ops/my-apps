@@ -2838,6 +2838,7 @@
       delSel.sel = {};
       renderSheet();
     }
+    updateSheetTip();
     delSelPaint();
     delSelSync();
     barSync(true);
@@ -3717,11 +3718,12 @@
   }
 
   var TIP_TAP = '마디를 누르면 <b>가사와 화성</b>을 바로 수정할 수 있어요 — 화성이 틀렸다면 그 자리에서 고치세요';
+  var TIP_DEL = '<b>마디 삭제 중</b> — 지울 마디의 <b>체크박스</b>를 눌러 고르세요(연속되지 않아도 됩니다). 위쪽 <b>🗑 선택한 N마디 삭제</b>를 누르면 한꺼번에 지워지고 번호가 다시 매겨집니다 — 지운 직후 <b>되돌리기</b>, 악보에는 마지막 <b>1마디</b>가 남습니다';
   var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>를 누르면 그 자리에 빈 마디가 바로 하나 들어가고, <b>🗑 삭제</b>를 누르면 그 마디가 바로 지워집니다(지운 직후 되돌리기 가능). 여러 마디는 위쪽 <b>🗑 마디 삭제</b> 탭에서 마디 <b>체크박스</b>로 골라 지울 수 있어요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
   function updateSheetTip(){
     var tip = $('sheetTip');
     if (!tip) return;
-    tip.innerHTML = inline.all ? TIP_ALL : TIP_TAP;
+    tip.innerHTML = delSel.on ? TIP_DEL : (inline.all ? TIP_ALL : TIP_TAP);
   }
 
   function setInlineAll(on){
