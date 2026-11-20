@@ -551,6 +551,50 @@
   .rule-box .rule-row{display:flex;align-items:center;gap:7px;margin-top:7px}
   .swatch{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
 
+  /* ---------- 마디 추가 (위치·개수) ---------- */
+  .am-group{margin-top:15px}
+  .am-modes{display:flex;gap:3px;padding:3px;border:1px solid var(--line);border-radius:13px;background:#F2E9DA;margin-top:7px}
+  .am-modes button{
+    flex:1 1 0;min-width:0;min-height:42px;border:0;border-radius:10px;background:none;padding:0 2px;
+    font-size:12.5px;font-weight:800;letter-spacing:-.02em;color:var(--ink-3);cursor:pointer;
+  }
+  .am-modes button.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(70,52,24,.14)}
+  .am-modes button[disabled]{opacity:.38;pointer-events:none}
+  .am-pos,.am-count{display:flex;align-items:center;gap:7px;margin-top:9px}
+  .am-pos.off{opacity:.38;pointer-events:none}
+  .am-pos input,.am-count input{
+    width:76px;min-height:42px;border-radius:11px;border:1px solid var(--line);background:#fff;
+    text-align:center;font-size:16px;font-weight:800;color:var(--ink);outline:none;padding:0 4px;
+    -moz-appearance:textfield;-webkit-appearance:none;appearance:none;
+  }
+  .am-pos input::-webkit-outer-spin-button,
+  .am-pos input::-webkit-inner-spin-button,
+  .am-count input::-webkit-outer-spin-button,
+  .am-count input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .am-pos input:focus,.am-count input:focus{box-shadow:0 0 0 3px rgba(201,185,156,.28)}
+  .am-pos-unit{font-size:11.5px;font-weight:800;color:var(--ink-3);letter-spacing:-.01em}
+  .am-quick{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .am-q{
+    min-width:42px;min-height:36px;padding:5px 11px;border-radius:10px;border:1px solid var(--line);
+    background:#fff;color:var(--ink-2);font-size:12.5px;font-weight:800;cursor:pointer;
+  }
+  .am-q.on{background:var(--ink);border-color:var(--ink);color:#FFF7E9}
+  .am-summary{
+    margin-top:14px;padding:10px 12px;border-radius:12px;background:#FBF3E4;
+    border:1px dashed #E7D6B6;font-size:12px;font-weight:700;color:#7A6644;line-height:1.6;
+  }
+  .am-summary b{color:#5E4718}
+  .m-insert{display:flex;gap:6px;margin-top:9px}
+  .m-insert .btn{flex:1 1 auto;min-height:34px;font-size:11.5px;letter-spacing:-.02em}
+  .ms-inserts{display:flex;gap:4px;margin-top:6px}
+  .ms-inserts button{
+    flex:1 1 auto;min-width:0;min-height:27px;padding:2px 4px;border-radius:7px;border:1px dashed var(--line);
+    background:#fff;color:var(--ink-3);font-size:10.5px;font-weight:800;letter-spacing:-.02em;cursor:pointer;
+  }
+  .ms-inserts button:active{background:#F7F1E6}
+  .mm-insert{display:flex;gap:6px;margin-top:10px}
+  .mm-insert .btn{flex:1 1 auto;min-height:36px;font-size:11.5px;letter-spacing:-.02em}
+
   /* ---------- print ---------- */
   @media print{
     @page{size:A4;margin:12mm}
@@ -715,9 +759,12 @@
     <div class="card">
       <h2>마디별 가사 · 화성 · 멜로디</h2>
       <p class="hint">한 마디를 <b>첫 박자</b> · <b>중간 박자</b> · <b>나머지</b>로 나눠 적습니다. 첫 박자는 level1·2 모두 색이 들어가고, <b>중간 박자는 level2에서만</b> 색이 들어갑니다. 중간 화음을 비우면 첫 박자와 같은 화음을 씁니다.</p>
-      <div class="row-between" style="margin-top:10px">
+      <div class="row-between" style="margin-top:10px;flex-wrap:wrap;gap:6px">
         <span class="hint" style="margin:0" id="mCount">0마디</span>
-        <button class="btn sm ghost" id="addMeasureTop" type="button">+ 마디 추가</button>
+        <div class="row" style="gap:6px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn sm ghost" id="addMeasureTop" type="button">＋ 맨 뒤에 1마디</button>
+          <button class="btn sm" id="addMeasurePick" type="button" title="맨 앞·마디 앞·마디 뒤·맨 뒤 어디든 원하는 만큼 마디를 넣습니다">＋ 위치 지정</button>
+        </div>
       </div>
       <div id="measureList" style="margin-top:10px"></div>
       <button class="btn block" id="addMeasure" type="button">+ 마디 추가</button>
@@ -878,6 +925,10 @@
       <button class="btn sm ghost" id="mmPrev" type="button">‹ 이전 마디</button>
       <button class="btn sm ghost" id="mmNext" type="button">다음 마디 ›</button>
     </div>
+    <div class="mm-insert">
+      <button class="btn sm ghost" id="mmInsBefore" type="button">＋ 이 앞에 마디</button>
+      <button class="btn sm ghost" id="mmInsAfter" type="button">＋ 이 뒤에 마디</button>
+    </div>
 
     <div class="mm-group" style="margin-top:14px">
       <div class="mm-group-head">
@@ -919,6 +970,65 @@
   </div>
 </div>
 
+<div class="modal" id="addMeasureModal" hidden>
+  <div class="modal-bg" data-am-close="1"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="amTitle">
+    <div class="row-between" style="align-items:flex-start">
+      <div style="min-width:0">
+        <h2 id="amTitle">마디 추가</h2>
+        <div class="mm-head-note" id="amSub">어디에 몇 마디를 넣을지 고르세요 — 새 마디는 <b>가사도 화성도 비어 있는 빈 마디</b>로 들어갑니다.</div>
+      </div>
+      <button class="round-btn" id="amClose" type="button" aria-label="닫기">✕</button>
+    </div>
+
+    <div class="am-group">
+      <div class="mm-group-head">
+        <span>어디에 넣을까요</span>
+        <em id="amWhereNow">맨 뒤</em>
+      </div>
+      <div class="am-modes" id="amModes" role="group" aria-label="마디를 넣을 위치">
+        <button type="button" data-mode="start">맨 앞</button>
+        <button type="button" data-mode="before">마디 앞</button>
+        <button type="button" data-mode="after">마디 뒤</button>
+        <button type="button" data-mode="end" class="active">맨 뒤</button>
+      </div>
+      <div class="am-pos off" id="amPosRow">
+        <button type="button" class="icon-btn" id="amIdxDown" aria-label="기준 마디 번호 줄이기">−</button>
+        <input id="amIdx" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="기준 마디 번호">
+        <span class="am-pos-unit">번 마디</span>
+        <button type="button" class="icon-btn" id="amIdxUp" aria-label="기준 마디 번호 늘리기">+</button>
+      </div>
+    </div>
+
+    <div class="am-group">
+      <div class="mm-group-head">
+        <span>몇 마디를 넣을까요</span>
+        <em id="amCountNow">1마디</em>
+      </div>
+      <div class="am-count">
+        <button type="button" class="icon-btn" id="amCntDown" aria-label="마디 수 줄이기">−</button>
+        <input id="amCnt" type="number" inputmode="numeric" min="1" max="99" step="1" value="1" aria-label="추가할 마디 수">
+        <span class="am-pos-unit">마디</span>
+        <button type="button" class="icon-btn" id="amCntUp" aria-label="마디 수 늘리기">+</button>
+      </div>
+      <div class="am-quick" id="amQuick" role="group" aria-label="자주 쓰는 마디 수">
+        <button type="button" class="am-q on" data-n="1">1</button>
+        <button type="button" class="am-q" data-n="2">2</button>
+        <button type="button" class="am-q" data-n="3">3</button>
+        <button type="button" class="am-q" data-n="4">4</button>
+        <button type="button" class="am-q" data-n="8">8</button>
+      </div>
+    </div>
+
+    <div class="am-summary" id="amSummary" role="status" aria-live="polite"></div>
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="amAdd" type="button">추가</button>
+      <button class="btn ghost" id="amCancel" type="button">그만두기</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="helpModal" hidden>
   <div class="modal-bg" data-close="1"></div>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -939,7 +1049,7 @@
       <div class="rule-row" style="color:var(--ink-3)">색이 있는 곳에서만 악기를 연주하고, 색이 없는 가사는 그냥 노래합니다.</div>
       <div class="rule-row" style="color:var(--ink-3)">중간 박자에 다른 화음이 오면 그 색으로 칠해집니다(예: 4도 → 1도).</div>
     </div>
-    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요. 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다.</p>
+    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요. 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. 마디를 <b>원하는 자리에 원하는 만큼</b> 넣으려면 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>나 악보 아래 <b>＋ 마디 추가</b>를 누르세요. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다.</p>
     <p class="hint">‘멜로디 포함’을 켜면 악보에 음이름이 보이고, 들을 때 멜로디도 함께 연주됩니다. 이 악보는 이 브라우저에 자동 저장되고, JSON으로 내려받아 다른 기기로 옮길 수 있어요. 사진은 저장되지 않습니다.</p>
   </div>
 </div>
@@ -981,6 +1091,14 @@
       midPrefixText:'', midText:'', midChord:'',
       restText:'', melody:''
     };
+  }
+
+  /* 새로 넣는 마디는 가사도 화성도 비워 둡니다(‘화음 없음’ = 색 없음).
+     사용자가 그 마디를 눌러 가사를 적고 1도·4도·5도 색을 고르면 됩니다. */
+  function BLANK_MEASURE(){
+    var m = NEW_MEASURE();
+    m.beat1Chord = 'NONE';
+    return m;
   }
 
   /* ------------------------------------------------------------
@@ -1045,7 +1163,7 @@
       menu:'빈 악보 (직접 입력)',
       title:'나의 색깔 악보',
       key:'C', bpm:90, beats:4, midBeat:3,
-      measures:[ NEW_MEASURE() ]
+      measures:[ BLANK_MEASURE() ]
     }
   ];
 
@@ -1464,6 +1582,14 @@
            '</div>';
   }
 
+  /* 바로 수정 모드에서 마디 사이에 바로 끼워 넣기 */
+  function measureInsertHTML(i){
+    return '<div class="ms-edit inserts"><div class="ms-inserts" role="group" aria-label="이 자리에 마디 넣기">' +
+             '<button type="button" data-ins="before" aria-label="' + (i + 1) + '마디 앞에 마디 추가">＋ 앞에</button>' +
+             '<button type="button" data-ins="after" aria-label="' + (i + 1) + '마디 뒤에 마디 추가">＋ 뒤에</button>' +
+           '</div></div>';
+  }
+
   /* ============================================================
      RENDER — final sheet
      ============================================================ */
@@ -1531,6 +1657,7 @@
         '<div class="ms-top"><span class="ms-no">' + (i + 1) + '</span>' +
           '<div class="ms-chords">' + chordsHTML(m, info, midInfo) + '</div></div>' +
         chordEditHTML(m) +
+        measureInsertHTML(i) +
         '<div class="beats">' + beatsHtml + '</div>' +
         '<div class="ms-lyric">' + lyr + '</div>' +
         lyricEditHTML(m, i) +
@@ -1675,6 +1802,10 @@
             midChordSelectHTML(m.midChord) + '</label>' +
           '<label class="in-wrap full in-melody"><span>멜로디 (음이름 · 예: C4 D4 E4 / 도 도 솔 솔)</span>' +
             '<input class="in-melodyinput" type="text" maxlength="80" value="' + esc(m.melody) + '" placeholder="C4 C4 G4 G4" autocomplete="off" spellcheck="false"></label>' +
+        '</div>' +
+        '<div class="m-insert">' +
+          '<button type="button" class="btn sm ghost" data-act="ins-before" aria-label="' + (i + 1) + '마디 앞에 마디 추가">＋ 이 앞에</button>' +
+          '<button type="button" class="btn sm ghost" data-act="ins-after" aria-label="' + (i + 1) + '마디 뒤에 마디 추가">＋ 이 뒤에</button>' +
         '</div>' +
         '<div class="m-note-src' + (note.bad ? ' bad' : '') + '">' + esc(note.text) + '</div>' +
         '<div class="m-preview">' + previewHTML(m, info) + '</div>';
@@ -1837,6 +1968,9 @@
 
     if (act === 'del'){
       state.measures.splice(i, 1);
+    } else if (act === 'ins-before' || act === 'ins-after'){
+      openAddMeasure({ mode:(act === 'ins-before' ? 'before' : 'after'), index: i + 1, count: 1, focusNew: true });
+      return;
     } else if (act === 'up'){
       if (i === 0) return;
       var a = state.measures[i - 1];
@@ -1856,7 +1990,7 @@
   });
 
   function addMeasure(){
-    state.measures.push(NEW_MEASURE());
+    state.measures.push(BLANK_MEASURE());
     renderMeasureList();
     renderSheet();
     save();
@@ -1870,6 +2004,191 @@
   }
   $('addMeasure').addEventListener('click', addMeasure);
   $('addMeasureTop').addEventListener('click', addMeasure);
+
+  /* ============================================================
+     ADD MEASURES — 원하는 위치에 원하는 만큼 빈 마디 넣기
+     ============================================================ */
+  var ADD_MAX = 200;   /* 한 악보에 둘 수 있는 마디 수 상한 */
+  var addState = { mode:'end', index:1, count:1, focusNew:true };
+
+  function totalMeasures(){ return state.measures.length; }
+
+  /* at(0~개수) 위치에 빈 마디 n개를 끼워 넣고, 실제로 넣은 개수를 돌려줍니다 */
+  function insertMeasures(at, n){
+    var total = totalMeasures();
+    n = clamp(parseInt(n, 10) || 1, 1, 99);
+    at = clamp(parseInt(at, 10) || 0, 0, total);
+    n = Math.min(n, Math.max(0, ADD_MAX - total));
+    if (n < 1) return 0;
+    var fresh = [];
+    for (var k = 0; k < n; k++) fresh.push(BLANK_MEASURE());
+    Array.prototype.splice.apply(state.measures, [at, 0].concat(fresh));
+    return n;
+  }
+
+  function amInsertAt(){
+    var total = totalMeasures();
+    if (addState.mode === 'start') return 0;
+    if (addState.mode === 'end') return total;
+    var idx = clamp(parseInt(addState.index, 10) || 1, 1, Math.max(1, total));
+    return (addState.mode === 'before') ? idx - 1 : idx;
+  }
+
+  function amWhereLabel(){
+    var total = totalMeasures();
+    if (addState.mode === 'start') return '맨 앞';
+    if (addState.mode === 'end') return '맨 뒤';
+    var idx = clamp(parseInt(addState.index, 10) || 1, 1, Math.max(1, total));
+    return idx + '번 마디 ' + (addState.mode === 'before' ? '앞' : '뒤');
+  }
+
+  function amSync(resetInputs){
+    var total = totalMeasures();
+    if (total === 0 && (addState.mode === 'before' || addState.mode === 'after')) addState.mode = 'end';
+    addState.count = clamp(parseInt(addState.count, 10) || 1, 1, 99);
+    addState.index = clamp(parseInt(addState.index, 10) || 1, 1, Math.max(1, total));
+
+    var modes = $('amModes').querySelectorAll('button');
+    for (var i = 0; i < modes.length; i++){
+      var mode = modes[i].getAttribute('data-mode');
+      var on = (mode === addState.mode);
+      modes[i].classList.toggle('active', on);
+      modes[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+      modes[i].disabled = (total === 0 && (mode === 'before' || mode === 'after'));
+    }
+    $('amWhereNow').textContent = amWhereLabel();
+
+    var mid = (addState.mode === 'before' || addState.mode === 'after');
+    $('amPosRow').classList.toggle('off', !mid);
+    $('amPosRow').setAttribute('aria-hidden', mid ? 'false' : 'true');
+    if (resetInputs || document.activeElement !== $('amIdx')) $('amIdx').value = String(addState.index);
+    if (resetInputs || document.activeElement !== $('amCnt')) $('amCnt').value = String(addState.count);
+    $('amCountNow').textContent = addState.count + '마디';
+
+    var qs = $('amQuick').querySelectorAll('.am-q');
+    for (var j = 0; j < qs.length; j++){
+      var qOn = (parseInt(qs[j].getAttribute('data-n'), 10) === addState.count);
+      qs[j].classList.toggle('on', qOn);
+      qs[j].setAttribute('aria-pressed', qOn ? 'true' : 'false');
+    }
+
+    var at = amInsertAt();
+    var n = addState.count;
+    var first = at + 1, last = at + n;
+    var span = (n === 1) ? (first + '번') : (first + '~' + last + '번');
+    $('amSummary').innerHTML = '<b>' + esc(amWhereLabel()) + '</b>에 ' + n + '마디를 넣어요 — 새 마디는 <b>' +
+      span + '</b>, 전체 <b>' + (total + n) + '마디</b>가 됩니다. 새 마디는 가사·화성 없이 비어 있습니다.';
+  }
+
+  function openAddMeasure(opts){
+    opts = opts || {};
+    if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
+    closeInlineChord();
+    addState.mode = opts.mode || 'end';
+    addState.index = opts.index || 1;
+    addState.count = clamp(parseInt(opts.count, 10) || 1, 1, 99);
+    addState.focusNew = (opts.focusNew !== false);
+    amSync(true);
+    $('addMeasureModal').hidden = false;
+  }
+
+  function closeAddMeasure(){
+    if (!$('addMeasureModal').hidden) $('addMeasureModal').hidden = true;
+  }
+
+  function focusNewMeasures(at){
+    if (!addState.focusNew) return;
+    if (!(at >= 0 && at < totalMeasures())) return;
+    if ($('view-score').classList.contains('active')){
+      var card = msCard(at);
+      if (card && card.scrollIntoView) card.scrollIntoView({ block:'center', behavior:'smooth' });
+      openInlineLyric(at);
+    } else {
+      focusMeasureCard(at);
+    }
+  }
+
+  function addMeasuresNow(){
+    if (totalMeasures() >= ADD_MAX){
+      toast('한 악보에는 ' + ADD_MAX + '마디까지 넣을 수 있어요');
+      return;
+    }
+    var at = amInsertAt();
+    var want = clamp(parseInt(addState.count, 10) || 1, 1, 99);
+    var where = amWhereLabel();
+    var prev = snapshot();
+    var n = insertMeasures(at, want);
+    if (!n) return;
+    closeAddMeasure();
+    renderMeasureList();
+    renderSheet();
+    save();
+    focusNewMeasures(at);
+    var first = at + 1, last = at + n;
+    toast('‘' + where + '’에 ' + n + '마디를 넣었어요 — 새 마디는 ' +
+          (n === 1 ? first + '번' : first + '~' + last + '번') + ' · 전체 ' + totalMeasures() + '마디',
+          '되돌리기', function(){ restore(prev); });
+  }
+
+  $('addMeasurePick').addEventListener('click', function(){
+    openAddMeasure({ mode:'end', index: totalMeasures(), count:1 });
+  });
+
+  $('amModes').addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('button[data-mode]') : null;
+    if (!btn || btn.disabled) return;
+    addState.mode = btn.getAttribute('data-mode');
+    amSync(false);
+  });
+
+  $('amIdx').addEventListener('input', function(){ addState.index = this.value; amSync(false); });
+  $('amIdx').addEventListener('change', function(){ amSync(true); });
+  $('amIdxDown').addEventListener('click', function(){
+    addState.index = clamp((parseInt(addState.index, 10) || 1) - 1, 1, Math.max(1, totalMeasures()));
+    amSync(true);
+  });
+  $('amIdxUp').addEventListener('click', function(){
+    addState.index = clamp((parseInt(addState.index, 10) || 1) + 1, 1, Math.max(1, totalMeasures()));
+    amSync(true);
+  });
+
+  $('amCnt').addEventListener('input', function(){ addState.count = this.value; amSync(false); });
+  $('amCnt').addEventListener('change', function(){ amSync(true); });
+  $('amCntDown').addEventListener('click', function(){
+    addState.count = clamp((parseInt(addState.count, 10) || 1) - 1, 1, 99);
+    amSync(true);
+  });
+  $('amCntUp').addEventListener('click', function(){
+    addState.count = clamp((parseInt(addState.count, 10) || 1) + 1, 1, 99);
+    amSync(true);
+  });
+
+  $('amQuick').addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.am-q') : null;
+    if (!btn) return;
+    addState.count = parseInt(btn.getAttribute('data-n'), 10) || 1;
+    amSync(true);
+  });
+
+  $('amAdd').addEventListener('click', addMeasuresNow);
+  $('amCancel').addEventListener('click', closeAddMeasure);
+  $('amClose').addEventListener('click', closeAddMeasure);
+  $('addMeasureModal').addEventListener('click', function(e){
+    if (e.target && e.target.getAttribute && e.target.getAttribute('data-am-close')) closeAddMeasure();
+  });
+
+  $('mmInsBefore').addEventListener('click', function(){
+    if (mmIndex < 0) return;
+    var i = mmIndex;
+    closeMeasureEditor();
+    openAddMeasure({ mode:'before', index: i + 1, count:1, focusNew:true });
+  });
+  $('mmInsAfter').addEventListener('click', function(){
+    if (mmIndex < 0) return;
+    var i = mmIndex;
+    closeMeasureEditor();
+    openAddMeasure({ mode:'after', index: i + 1, count:1, focusNew:true });
+  });
 
   $('titleInput').addEventListener('input', function(){
     state.title = this.value;
@@ -2655,7 +2974,7 @@
   }
 
   var TIP_TAP = '마디를 누르면 <b>가사와 화성</b>을 바로 수정할 수 있어요 — 화성이 틀렸다면 그 자리에서 고치세요';
-  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
+  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>로 원하는 자리에 마디를 넣을 수 있어요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
   function updateSheetTip(){
     var tip = $('sheetTip');
     if (!tip) return;
@@ -2767,13 +3086,7 @@
   $('inlineEditBtn').addEventListener('click', function(){ setInlineAll(!inline.all); });
 
   $('inlineAddMeasure').addEventListener('click', function(){
-    state.measures.push(NEW_MEASURE());
-    inline.all = true;
-    $('sheet').classList.add('edit-all');
-    renderMeasureList();
-    renderSheet();
-    save();
-    openInlineLyric(state.measures.length - 1);
+    openAddMeasure({ mode:'end', index: totalMeasures(), count:1, focusNew:true });
   });
 
   $('measureGrid').addEventListener('input', function(e){
@@ -2821,6 +3134,7 @@
       return;
     }
     if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.target.closest && e.target.closest('button,input,textarea,.ms-edit')) return;
     var cell = e.target.closest ? e.target.closest('.ms') : null;
     if (!cell) return;
     e.preventDefault();
@@ -2830,6 +3144,13 @@
   $('measureGrid').addEventListener('click', function(e){
     var t = e.target;
     if (!t || !t.closest) return;
+
+    var ins = t.closest('[data-ins]');
+    if (ins){
+      var insCell = t.closest('.ms');
+      if (insCell) openAddMeasure({ mode: ins.getAttribute('data-ins'), index: msIndex(insCell) + 1, count: 1, focusNew: true });
+      return;
+    }
 
     var pill = t.closest('.dpill');
     if (pill){ onPill(pill); return; }
@@ -3044,7 +3365,7 @@
     if (e.target && e.target.getAttribute && e.target.getAttribute('data-close')) openHelp(false);
   });
   document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape'){ openHelp(false); closeMeasureEditor(); closeInlineChord(); }
+    if (e.key === 'Escape'){ openHelp(false); closeMeasureEditor(); closeInlineChord(); closeAddMeasure(); }
   });
 
   /* ============================================================
@@ -3097,6 +3418,11 @@
     focusMeasureCard: focusMeasureCard,
     setInlineAll: setInlineAll,
     isInlineAll: function(){ return !!inline.all; },
+    openAddMeasure: openAddMeasure,
+    closeAddMeasure: closeAddMeasure,
+    addMeasures: addMeasuresNow,
+    insertMeasures: function(at, n){ var k = insertMeasures(at, n); renderMeasureList(); renderSheet(); save(); return k; },
+    blankMeasure: BLANK_MEASURE,
     openInlineLyric: openInlineLyric,
     commitInlineLyric: commitInlineLyric,
     openInlineChord: openInlineChord,
@@ -3111,7 +3437,7 @@
     splitRest: splitRest,
     prompt: AI_PROMPT,
     schema: AI_SCHEMA,
-    version: '3.0.0'
+    version: '3.1.0'
   };
 
   if (document.readyState === 'loading'){
