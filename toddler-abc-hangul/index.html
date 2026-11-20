@@ -1958,10 +1958,13 @@ Rec.syncUI = function(){
   btn.setAttribute('aria-label', rec ? '녹음 끝내기'
     : (has ? '내 목소리 다시 녹음하기' : '내 목소리로 녹음하기'));
   if(el.recBtnLabel){
-    el.recBtnLabel.textContent = rec ? ('녹음 끝 ' + recRemainSec())
-      : (has ? '다시 녹음' : '목소리 녹음');
+    const next = rec ? ('녹음 끝 ' + recRemainSec()) : (has ? '다시 녹음' : '목소리 녹음');
+    if(el.recBtnLabel.textContent !== next) el.recBtnLabel.textContent = next;   // 낭독기 소음 줄이기
   }
-  if(el.recIco) el.recIco.textContent = rec ? '⏹️' : '🎙️';
+  if(el.recIco){
+    const ico = rec ? '⏹️' : '🎙️';
+    if(el.recIco.textContent !== ico) el.recIco.textContent = ico;
+  }
   if(el.recChip) el.recChip.hidden = !has || rec;
 };
 
