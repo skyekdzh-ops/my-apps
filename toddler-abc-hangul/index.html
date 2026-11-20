@@ -1313,14 +1313,19 @@ function saveStore(){
    (1.6대의 새된 소리·느린 0.82의 또박또박한 낭독이 아니라, 씩씩하고 발랄한 톤)
    발음을 다 읽고 나면 짧게 "뿌우~" 하고 코끼리 인사를 한다. */
 const VOICE_CHAR = { pitch:1.35, rate:0.94 };
-const VoiceLog = { last:null, chimes:0, chimeReq:0, ducks:0, spoken:[] };
+const VoiceLog = { last:null, chimes:0, chimeReq:0, ducks:0, spoken:[],
+                   attempts:0, retries:0, dropped:0, cancellations:0, errors:[] };
 let voices = [];
 function refreshVoices(){
-  try{ voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }catch(e){ voices=[]; }
+  try{ voices = window.speechSynthesis ? (window.speechSynthesis.getVoices() || []) : []; }catch(e){ voices=[]; }
+  return voices;
 }
 if(window.speechSynthesis){
   refreshVoices();
-  window.speechSynthesis.onvoiceschanged = refreshVoices;
+  try{ window.speechSynthesis.onvoiceschanged = refreshVoices; }catch(e){}
+  /* 아이폰 Safari는 첫 제스처 전에는 getVoices()가 빈 배열이다.
+     목록이 늦게 채워지는 경우가 있어 한 번 더 받아 둔다(실패해도 무해). */
+  setTimeout(refreshVoices, 1200);
 }
 function pickVoice(lang){
   if(!voices.length) refreshVoices();
@@ -1333,10 +1338,14 @@ function pickVoice(lang){
   if(!pool.length) return null;
   // 높은 여성/아이 음성을 강제하지 않는다 — 또렷하고 자연스러운 기본 음성을
   // 고르고, 남자아이 톤은 pitch/rate로 만든다.
-  const words = String(v.name||'').toLowerCase().split(/[^a-z]+/).filter(Boolean);
-  const has = (list)=> words.some(w=> list.indexOf(w)>=0);
+  // ※ 예전에는 이 줄이 String(v.name…) 로 v(없는 변수)를 썼다. 그래서 기기에
+  //    음성이 하나라도 있으면(모든 실제 아이폰) ReferenceError가 나고,
+  //    speak()의 try/catch가 이를 삼켜 '소리 듣기 = 무음'이 됐다. 이제는
+  //    점수 계산 안에서 그 음성의 이름을 직접 본다(음성마다 다르게 채점).
   const score = (v)=>{
     const n = String(v.name||'').toLowerCase();
+    const words = n.split(/[^a-z]+/).filter(Boolean);
+    const has = (list)=> words.some(w=> list.indexOf(w)>=0);
     let s = 0;
     // 차분한 중성·남성 음성이 있으면 먼저 (여기에 pitch 1.35를 얹으면 남자아이 톤)
     if(has(['male','man','boy','alex','aaron','daniel','fred','guy','david','james','mark','tom','oliver','rishi'])) s += 5;
@@ -1350,35 +1359,158 @@ function pickVoice(lang){
     if(/low quality/.test(n)) s -= 4;
     return s;
   };
-  return pool.slice().sort((a,b)=>score(b)-score(a))[0] || pool[0];
+  const best = pool.slice().sort((a,b)=>score(b)-score(a))[0] || pool[0];
+  /* 고른 음성은 반드시 목표 언어와 일치해야 한다. iOS에서 다른 언어 음성을
+     지정하면 발화가 조용히 실패한다. */
+  if(!best || !best.lang) return null;
+  const bl = best.lang.replace('_','-').toLowerCase();
+  if(bl !== want && bl.indexOf(short) !== 0) return null;
+  return best;
 }
-function speak(text, lang, opts){
-  if(!window.speechSynthesis || !text) return false;
-  opts = opts || {};
-  try{
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
-    const v = pickVoice(lang);
+
+/* ============================================================
+   6-a. iPhone(Safari/WebKit)에서 소리가 안 나던 원인과 처리
+   ------------------------------------------------------------
+   이 앱은 소리 듣기마다 speechSynthesis.cancel() → speak() 를 같은
+   동기 턴에 연달아 호출하고 있었다. 그런데 WebKit은 cancel()의 콜백을
+   비동기로 처리하기 때문에(bug 191745), 방금 넣은 새 발화까지 함께
+   지워 버린다. 게다가 iOS 13.4.1 이후는 cancel() 뒤에 onend/onerror가
+   아예 오지 않아(bug 211776) 앱은 '말했는데 조용한' 상태가 된다.
+   → 그래서 지금은
+     ① 말하는 중이 아닐 때는 cancel()을 아예 부르지 않고 바로 speak(),
+        말하는 중일 때만 cancel() 후 한 턴(0.12초) 미뤄 speak(),
+     ② 발화가 'start' 신호 없이 사라지면 워치독이 시스템 기본 음성으로
+        한 번 더 말하고,
+     ③ 음성/언어 오류(synthesis-failed 등)면 u.voice=null로 재시도하며,
+     ④ speak 전에 paused 상태를 풀고 rate/pitch를 허용 범위로 자른다.
+   ※ 첫 발화는 반드시 사용자 제스처(클릭) 안에서 동기적으로 불러야 iOS가
+     소리를 허용하므로, say()/speakCurrent()는 await·setTimeout 없이 부른다.
+   ============================================================ */
+const VOICE_GUARD = { seq:0, started:false, attempts:0, lastError:'', lastStartAt:0, lastSpeakAt:0, suppressUntil:0 };
+
+function clampNum(v, lo, hi, dflt){
+  v = Number(v);
+  if(!isFinite(v)) return dflt;
+  return Math.min(hi, Math.max(lo, v));
+}
+function isVoiceFailure(code){
+  /* synthesis-failed/voice|language-unavailable = 지정 음성 문제
+     canceled/interrupted = iOS가 발화를 삼켰을 때 오는 코드(취소도 같은 코드를 쓴다)
+     → 호출부에서 '내가 취소한 것이 아닐 때'만 재시도한다. */
+  return /synthesis-failed|voice-unavailable|language-unavailable|not-allowed|audio-busy|audio-hardware|network|canceled|interrupted/i.test(String(code||''));
+}
+/* 앱이 스스로 말을 끊을 때(노래 정지·백그라운드 이동) — 재시도 금지 */
+function cancelSpeech(){
+  VOICE_GUARD.seq++;                 // 진행 중인 발화의 워치독·재시도를 모두 무효화
+  VOICE_GUARD.suppressUntil = Date.now() + 600;
+  try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){}
+}
+function makeVoiceUtterance(text, lang, opts, useVoice){
+  const u = new SpeechSynthesisUtterance(String(text));
+  u.lang = (lang || 'ko-KR');
+  if(useVoice){
+    const v = pickVoice(u.lang);
     if(v) u.voice = v;
-    u.rate = opts.rate || VOICE_CHAR.rate;
-    u.pitch = opts.pitch || VOICE_CHAR.pitch;
-    u.volume = (opts.volume!=null) ? opts.volume : 1;
-    VoiceLog.last = { text:String(text), lang:lang, rate:u.rate, pitch:u.pitch,
-                      voice:v? v.name : '', at:Date.now() };
+  }else{
+    u.voice = null;   // 기기 기본 음성(iOS: 설정 > 손쉬운 사용 > 콘텐츠 말하기)
+  }
+  u.rate   = clampNum(opts.rate  != null ? opts.rate  : VOICE_CHAR.rate,  0.5, 2, VOICE_CHAR.rate);
+  u.pitch  = clampNum(opts.pitch != null ? opts.pitch : VOICE_CHAR.pitch,  0.5, 2, VOICE_CHAR.pitch);
+  u.volume = clampNum(opts.volume != null ? opts.volume : 1, 0, 1, 1);
+  return u;
+}
+
+function speak(text, lang, opts){
+  const S = window.speechSynthesis;
+  if(!S || !text) return false;
+  opts = opts || {};
+  text = String(text);
+  VOICE_GUARD.seq++;
+  const mySeq = VOICE_GUARD.seq;
+  VOICE_GUARD.started = false;
+  VOICE_GUARD.attempts = 0;
+  VOICE_GUARD.lastError = '';
+  VOICE_GUARD.lastSpeakAt = Date.now();
+  try{ if(S.paused) S.resume(); }catch(e){}      // 발화 후 paused로 굳는 iOS 상태 풀기
+  if(!voices.length) refreshVoices();            // iOS: 첫 제스처에서야 목록이 채워진다
+
+  let chimed = false, chimeTries = 0;
+  const fireChime = ()=>{
+    if(chimed) return;
+    /* iOS에서는 말소리와 Web Audio가 겹치면 말소리가 끊긴다.
+       발화가 아직 진행 중이면 끝난 뒤로 조금씩 미룬다. */
+    if(opts.chime && mySeq===VOICE_GUARD.seq && (S.speaking || S.pending) && chimeTries < 4){
+      chimeTries++;
+      setTimeout(fireChime, 350);
+      return;
+    }
+    chimed = true;
+    if(opts.chime && mySeq===VOICE_GUARD.seq) elephantChime();
+  };
+  if(opts.chime){
+    VoiceLog.chimeReq++;
+    setTimeout(fireChime, 1100);   // 발음이 끝난 뒤 "뿌우~" (이벤트가 없어도 한 번은)
+  }
+
+  const speakOnce = (useVoice)=>{
+    if(mySeq !== VOICE_GUARD.seq) return false;
+    VOICE_GUARD.attempts++;
+    VoiceLog.attempts++;
+    let settled = false;
+    const u = makeVoiceUtterance(text, lang, opts, useVoice);
+    VoiceLog.last = { text:text, lang:u.lang, rate:u.rate, pitch:u.pitch, volume:u.volume,
+                      voice:(u.voice ? u.voice.name : ''), voiceURI:(u.voice ? (u.voice.voiceURI||'') : ''),
+                      attempt:VOICE_GUARD.attempts, at:Date.now() };
     VoiceLog.spoken.push(VoiceLog.last);
     if(VoiceLog.spoken.length > 40) VoiceLog.spoken.shift();
-    let chimed = false;
-    const fireChime = ()=>{ if(chimed) return; chimed = true; if(opts.chime) elephantChime(); };
-    if(opts.chime){
-      VoiceLog.chimeReq++;
-      setTimeout(fireChime, 1100);   // 발음이 끝난 뒤 "뿌우~" (이벤트가 없어도 한 번은)
+    u.onstart = ()=>{ VOICE_GUARD.started = true; VOICE_GUARD.lastStartAt = Date.now(); };
+    u.onend   = ()=>{ settled = true; fireChime(); };
+    u.onerror = (ev)=>{
+      settled = true;
+      const code = (ev && ev.error) || 'error';
+      VOICE_GUARD.lastError = code;
+      VoiceLog.errors.push({ text:text, error:code, voice:(u.voice?u.voice.name:''), at:Date.now() });
+      if(VoiceLog.errors.length > 20) VoiceLog.errors.shift();
+      // 지정 음성/언어 때문에 실패했으면 시스템 기본 음성으로 한 번 더
+      if(mySeq === VOICE_GUARD.seq && useVoice && isVoiceFailure(code) && VOICE_GUARD.attempts < 2
+         && Date.now() > VOICE_GUARD.suppressUntil){
+        VoiceLog.retries++;
+        speakOnce(false);
+        return;
+      }
+      fireChime();
+    };
+    try{ S.speak(u); }
+    catch(e){
+      VOICE_GUARD.lastError = 'throw:' + String((e && e.message) || e);
+      VoiceLog.errors.push({ text:text, error:VOICE_GUARD.lastError, voice:'', at:Date.now() });
+      return false;
     }
-    u.onend = fireChime;
-    u.onerror = fireChime;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+    // 워치독 — start도 end도 없이 큐가 비었다면 iOS가 발화를 삼킨 것이다.
+    setTimeout(()=>{
+      if(mySeq !== VOICE_GUARD.seq) return;
+      if(VOICE_GUARD.started || settled) return;
+      if(S.speaking || S.pending) return;
+      if(VOICE_GUARD.attempts >= 2) return;
+      if(Date.now() <= VOICE_GUARD.suppressUntil) return;
+      VOICE_GUARD.dropped++;
+      VoiceLog.dropped++;
+      try{ if(S.paused) S.resume(); }catch(e){}
+      speakOnce(false);            // 시스템 기본 음성으로 한 번 더
+    }, 700);
     return true;
-  }catch(e){ return false; }
+  };
+
+  if(S.speaking || S.pending){
+    // 말하는 중 → cancel()은 필요하지만, 같은 턴의 speak()는 WebKit이 함께 지운다.
+    // 이미 소리가 난 상태라 제스처 잠금은 풀려 있으므로 한 턴 미뤄도 안전하다.
+    try{ S.cancel(); }catch(e){}
+    VoiceLog.cancellations++;
+    setTimeout(()=>{ if(mySeq === VOICE_GUARD.seq) speakOnce(true); }, 120);
+    return true;
+  }
+  // 아무것도 말하고 있지 않으면 cancel() 없이 제스처 안에서 곧바로 speak()
+  return speakOnce(true);
 }
 /* 짧고 귀여운 "뿌우~" 코끼리 인사 (Web Audio) */
 function elephantChime(level){
@@ -2033,7 +2165,7 @@ function stopSong(){
     masterGain.gain.setValueAtTime(Math.max(masterGain.gain.value, 0.0001), now);
     masterGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
   }catch(e){}
-  try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){}
+  try{ if(window.speechSynthesis) { if(window.speechSynthesis.speaking || window.speechSynthesis.pending) cancelSpeech(); } }catch(e){}
   state.songPlaying = false;
 }
 function unlockAudio(){
@@ -2788,7 +2920,7 @@ document.addEventListener('visibilitychange', ()=>{
   if(document.hidden){
     stopRecognition();
     stopSong();
-    if(window.speechSynthesis) try{ window.speechSynthesis.cancel(); }catch(e){}
+    cancelSpeech();
   }
 });
 window.addEventListener('beforeunload', ()=>{ stopSong(); });
@@ -2823,7 +2955,12 @@ ToddlerApp.voice = {
   chimeReq: ()=> VoiceLog.chimeReq,
   ducks: ()=> VoiceLog.ducks,
   pick: pickVoice,
-  chime: (l)=> elephantChime(l)
+  chime: (l)=> elephantChime(l),
+  diag: ()=>({ attempts:VoiceLog.attempts, retries:VoiceLog.retries, dropped:VoiceLog.dropped,
+               cancellations:VoiceLog.cancellations, errors:VoiceLog.errors.slice(),
+               guard:{ seq:VOICE_GUARD.seq, started:VOICE_GUARD.started,
+                       lastError:VOICE_GUARD.lastError, lastStartAt:VOICE_GUARD.lastStartAt },
+               voices: voices.map(v=>({name:v.name, lang:v.lang, local:!!v.localService})) })
 };
 ToddlerApp.song = {
   lines: SONG.lines.map(l=> l.text),
