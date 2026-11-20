@@ -360,6 +360,34 @@
   .addbar-go.del:active{background:#FDF1EF}
   .addbar-go[disabled]{opacity:.45;pointer-events:none}
   .addbar-del-note{font-size:10.5px;font-weight:800;color:#B3261E;letter-spacing:-.01em}
+
+  /* ---------- 선택 삭제 (마디 체크박스) ---------- */
+  .addbar-pick{
+    display:flex;flex-direction:column;gap:6px;
+    background:#FFF8F6;border:1px solid #F0D9D4;border-radius:11px;padding:7px 8px 8px;
+  }
+  .addbar-pick-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .addbar-pick-sum{
+    flex:1 1 110px;min-width:0;font-size:11px;font-weight:700;color:#8A5B52;
+    line-height:1.45;letter-spacing:-.01em;
+  }
+  .addbar-pick-sum b{color:#B3261E;font-weight:800}
+  .addbar-pick-clear{
+    flex:0 0 auto;min-height:30px;padding:4px 9px;border-radius:9px;border:1px solid #E7CFC9;
+    background:#fff;color:#8A5B52;font-size:11px;font-weight:800;letter-spacing:-.01em;cursor:pointer;
+  }
+  .addbar-pick-clear:active{background:#FBEFEC}
+  .addbar-pick-clear[disabled]{opacity:.45;pointer-events:none}
+  .addbar-pick-go{
+    width:100%;margin-left:0;min-height:38px;background:#B3261E;border-color:#B3261E;color:#FFF7E9;
+    font-size:12.5px;
+  }
+  .addbar-pick-go:active{background:#9A1F18}
+  .addbar-or{
+    display:flex;align-items:center;gap:7px;margin:2px 0 0;
+    font-size:10px;font-weight:800;color:var(--ink-3);letter-spacing:-.01em;
+  }
+  .addbar-or::before,.addbar-or::after{content:"";flex:1 1 auto;height:1px;background:var(--line-2)}
   @media (max-width:430px){
     .addbar{padding:8px 10px 9px}
     .addbar-seg button{padding:6px 6px;font-size:11.5px}
@@ -376,6 +404,24 @@
     color:#C6B9A2;line-height:1.15;cursor:pointer;
   }
   .ms-more:hover,.ms-more:focus-visible{color:var(--ink-2);background:#F7F1E6;outline:none}
+
+  /* 선택 삭제 모드 — 마디마다 체크박스 */
+  .ms-check{display:none}
+  .sheet.del-mode .ms-check{
+    display:flex;flex:1 1 100%;align-items:center;gap:6px;min-height:34px;
+    padding:4px 7px;margin:0 0 5px;border-radius:9px;
+    background:#FFF4F2;border:1px solid #F0D6D1;color:#B3261E;
+    font-size:11px;font-weight:800;letter-spacing:-.02em;line-height:1.1;
+    cursor:pointer;-webkit-user-select:none;user-select:none;
+  }
+  .ms-checkbox{
+    width:21px;height:21px;margin:0;flex:0 0 auto;cursor:pointer;
+    accent-color:#B3261E;-webkit-appearance:auto;appearance:auto;
+  }
+  .sheet.del-mode .ms{cursor:pointer;border-color:#E8D3CE;padding-bottom:12px}
+  .sheet.del-mode .ms.sel{background:#FFF7F5;border-color:#DE9A92;box-shadow:0 0 0 2.5px rgba(179,38,30,.16)}
+  .sheet.del-mode .ms.sel .ms-check{background:#FCE4E0;border-color:#DC9E96}
+  .sheet.del-mode .ms-more{display:none !important}
 
   /* ---------- inline editing right on the score ---------- */
   .ms-chord{
@@ -659,6 +705,67 @@
   .mm-insert{display:flex;gap:6px;margin-top:10px}
   .mm-insert .btn{flex:1 1 auto;min-height:36px;font-size:11.5px;letter-spacing:-.02em}
 
+  /* ---------- 피아노 건반으로 멜로디 입력 ---------- */
+  .pk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .pk-oct{display:flex;align-items:center;gap:3px}
+  .pk-oct-btn{
+    width:30px;min-height:32px;border-radius:9px;border:1px solid var(--line);background:#F7F1E6;
+    color:var(--ink-2);font-size:12px;font-weight:800;cursor:pointer;padding:0;
+  }
+  .pk-oct-btn:active{background:#EFE5D3}
+  .pk-oct-btn[disabled]{opacity:.4;pointer-events:none}
+  .pk-oct-lab{
+    min-width:66px;text-align:center;font-size:11px;font-weight:800;color:var(--ink-2);
+    font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+  }
+  .pk-board{
+    position:relative;display:flex;height:110px;margin-top:8px;padding:0 1px 1px;
+    background:#2A251F;border-radius:0 0 11px 11px;
+    -webkit-user-select:none;user-select:none;touch-action:manipulation;
+  }
+  .pk-w{
+    position:relative;flex:1 1 0;min-width:0;margin-right:1px;
+    border:0;border-radius:0 0 7px 7px;background:linear-gradient(#FFFDF8,#F1E8D9);color:#3A332B;
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1px;
+    padding:0 0 8px;cursor:pointer;box-shadow:inset 0 -3px 0 rgba(70,52,24,.10);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .pk-w:last-child{margin-right:0}
+  .pk-w:active,.pk-w.down{background:linear-gradient(#EFE2CB,#E3D4B8)}
+  .pk-sol{font-family:var(--serif);font-size:13.5px;font-weight:800;line-height:1}
+  .pk-nm{font-size:9px;font-weight:800;color:#8C7E68;letter-spacing:.03em;line-height:1}
+  .pk-b{
+    position:absolute;top:0;z-index:2;width:8.8%;height:57%;transform:translateX(-50%);
+    border:0;border-radius:0 0 5px 5px;background:linear-gradient(#3B342B,#211D19);
+    color:#FFF7E9;cursor:pointer;padding:0;box-shadow:0 2px 5px rgba(0,0,0,.32);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .pk-b:active,.pk-b.down{background:linear-gradient(#6E5D46,#4A3E30)}
+  .pk-tools{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+  .pk-tool{
+    flex:1 1 auto;min-width:74px;min-height:38px;padding:6px 5px;border-radius:10px;
+    border:1px solid var(--line);background:#fff;color:var(--ink-2);
+    font-size:11.5px;font-weight:800;letter-spacing:-.02em;cursor:pointer;white-space:nowrap;
+  }
+  .pk-tool:active{background:#F7F1E6}
+  .pk-now{
+    margin-top:8px;padding:7px 10px;border-radius:10px;background:#F5F1E8;
+    font-size:11.5px;font-weight:700;color:#7A6644;line-height:1.5;letter-spacing:-.01em;
+  }
+  .pk-now b{color:#5E4718}
+  .pk-now em{font-style:normal;color:var(--ink-3);font-weight:700}
+  .m-kbd{
+    flex:0 0 auto;min-height:26px;margin-left:auto;padding:2px 8px;border-radius:8px;
+    border:1px solid #E7D6B6;background:#FBF3E4;color:#7A6644;
+    font-size:10.5px;font-weight:800;letter-spacing:-.02em;cursor:pointer;
+  }
+  .m-kbd:active{background:#F5E9D2}
+  .in-mel-head{display:flex;align-items:center;gap:5px;min-width:0}
+  .in-mel-head > span{
+    font-size:10.5px;font-weight:700;color:var(--ink-3);letter-spacing:.01em;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+
   /* ---------- print ---------- */
   @media print{
     @page{size:A4;margin:12mm}
@@ -683,6 +790,10 @@
     .ms{break-inside:avoid;page-break-inside:avoid;box-shadow:none !important;transform:none !important}
     .ms.playing{box-shadow:none !important;transform:none !important}
     .sheet-foot{font-size:8pt !important;margin-top:7mm !important}
+    .sheet.del-mode .ms-check{display:none !important}
+    .sheet.del-mode .ms,
+    .sheet.del-mode .ms.sel{background:#fff !important;box-shadow:none !important;border-color:#D8D0C2 !important}
+    .ms-checkbox{display:none !important}
   }
 </style>
 </head>
@@ -769,6 +880,14 @@
           </div>
         </div>
         <div id="addBarDelPane" hidden>
+          <div class="addbar-pick">
+            <div class="addbar-pick-row">
+              <span class="addbar-pick-sum" id="addBarSelSum" role="status" aria-live="polite">지울 마디의 <b>체크박스</b>를 눌러 고르세요</span>
+              <button type="button" class="addbar-pick-clear" id="addBarSelClear" disabled>선택 해제</button>
+            </div>
+            <button type="button" class="btn addbar-go addbar-pick-go" id="addBarSelGo" disabled>🗑 선택한 마디 삭제</button>
+          </div>
+          <div class="addbar-or">또는 번호로 지우기</div>
           <div class="addbar-line">
             <span class="addbar-lab">어디</span>
             <div class="addbar-step">
@@ -1095,6 +1214,24 @@
         <input id="mmMelody" class="in-melodyinput" type="text" maxlength="80" placeholder="C4 C4 G4 G4" autocomplete="off" spellcheck="false"></label>
     </div>
 
+    <div class="mm-group" id="mmPianoGroup">
+      <div class="mm-group-head pk-head">
+        <span>🎹 건반을 눌러 멜로디 넣기</span>
+        <div class="pk-oct">
+          <button class="pk-oct-btn" id="pkOctDown" type="button" aria-label="한 옥타브 낮게">◀</button>
+          <span class="pk-oct-lab" id="pkOctLab">C4~B4</span>
+          <button class="pk-oct-btn" id="pkOctUp" type="button" aria-label="한 옥타브 높게">▶</button>
+        </div>
+      </div>
+      <div class="pk-board" id="pkBoard" role="group" aria-label="피아노 건반"></div>
+      <div class="pk-tools">
+        <button class="pk-tool" id="pkBack" type="button">← 한 음 지우기</button>
+        <button class="pk-tool" id="pkRest" type="button">쉼표</button>
+        <button class="pk-tool" id="pkClear" type="button">전체 지우기</button>
+      </div>
+      <div class="pk-now" id="pkNow">건반을 눌러 멜로디를 넣어 보세요</div>
+    </div>
+
     <div class="m-note-src" id="mmNoteSrc"></div>
     <div class="m-preview" id="mmPreview"></div>
 
@@ -1184,7 +1321,7 @@
       <div class="rule-row" style="color:var(--ink-3)">색이 있는 곳에서만 악기를 연주하고, 색이 없는 가사는 그냥 노래합니다.</div>
       <div class="rule-row" style="color:var(--ink-3)">중간 박자에 다른 화음이 오면 그 색으로 칠해집니다(예: 4도 → 1도).</div>
     </div>
-    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요. 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭에서 <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다.</p>
+    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요(상세 창의 <b>🎹 건반</b>을 터치하면 피아노 건반으로 멜로디를 넣을 수 있어요). 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭을 열어 악보 마디마다 나타나는 <b>체크박스</b>로 원하는 마디를 골라(연속되지 않아도 됩니다) <b>🗑 선택한 N마디 삭제</b>를 누르거나, <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다.</p>
     <p class="hint">‘멜로디 포함’을 켜면 악보에 음이름이 보이고, 들을 때 멜로디도 함께 연주됩니다. 이 악보는 이 브라우저에 자동 저장되고, JSON으로 내려받아 다른 기기로 옮길 수 있어요. 사진은 저장되지 않습니다.</p>
   </div>
 </div>
@@ -1737,6 +1874,7 @@
     $('sheetTitle').textContent = state.title || '제목 없는 악보';
     $('sheetMeta').textContent = metaText();
     $('sheet').classList.toggle('edit-all', !!inline.all);
+    $('sheet').classList.toggle('del-mode', !!delSel.on);
     $('inlineEditBtn').classList.toggle('on', !!inline.all);
     $('inlineEditBtn').setAttribute('aria-pressed', inline.all ? 'true' : 'false');
 
@@ -1765,17 +1903,22 @@
       var info = chordInfo(m.beat1Chord);
       var midInfo = chordInfo(midChordId(m));
       var el = document.createElement('div');
+      var picked = !!(delSel.on && delSel.sel[i]);
       var cls = 'ms' + (info.id === 'NONE' ? ' blank' : '') +
                 (inline.all ? ' edit-all' : '') +
                 (inline.lyric === i ? ' edit-lyric' : '') +
-                (inline.chord === i ? ' edit-chords' : '');
+                (inline.chord === i ? ' edit-chords' : '') +
+                (picked ? ' sel' : '');
       el.className = cls;
       el.style.setProperty('--deg', info.color);
       el.style.setProperty('--deg-soft', info.soft);
       el.setAttribute('data-index', String(i));
       el.setAttribute('role', 'button');
       el.setAttribute('tabindex', '0');
-      el.setAttribute('aria-label', (i + 1) + '마디 가사 바로 고치기');
+      el.setAttribute('aria-label', delSel.on
+        ? ((i + 1) + '번 마디 지우기 선택')
+        : ((i + 1) + '마디 가사 바로 고치기'));
+      if (delSel.on) el.setAttribute('aria-pressed', picked ? 'true' : 'false');
 
       var beatsHtml = '';
       for (var b = 0; b < state.beats; b++){
@@ -1793,7 +1936,11 @@
       var lyr = lyrRaw || '<span class="rest none">가사 없음</span>';
 
       el.innerHTML =
-        '<div class="ms-top"><span class="ms-no">' + (i + 1) + '</span>' +
+        '<div class="ms-top">' +
+          '<label class="ms-check"><input class="ms-checkbox" type="checkbox" data-sel="' + i + '"' +
+            (picked ? ' checked' : '') + ' aria-label="' + (i + 1) + '번 마디 지우기 선택">' +
+            '<span class="ms-check-t">' + (i + 1) + '번 지우기</span></label>' +
+          '<span class="ms-no">' + (i + 1) + '</span>' +
           '<div class="ms-chords">' + chordsHTML(m, info, midInfo) + '</div></div>' +
         chordEditHTML(m) +
         measureInsertHTML(i) +
@@ -1939,8 +2086,9 @@
             '<input class="in-rest" type="text" maxlength="60" value="' + esc(m.restText) + '" placeholder="짝" autocomplete="off"></label>' +
           '<label class="in-wrap full"><span>중간 박자 화음 (비우면 첫 박자와 같음)</span>' +
             midChordSelectHTML(m.midChord) + '</label>' +
-          '<label class="in-wrap full in-melody"><span>멜로디 (음이름 · 예: C4 D4 E4 / 도 도 솔 솔)</span>' +
-            '<input class="in-melodyinput" type="text" maxlength="80" value="' + esc(m.melody) + '" placeholder="C4 C4 G4 G4" autocomplete="off" spellcheck="false"></label>' +
+          '<div class="in-wrap full in-melody"><span class="in-mel-head"><span>멜로디 (음이름 · 예: C4 D4 E4 / 도 도 솔 솔)</span>' +
+            '<button type="button" class="m-kbd" data-act="piano" aria-label="' + (i + 1) + '마디 피아노 건반으로 멜로디 넣기">🎹 건반</button></span>' +
+            '<input class="in-melodyinput" type="text" maxlength="80" value="' + esc(m.melody) + '" placeholder="C4 C4 G4 G4" autocomplete="off" spellcheck="false" aria-label="' + (i + 1) + '마디 멜로디"></div>' +
         '</div>' +
         '<div class="m-insert">' +
           '<button type="button" class="btn sm ghost" data-act="ins-before" aria-label="' + (i + 1) + '마디 앞에 마디 추가">＋ 이 앞에</button>' +
@@ -2108,6 +2256,9 @@
 
     if (act === 'del'){
       deleteMeasuresAt(i, 1);
+      return;
+    } else if (act === 'piano'){
+      openMeasureEditor(i);
       return;
     } else if (act === 'ins-before' || act === 'ins-after'){
       openAddMeasure({ mode:(act === 'ins-before' ? 'before' : 'after'), index: i + 1, count: 1, focusNew: true });
@@ -2520,9 +2671,145 @@
     go.disabled = (r.total <= 1);
     go.setAttribute('aria-disabled', r.total <= 1 ? 'true' : 'false');
     go.textContent = (r.n > 1) ? ('🗑 ' + r.n + '마디 삭제') : '🗑 마디 삭제';
-    $('inlineAddMeasure').textContent = (r.n >= 1)
+    delSelSync();
+  }
+
+  /* ---------- 선택 삭제 — 악보 마디의 체크박스로 여러 마디를 고르기 ---------- */
+  var delSel = { on:false, sel:{} };   /* on: 삭제 탭이 열려 체크박스가 보이는 상태 · sel: {마디번호:true} */
+
+  function delSelCount(){
+    var total = totalMeasures(), n = 0;
+    for (var i = 0; i < total; i++){ if (delSel.sel[i]) n++; }
+    return n;
+  }
+
+  function delSelIndices(){
+    var total = totalMeasures(), out = [];
+    for (var i = 0; i < total; i++){ if (delSel.sel[i]) out.push(i); }
+    return out;
+  }
+
+  /* [0,2,3,6] → ‘1·3~4·7번’ — 연속된 번호는 묶어서 짧게 */
+  function measureListLabel(idxs){
+    if (!idxs.length) return '';
+    var parts = [], i = 0;
+    while (i < idxs.length){
+      var s = idxs[i], e = s;
+      while (i + 1 < idxs.length && idxs[i + 1] === e + 1){ i++; e = idxs[i]; }
+      parts.push((s === e) ? String(s + 1) : ((s + 1) + '~' + (e + 1)));
+      i++;
+    }
+    return parts.join('·') + '번';
+  }
+
+  /* 체크 표시만 화면에 반영합니다 (악보를 다시 그리지 않아 스크롤이 튀지 않습니다) */
+  function delSelPaint(){
+    var cards = $('measureGrid').querySelectorAll('.ms');
+    for (var i = 0; i < cards.length; i++){
+      var idx = msIndex(cards[i]);
+      var on = !!delSel.sel[idx];
+      cards[i].classList.toggle('sel', on);
+      cards[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+      var box = cards[i].querySelector('.ms-checkbox');
+      if (box) box.checked = on;
+    }
+  }
+
+  function delSelBottomLabel(){
+    var n = delSelCount();
+    if (n) return '🗑 선택한 ' + n + '마디 삭제';
+    var r = delRange();
+    return (r.n >= 1)
       ? ('🗑 ' + (r.n === 1 ? (r.idx + '번 마디 삭제') : (r.idx + '번부터 ' + r.n + '마디 삭제')))
       : '🗑 지울 마디가 없어요';
+  }
+
+  /* 인라인 바의 선택 삭제 줄과 악보 아래 큰 단추를 선택 상태에 맞춥니다 */
+  function delSelSync(){
+    var sum = $('addBarSelSum');
+    if (!sum) return;
+    var n = delSelCount(), total = totalMeasures();
+    var all = (n > 0 && n >= total);
+    if (!n){
+      sum.innerHTML = (total <= 1)
+        ? '마지막 <b>1마디</b>는 지울 수 없어요 — 악보에는 최소 1마디가 남습니다'
+        : '지울 마디의 <b>체크박스</b>를 눌러 고르세요';
+    } else if (all){
+      sum.innerHTML = '<b>' + n + '마디</b> 전부 선택됨 · 실행하면 <b>마지막 1마디</b>는 남겨요';
+    } else {
+      sum.innerHTML = '<b>' + n + '마디</b> 선택됨 · ' + measureListLabel(delSelIndices());
+    }
+    var clear = $('addBarSelClear');
+    if (clear){
+      clear.disabled = !n;
+      clear.setAttribute('aria-disabled', n ? 'false' : 'true');
+    }
+    var go = $('addBarSelGo');
+    if (go){
+      go.disabled = !n;
+      go.setAttribute('aria-disabled', n ? 'false' : 'true');
+      go.textContent = n ? ('🗑 선택한 ' + n + '마디 삭제') : '🗑 선택한 마디 삭제';
+    }
+    if (bar.tab === 'del') $('inlineAddMeasure').textContent = delSelBottomLabel();
+  }
+
+  function delSelToggle(i){
+    var total = totalMeasures();
+    if (!(i >= 0 && i < total)) return;
+    if (total <= 1){
+      toast('마지막 한 마디는 지울 수 없어요 — 악보에는 최소 1마디가 남아야 해요');
+      return;
+    }
+    if (delSel.sel[i]) delete delSel.sel[i];
+    else delSel.sel[i] = true;
+    delSelPaint();
+    delSelSync();
+  }
+
+  function delSelClearAll(){
+    if (!delSelCount()) return;
+    delSel.sel = {};
+    delSelPaint();
+    delSelSync();
+  }
+
+  /* 체크한 마디들만 지움 — 번호는 자동 재정렬, 되돌리기 가능, 마지막 1마디는 보호 */
+  function deleteSelected(){
+    var total = totalMeasures();
+    if (total <= 1){
+      toast('마지막 한 마디는 지울 수 없어요 — 악보에는 최소 1마디가 남아야 해요');
+      return 0;
+    }
+    var idxs = delSelIndices();
+    if (!idxs.length){
+      toast('지울 마디를 먼저 체크하세요');
+      return 0;
+    }
+    var leftOne = false;
+    if (idxs.length >= total){ idxs = idxs.slice(0, total - 1); leftOne = true; }  /* 전부 골라도 마지막 1마디는 남김 */
+    if (!idxs.length) return 0;
+
+    if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
+    closeInlineChord();
+
+    var prev = snapshot();
+    for (var k = idxs.length - 1; k >= 0; k--) state.measures.splice(idxs[k], 1);
+    delSel.sel = {};
+    renderMeasureList();
+    renderSheet();
+    save();
+    barSync(true);
+    delSelSync();
+
+    toast(measureListLabel(idxs) + ' ' + idxs.length + '마디를 지웠어요 — 전체 ' + totalMeasures() + '마디' +
+          (leftOne ? ' · 마지막 1마디는 남겼어요' : ''), '되돌리기', function(){
+      restore(prev);
+      delSel.sel = {};
+      barSync(true);
+      delSelPaint();
+      delSelSync();
+    });
+    return idxs.length;
   }
 
   function delBarGo(){
@@ -2545,6 +2832,14 @@
       tabs[i].setAttribute('aria-pressed', on ? 'true' : 'false');
     }
     $('inlineAddMeasure').classList.toggle('inline-del', del);
+    /* 삭제 탭에서는 악보 마디마다 체크박스가 나타납니다 */
+    if (delSel.on !== del){
+      delSel.on = del;
+      delSel.sel = {};
+      renderSheet();
+    }
+    delSelPaint();
+    delSelSync();
     barSync(true);
   }
 
@@ -2584,6 +2879,13 @@
   $('addBarDelGo').addEventListener('click', function(){
     if (this.disabled) return;
     delBarGo();
+  });
+  $('addBarSelGo').addEventListener('click', function(){
+    if (this.disabled) return;
+    deleteSelected();
+  });
+  $('addBarSelClear').addEventListener('click', function(){
+    delSelClearAll();
   });
 
   $('addBarModes').addEventListener('click', function(e){    var btn = e.target.closest ? e.target.closest('button[data-amode]') : null;
@@ -3415,7 +3717,7 @@
   }
 
   var TIP_TAP = '마디를 누르면 <b>가사와 화성</b>을 바로 수정할 수 있어요 — 화성이 틀렸다면 그 자리에서 고치세요';
-  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>를 누르면 그 자리에 빈 마디가 바로 하나 들어가고, <b>🗑 삭제</b>를 누르면 그 마디가 바로 지워집니다(지운 직후 되돌리기 가능). 여러 마디는 위쪽 <b>＋ 마디 추가 / 🗑 마디 삭제</b>에서 개수를 고르세요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
+  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>를 누르면 그 자리에 빈 마디가 바로 하나 들어가고, <b>🗑 삭제</b>를 누르면 그 마디가 바로 지워집니다(지운 직후 되돌리기 가능). 여러 마디는 위쪽 <b>🗑 마디 삭제</b> 탭에서 마디 <b>체크박스</b>로 골라 지울 수 있어요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
   function updateSheetTip(){
     var tip = $('sheetTip');
     if (!tip) return;
@@ -3528,8 +3830,10 @@
 
   $('inlineAddMeasure').addEventListener('click', function(){
     /* 악보 아래 단추는 지금 바의 탭을 그대로 따릅니다 — 추가 탭이면 추가, 삭제 탭이면 삭제 */
-    if (bar.tab === 'del') delBarGo();
-    else barAdd();
+    if (bar.tab === 'del'){
+      if (delSelCount()) deleteSelected();
+      else delBarGo();
+    } else barAdd();
   });
 
   $('measureGrid').addEventListener('input', function(e){
@@ -3559,6 +3863,16 @@
   });
 
   $('measureGrid').addEventListener('keydown', function(e){
+    if (delSel.on){
+      /* 선택 삭제 모드 — 마디에 초점을 두고 Enter/Space로 체크 */
+      if (e.target.closest && e.target.closest('input,button,label')) return;
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var kc = e.target.closest ? e.target.closest('.ms') : null;
+      if (!kc) return;
+      e.preventDefault();
+      delSelToggle(msIndex(kc));
+      return;
+    }
     var inp = e.target && e.target.classList && e.target.classList.contains('ms-lyric-input') ? e.target : null;
     if (inp){
       var card = inp.closest('.ms');
@@ -3584,9 +3898,28 @@
     openInlineLyric(msIndex(cell));
   });
 
+  $('measureGrid').addEventListener('change', function(e){
+    var box = e.target;
+    if (!box || !box.classList || !box.classList.contains('ms-checkbox')) return;
+    var card = box.closest ? box.closest('.ms') : null;
+    if (!card) return;
+    var i = msIndex(card);
+    if (!(i >= 0 && i < state.measures.length)) return;
+    if (box.checked) delSel.sel[i] = true;
+    else delete delSel.sel[i];
+    delSelPaint();
+    delSelSync();
+  });
+
   $('measureGrid').addEventListener('click', function(e){
     var t = e.target;
     if (!t || !t.closest) return;
+
+    /* 선택 삭제 모드 — 마디 본문을 누르면 체크/해제 (체크박스·편집도구는 자기 일을 합니다) */
+    if (delSel.on && !t.closest('.ms-check') && !t.closest('.ms-edit')){
+      var pickCell = t.closest('.ms');
+      if (pickCell){ delSelToggle(msIndex(pickCell)); return; }
+    }
 
     var ins = t.closest('[data-ins]');
     if (ins){
@@ -3719,6 +4052,17 @@
       midNow.textContent = '첫 박자와 같음';
       midNow.style.color = '';
     }
+
+    /* 건반도 이 마디의 지금 옥타브·멜로디에 맞춰 엽니다 */
+    var mtoks = melodyTokens(m.melody);
+    var lastOct = 4;
+    for (var ti = mtoks.length - 1; ti >= 0; ti--){
+      var nn = parseNoteToken(mtoks[ti]);
+      if (nn){ lastOct = nn.oct; break; }
+    }
+    piano.oct = clamp(lastOct, PK_MIN_OCT, PK_MAX_OCT);
+    pianoRender();
+    pianoNow();
     updateMM();
   }
 
@@ -3751,6 +4095,7 @@
     m.restText = $('mmRest').value;
     m.melody = $('mmMelody').value;
     updateMM();
+    pianoNow();
     syncCardFromState(mmIndex);
     scheduleSheet();
   }
@@ -3799,6 +4144,139 @@
     var i = mmIndex;
     closeMeasureEditor();
     focusMeasureCard(i);
+  });
+
+  /* ============================================================
+     PIANO — 건반을 터치해 멜로디 넣기 (마디 상세 모달)
+     ============================================================ */
+  var PK_WHITE = [
+    { pc:'C', sol:'도' }, { pc:'D', sol:'레' }, { pc:'E', sol:'미' }, { pc:'F', sol:'파' },
+    { pc:'G', sol:'솔' }, { pc:'A', sol:'라' }, { pc:'B', sol:'시' }
+  ];
+  var PK_BLACK = [
+    { after:0, pc:'C#', sol:'도♯' }, { after:1, pc:'D#', sol:'레♯' },
+    { after:3, pc:'F#', sol:'파♯' }, { after:4, pc:'G#', sol:'솔♯' }, { after:5, pc:'A#', sol:'라♯' }
+  ];
+  var PK_SOL = { 0:'도', 1:'도♯', 2:'레', 3:'레♯', 4:'미', 5:'파', 6:'파♯', 7:'솔', 8:'솔♯', 9:'라', 10:'라♯', 11:'시' };
+  var PK_MIN_OCT = 2, PK_MAX_OCT = 6;
+  var piano = { oct: 4 };
+
+  function pianoOct(){ return clamp(piano.oct, PK_MIN_OCT, PK_MAX_OCT); }
+
+  function pianoRender(){
+    var board = $('pkBoard');
+    if (!board) return;
+    var o = pianoOct();
+    var html = '';
+    for (var i = 0; i < PK_WHITE.length; i++){
+      var w = PK_WHITE[i];
+      html += '<button type="button" class="pk-w" data-note="' + (w.pc + o) + '"' +
+                ' aria-label="' + w.sol + ' ' + (w.pc + o) + '">' +
+                '<span class="pk-sol">' + w.sol + '</span>' +
+                '<span class="pk-nm">' + w.pc + '</span>' +
+              '</button>';
+    }
+    for (var j = 0; j < PK_BLACK.length; j++){
+      var b = PK_BLACK[j];
+      var left = ((b.after + 1) * (100 / 7)).toFixed(3);
+      html += '<button type="button" class="pk-b" data-note="' + (b.pc + o) + '"' +
+                ' style="left:' + left + '%" aria-label="' + b.sol + ' ' + (b.pc + o) + '"></button>';
+    }
+    board.innerHTML = html;
+    $('pkOctLab').textContent = 'C' + o + '~B' + o;
+    $('pkOctDown').disabled = (o <= PK_MIN_OCT);
+    $('pkOctUp').disabled = (o >= PK_MAX_OCT);
+  }
+
+  function pianoNowHTML(m){
+    var toks = m ? melodyTokens(m.melody) : [];
+    if (!toks.length) return '건반을 눌러 멜로디를 넣어 보세요 — 누른 음이 <b>이 마디</b>에 차곡차곡 쌓입니다';
+    var words = toks.map(function(t){
+      if (isRestToken(t)) return '쉼표';
+      var n = parseNoteToken(t);
+      return n ? (PK_SOL[n.pc] + n.oct) : t;
+    });
+    return '이 마디 멜로디 <b>' + esc(words.join(' ')) + '</b> <em>· ' + toks.length + '음</em>';
+  }
+
+  function pianoNow(){
+    var el = $('pkNow');
+    if (!el) return;
+    el.innerHTML = pianoNowHTML((mmIndex >= 0) ? state.measures[mmIndex] : null);
+  }
+
+  /* 건반을 누를 때 실제 소리 — 멜로디 재생과 같은 악기(triangle)로 짧게 */
+  function pianoSound(name){
+    var note = parseNoteToken(name);
+    if (!note) return;
+    var ctx = ensureAudio();
+    if (ctx) voiceNote(ctx, note, ctx.currentTime, 0.3);
+  }
+
+  function pianoCloseGlyphs(){
+    var keys = $('pkBoard').querySelectorAll('.down');
+    for (var i = 0; i < keys.length; i++) keys[i].classList.remove('down');
+  }
+
+  /* 마디의 멜로디를 통째로 바꿉니다 (텍스트 입력과 같은 저장 경로) */
+  function melodySet(text){
+    if (mmIndex < 0 || !state.measures[mmIndex]) return;
+    var m = state.measures[mmIndex];
+    m.melody = str(text).slice(0, 80);
+    $('mmMelody').value = m.melody;
+    updateMM();
+    pianoNow();
+    syncCardFromState(mmIndex);
+    scheduleSheet();
+  }
+
+  function pianoAppend(tok){
+    if (mmIndex < 0 || !state.measures[mmIndex]) return false;
+    var toks = melodyTokens(state.measures[mmIndex].melody);
+    var next = toks.concat([tok]).join(' ');
+    if (next.length > 80){ toast('멜로디는 한 마디에 80자가지 넣을 수 있어요'); return false; }
+    melodySet(next);
+    return true;
+  }
+
+  function pianoPop(){
+    if (mmIndex < 0 || !state.measures[mmIndex]) return false;
+    var toks = melodyTokens(state.measures[mmIndex].melody);
+    if (!toks.length) return false;
+    toks.pop();
+    melodySet(toks.join(' '));
+    return true;
+  }
+
+  function pianoOctChange(d){
+    var o = clamp(pianoOct() + d, PK_MIN_OCT, PK_MAX_OCT);
+    if (o === piano.oct) return;
+    piano.oct = o;
+    pianoRender();
+  }
+
+  $('pkBoard').addEventListener('pointerdown', function(e){
+    var k = e.target.closest ? e.target.closest('[data-note]') : null;
+    if (!k) return;
+    k.classList.add('down');
+    pianoSound(k.getAttribute('data-note'));
+  });
+  $('pkBoard').addEventListener('pointerup', pianoCloseGlyphs);
+  $('pkBoard').addEventListener('pointercancel', pianoCloseGlyphs);
+  $('pkBoard').addEventListener('pointerleave', pianoCloseGlyphs);
+  $('pkBoard').addEventListener('click', function(e){
+    var k = e.target.closest ? e.target.closest('[data-note]') : null;
+    if (!k) return;
+    pianoAppend(k.getAttribute('data-note'));
+  });
+  $('pkOctDown').addEventListener('click', function(){ pianoOctChange(-1); });
+  $('pkOctUp').addEventListener('click', function(){ pianoOctChange(1); });
+  $('pkBack').addEventListener('click', function(){ pianoPop(); });
+  $('pkRest').addEventListener('click', function(){ pianoAppend('-'); });
+  $('pkClear').addEventListener('click', function(){
+    if (mmIndex < 0 || !state.measures[mmIndex]) return;
+    if (!str(state.measures[mmIndex].melody).trim()) return;
+    melodySet('');
   });
 
 
@@ -3881,6 +4359,17 @@
     delSync: delSync,
     delBarGo: delBarGo,
     deleteMeasuresAt: deleteMeasuresAt,
+    delSelState: delSel,
+    delSelToggle: delSelToggle,
+    delSelClear: delSelClearAll,
+    delSelCount: delSelCount,
+    deleteSelected: deleteSelected,
+    pianoState: piano,
+    pianoRender: pianoRender,
+    pianoAppend: pianoAppend,
+    pianoPop: pianoPop,
+    pianoSet: melodySet,
+    pianoOct: pianoOctChange,
     insertMeasures: function(at, n){ var k = insertMeasures(at, n); renderMeasureList(); renderSheet(); save(); barSync(); return k; },
     blankMeasure: BLANK_MEASURE,
     openInlineLyric: openInlineLyric,
@@ -3897,7 +4386,7 @@
     splitRest: splitRest,
     prompt: AI_PROMPT,
     schema: AI_SCHEMA,
-    version: '3.3.0'
+    version: '3.4.0'
   };
 
   if (document.readyState === 'loading'){
