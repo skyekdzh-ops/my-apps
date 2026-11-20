@@ -931,7 +931,7 @@
     </div>
 
     <div class="quickbar">
-      <label class="quick-field" title="조성을 바꾸면 1도·4도·5도 화음 이름이 그 조성에 맞게 바뀝니다">
+      <label class="quick-field" title="조성을 바꾸면 1도·4도·5도 화음 이름과 멜로디가 그 조성에 맞게 함께 바뀝니다">
         <span>조성</span>
         <select id="quickKeySelect" aria-label="조성 바꾸기"></select>
       </label>
@@ -967,7 +967,7 @@
   <section class="view" id="view-edit" aria-label="가사 편집">
     <div class="card">
       <h2>곡 정보</h2>
-      <p class="hint">조성을 바꾸면 1도·4도·5도 화음 이름이 그 조성에 맞게 자동으로 바뀝니다.</p>
+      <p class="hint">조성을 바꾸면 1도·4도·5도 화음 이름이 그 조성에 맞게 자동으로 바뀌고, <b>멜로디도 그 조성으로 함께 전조</b>됩니다(바뀐 직후 ‘되돌리기’로 복구할 수 있어요).</p>
       <div class="field" style="margin-top:12px">
         <label for="titleInput">곡 제목</label>
         <input id="titleInput" type="text" maxlength="60" placeholder="곡 제목" autocomplete="off">
@@ -1321,7 +1321,7 @@
       <div class="rule-row" style="color:var(--ink-3)">색이 있는 곳에서만 악기를 연주하고, 색이 없는 가사는 그냥 노래합니다.</div>
       <div class="rule-row" style="color:var(--ink-3)">중간 박자에 다른 화음이 오면 그 색으로 칠해집니다(예: 4도 → 1도).</div>
     </div>
-    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요(상세 창의 <b>🎹 건반</b>을 터치하면 피아노 건반으로 멜로디를 넣을 수 있어요). 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭을 열어 악보 마디마다 나타나는 <b>체크박스</b>로 원하는 마디를 골라(연속되지 않아도 됩니다) <b>🗑 선택한 N마디 삭제</b>를 누르거나, <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다.</p>
+    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요(상세 창의 <b>🎹 건반</b>을 터치하면 피아노 건반으로 멜로디를 넣을 수 있어요). 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다 — <b>조성을 바꾸면 그 곡의 멜로디가 새 조성으로 함께 전조</b>되고(가까운 쪽 반음으로 옮겨 옥타브가 튀지 않게, 샤프 조성은 #·플랫 조성은 b 표기), 바뀐 직후 <b>되돌리기</b>로 원래 조성·멜로디로 돌아갈 수 있어요. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭을 열어 악보 마디마다 나타나는 <b>체크박스</b>로 원하는 마디를 골라(연속되지 않아도 됩니다) <b>🗑 선택한 N마디 삭제</b>를 누르거나, <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다.</p>
     <p class="hint">‘멜로디 포함’을 켜면 악보에 음이름이 보이고, 들을 때 멜로디도 함께 연주됩니다. 이 악보는 이 브라우저에 자동 저장되고, JSON으로 내려받아 다른 기기로 옮길 수 있어요. 사진은 저장되지 않습니다.</p>
   </div>
 </div>
@@ -1526,8 +1526,13 @@
 
   function parseNoteToken(t){
     if (!t || isRestToken(t)) return null;
-    var sol = /^([도레미파솔라시])([0-9])?$/.exec(t);
-    if (sol) return { pc: PCS[SOLFEGE[sol[1]]], oct: sol[2] ? parseInt(sol[2], 10) : 4, src:t };
+    var sol = /^([도레미파솔라시])([♯#♭b])?([0-9])?$/.exec(t);
+    if (sol){
+      var spc = PCS[SOLFEGE[sol[1]]];
+      if (sol[2] === '♯' || sol[2] === '#') spc = (spc + 1) % 12;
+      else if (sol[2] === '♭' || sol[2] === 'b') spc = (spc + 11) % 12;
+      return { pc: spc, oct: sol[3] ? parseInt(sol[3], 10) : 4, src:t };
+    }
     var abs = /^([A-Ga-g])([#b]?)([0-9])?$/.exec(t);
     if (abs){
       var pc = PCS[abs[1].toUpperCase() + (abs[2] || '')];
@@ -1537,6 +1542,91 @@
   }
   function parseMelody(text){
     return melodyTokens(text).map(parseNoteToken);
+  }
+
+  /* ---------- 조성 바꾸기 = 멜로디 자동 전조(이조) ----------
+     조성을 oldKey → newKey로 바꿀 때, 악보의 모든 마디 멜로디를‘최단 반음 이동’
+     (−5 ~ +6반음)으로 옮기고, 목표 조성의 조표에 맞춰 #/b 표기를 고릅니다.
+     쉼표와 읽지 못한 토큰은 그대로 두고, C2~B6 밖으로는 나가지 않습니다. */
+  var SHARP_SPELL = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  var FLAT_SPELL  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+  var SOL_SHARP   = ['도','도♯','레','레♯','미','파','파♯','솔','솔♯','라','라♯','시'];
+  var SOL_FLAT    = ['도','레♭','레','미♭','미','파','솔♭','솔','라♭','라','시♭','시'];
+  var FLAT_KEYS   = { F:1, Bb:1, Eb:1, Ab:1, Db:1, Gb:1 };
+  var KEY_PC      = { C:0, 'C#':1, Db:1, D:2, 'D#':3, Eb:3, E:4, F:5, 'F#':6, Gb:6,
+                      G:7, 'G#':8, Ab:8, A:9, 'A#':10, Bb:10, B:11 };
+  var MEL_MIDI_MIN = 36, MEL_MIDI_MAX = 95;   /* C2 ~ B6 */
+
+  function keyPc(key){
+    var s = str(key || 'C');
+    if (KEY_PC[s] !== undefined) return KEY_PC[s];
+    var m = /^([A-G])([#b]?)/.exec(s);
+    return m ? (PCS[m[1] + (m[2] || '')] || 0) : 0;
+  }
+  function keyPrefersFlats(key){ return !!FLAT_KEYS[str(key)]; }
+
+  /* 두 조성 사이의 가장 자연스러운 반음 이동 — −5 ~ +6 */
+  function keyShift(fromKey, toKey){
+    var d = ((keyPc(toKey) - keyPc(fromKey)) % 12 + 12) % 12;
+    if (d > 6) d -= 12;
+    return d;
+  }
+
+  function noteMidi(n){ return (n.oct + 1) * 12 + n.pc; }
+
+  /* 계이름 표기 — 플랫 조성에서는 ‘미♭’, 샤프 조성에서는 ‘레♯’로 보여 줍니다 */
+  function solName(pc){
+    var i = ((pc % 12) + 12) % 12;
+    return keyPrefersFlats(state.key) ? SOL_FLAT[i] : SOL_SHARP[i];
+  }
+
+  /* 80자 제한을 넘지 않게 토큰을 차곡차곡 담습니다 (토큰 중간에서 자르지 않음) */
+  function melodyFit(tokens){
+    var out = [], len = 0;
+    for (var i = 0; i < tokens.length; i++){
+      var add = (out.length ? 1 : 0) + str(tokens[i]).length;
+      if (len + add > 80) break;
+      out.push(tokens[i]);
+      len += add;
+    }
+    return out.join(' ');
+  }
+
+  function transposeToken(tok, shift, flats){
+    if (!tok) return tok;
+    if (isRestToken(tok)) return tok;          /* 쉼표는 그대로 */
+    var n = parseNoteToken(tok);
+    if (!n) return tok;                        /* 읽지 못한 토큰도 그대로 */
+    var midi = noteMidi(n) + shift;
+    while (midi < MEL_MIDI_MIN) midi += 12;    /* 옥타브가 꺾이지 않게 되돌립니다 */
+    while (midi > MEL_MIDI_MAX) midi -= 12;
+    midi = clamp(midi, MEL_MIDI_MIN, MEL_MIDI_MAX);
+    var pc = ((midi % 12) + 12) % 12;
+    var oct = Math.floor(midi / 12) - 1;
+    var korean = /^[도레미파솔라시]/.test(tok);   /* 적어 둔 표기(계이름/음이름)를 지킵니다 */
+    var name = korean ? (flats ? SOL_FLAT[pc] : SOL_SHARP[pc])
+                      : (flats ? FLAT_SPELL[pc] : SHARP_SPELL[pc]);
+    return name + oct;
+  }
+
+  function transposeMelodyText(text, shift, flats){
+    var toks = melodyTokens(text);
+    if (!toks.length) return str(text);
+    if (!shift) return toks.join(' ');
+    return melodyFit(toks.map(function(t){ return transposeToken(t, shift, flats); }));
+  }
+
+  /* 악보의 모든 마디 멜로디를 전조하고, 바뀐 마디 수를 돌려줍니다 */
+  function transposeScore(shift, flats){
+    var moved = 0;
+    state.measures.forEach(function(m){
+      if (!melodyTokens(m.melody).length) return;
+      var before = melodyTokens(m.melody).join(' ');
+      var after = transposeMelodyText(m.melody, shift, !!flats);
+      if (after !== before) moved++;
+      m.melody = after;
+    });
+    return moved;
   }
 
   /* ---------- measure data ---------- */
@@ -2115,14 +2205,35 @@
     $('quickKeySelect').value = state.key;
   }
 
+  /* 조성을 바꿉니다 — 지금 곡의 조성을 바꿀 때만 멜로디를 함께 전조합니다.
+     ( 프리셋·JSON 불러오기는 state.key를 직접 넣으므로 전조 없이 그 곡의 조성·멜로디를 씁니다 ) */
   function applyKey(k){
-    state.key = KEYS[k] ? k : 'C';
+    var next = KEYS[k] ? k : 'C';
+    var oldKey = state.key;
+    var prev = (next !== oldKey) ? snapshot() : null;
+    var shift = prev ? keyShift(oldKey, next) : 0;
+    var flats = keyPrefersFlats(next);
+    var moved = 0;
+
+    state.key = next;
+    if (shift) moved = transposeScore(shift, flats);
+
     $('keySelect').value = state.key;
     $('quickKeySelect').value = state.key;
     renderMeasureList();
     renderDegreeStrip();
     renderSheet();
+    /* 마디 상세 창이나 건반이 열려 있으면 그 안의 멜로디 칸·상태줄도 새 음으로 */
+    if (mmIndex >= 0 && state.measures[mmIndex]){
+      if ($('mmMelody')) $('mmMelody').value = state.measures[mmIndex].melody;
+      updateMM();
+      pianoNow();
+    }
     save();
+
+    var info = { from:oldKey, to:state.key, shift:shift, flats:flats, moved:moved, prev:prev };
+    keyToast(info);
+    return info;
   }
 
   function metaText(){
@@ -2942,12 +3053,20 @@
 
   $('bpmInput').addEventListener('change', function(){ applyBpm(this.value); });
 
-  function keyToast(){
-    toast(state.key + '장조로 바꿨어요 — 1도 ' + KEYS[state.key].I + ' · 4도 ' + KEYS[state.key].IV + ' · 5도 ' + KEYS[state.key].V);
+  function keyToast(info){
+    var k = KEYS[state.key] || KEYS.C;
+    var tail = ' — 1도 ' + k.I + ' · 4도 ' + k.IV + ' · 5도 ' + k.V;
+    if (info && info.prev && info.shift){
+      var msg = info.to + '장조로 바꾸면서 멜로디도 ' + Math.abs(info.shift) + '반음 ' +
+                (info.shift > 0 ? '올려' : '내려') + ' 전조했어요' +
+                (info.moved ? ' (' + info.moved + '마디)' : '');
+      toast(msg + tail, '되돌리기', function(){ restore(info.prev); });
+      return;
+    }
+    toast(state.key + '장조로 바꿨어요' + tail);
   }
   $('keySelect').addEventListener('change', function(){
     applyKey(this.value);
-    keyToast();
   });
 
   $('beatsSelect').addEventListener('change', function(){
@@ -2966,7 +3085,6 @@
   /* ---------- quick controls on the score tab ---------- */
   $('quickKeySelect').addEventListener('change', function(){
     applyKey(this.value);
-    keyToast();
   });
 
   $('quickBpm').addEventListener('change', function(){ applyBpm(this.value); });
@@ -4205,7 +4323,7 @@
     var words = toks.map(function(t){
       if (isRestToken(t)) return '쉼표';
       var n = parseNoteToken(t);
-      return n ? (PK_SOL[n.pc] + n.oct) : t;
+      return n ? (solName(n.pc) + n.oct) : t;
     });
     return '이 마디 멜로디 <b>' + esc(words.join(' ')) + '</b> <em>· ' + toks.length + '음</em>';
   }
@@ -4352,6 +4470,13 @@
     applyScore: applyScoreObject,
     setLevel: setLevel,
     applyKey: applyKey,
+    transposeToken: transposeToken,
+    transposeMelody: transposeMelodyText,
+    transposeScore: transposeScore,
+    keyShift: keyShift,
+    keyPc: keyPc,
+    keyPrefersFlats: keyPrefersFlats,
+    solName: solName,
     applyBpm: applyBpm,
     openMeasure: openMeasureEditor,
     closeMeasure: closeMeasureEditor,
@@ -4397,7 +4522,7 @@
     splitRest: splitRest,
     prompt: AI_PROMPT,
     schema: AI_SCHEMA,
-    version: '3.4.0'
+    version: '3.5.0'
   };
 
   if (document.readyState === 'loading'){
