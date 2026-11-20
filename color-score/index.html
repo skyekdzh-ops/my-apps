@@ -306,6 +306,55 @@
   .bpm-step input:focus{box-shadow:0 0 0 3px rgba(201,185,156,.28);border-radius:8px}
   .quick-field .unit{font-size:9.5px;font-weight:800;color:var(--ink-3);letter-spacing:.02em}
 
+  /* ---------- 인라인 마디 추가 바 (악보 화면에서 바로) ---------- */
+  .addbar{
+    background:#fff;border:1px solid var(--line);border-radius:15px;
+    padding:9px 11px 10px;margin-bottom:12px;box-shadow:0 2px 10px rgba(70,52,24,.05);
+  }
+  .addbar-top{display:flex;align-items:flex-start;gap:8px}
+  .addbar-t{font-size:12px;font-weight:800;color:var(--ink-2);letter-spacing:-.01em;white-space:nowrap;padding-top:1px}
+  .addbar-sum{flex:1;min-width:0;font-size:10.5px;color:var(--ink-3);font-weight:700;line-height:1.4;letter-spacing:-.01em}
+  .addbar-sum b{color:#5E4718;font-weight:800}
+  .addbar-fold{
+    flex:0 0 auto;border:0;background:none;color:var(--ink-3);font-size:11px;font-weight:800;
+    padding:2px 2px 2px 6px;cursor:pointer;white-space:nowrap;letter-spacing:-.01em;
+  }
+  .addbar-fold:active{opacity:.6}
+  .addbar-body{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+  .addbar-body[hidden]{display:none}
+  .addbar-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .addbar-lab{font-size:10.5px;font-weight:800;color:var(--ink-3);min-width:32px;letter-spacing:-.01em}
+  .addbar-seg{display:flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:11px;background:#F2E9DA}
+  .addbar-seg button{
+    border:0;background:none;border-radius:9px;padding:6px 8px;min-height:30px;
+    font-size:12px;font-weight:800;color:var(--ink-3);letter-spacing:-.01em;cursor:pointer;white-space:nowrap;
+  }
+  .addbar-seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(70,52,24,.14)}
+  .addbar-seg button[disabled]{opacity:.35;pointer-events:none}
+  .addbar-step{display:flex;align-items:center;gap:3px}
+  .addbar-step .icon-btn{width:26px;height:30px;border-radius:8px;font-size:12px}
+  .addbar-step input{
+    width:42px;text-align:center;border:1px solid var(--line);border-radius:8px;background:#FDFAF4;
+    min-height:30px;font-size:13.5px;font-weight:800;color:var(--ink);outline:none;padding:0;
+    -moz-appearance:textfield;
+  }
+  .addbar-step input::-webkit-outer-spin-button,
+  .addbar-step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .addbar-step input:focus{box-shadow:0 0 0 3px rgba(201,185,156,.28)}
+  .addbar-unit{font-size:10.5px;font-weight:800;color:var(--ink-3);letter-spacing:-.01em}
+  .addbar-quick{display:flex;gap:4px}
+  .addbar-quick .aq{
+    min-width:33px;min-height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;
+    font-size:12px;font-weight:800;color:var(--ink-2);cursor:pointer;padding:0 6px;
+  }
+  .addbar-quick .aq.on{background:var(--ink);border-color:var(--ink);color:#FFF7E9}
+  .addbar-go{margin-left:auto;min-height:38px;padding:8px 13px;font-size:13px;border-radius:11px}
+  @media (max-width:430px){
+    .addbar{padding:8px 10px 9px}
+    .addbar-seg button{padding:6px 6px;font-size:11.5px}
+    .addbar-go{flex:1 1 100%;margin-left:0}
+  }
+
   /* ---------- measure tap-to-edit ---------- */
   .ms{cursor:pointer}
   .ms:active{transform:translateY(0) scale(.99)}
@@ -604,7 +653,7 @@
     main{padding:0 !important}
     .view{display:none !important;padding:0 !important;max-width:none !important}
     #view-score{display:block !important}
-    .toolbar,.levelbar,.quickbar,.tiny-note,.sheet-tip{display:none !important}
+    .toolbar,.levelbar,.quickbar,.tiny-note,.sheet-tip,.addbar{display:none !important}
     .ms-more{display:none !important}
     .ms-edit{display:none !important}
     .ms-lyric{display:flex !important}
@@ -661,6 +710,46 @@
       </button>
     </div>
 
+    <!-- 악보 화면에서 바로 마디 넣기 — 모달 없이 위치·개수를 고르고 바로 추가 -->
+    <div class="addbar" id="addBar" role="group" aria-label="마디 추가">
+      <div class="addbar-top">
+        <span class="addbar-t">＋ 마디 추가</span>
+        <span class="addbar-sum" id="addBarSum" role="status" aria-live="polite">맨 뒤에 1마디</span>
+        <button class="addbar-fold" id="addBarFold" type="button" aria-expanded="true" aria-controls="addBarBody">접기</button>
+      </div>
+      <div class="addbar-body" id="addBarBody">
+        <div class="addbar-line">
+          <span class="addbar-lab">어디에</span>
+          <div class="addbar-seg" id="addBarModes" role="group" aria-label="마디를 넣을 위치">
+            <button type="button" data-amode="start" aria-pressed="false">맨 앞</button>
+            <button type="button" data-amode="before" aria-pressed="false">마디 앞</button>
+            <button type="button" data-amode="after" aria-pressed="false">마디 뒤</button>
+            <button type="button" data-amode="end" class="active" aria-pressed="true">맨 뒤</button>
+          </div>
+          <div class="addbar-step" id="addBarIdxLine" hidden>
+            <button type="button" class="icon-btn" id="addBarIdxDown" aria-label="기준 마디 번호 줄이기">−</button>
+            <input id="addBarIdx" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="기준 마디 번호">
+            <button type="button" class="icon-btn" id="addBarIdxUp" aria-label="기준 마디 번호 늘리기">+</button>
+            <span class="addbar-unit">번 마디</span>
+          </div>
+        </div>
+        <div class="addbar-line">
+          <span class="addbar-lab">몇 마디</span>
+          <div class="addbar-quick" id="addBarQuick" role="group" aria-label="자주 쓰는 마디 수">
+            <button type="button" class="aq on" data-n="1" aria-pressed="true">1</button>
+            <button type="button" class="aq" data-n="2" aria-pressed="false">2</button>
+            <button type="button" class="aq" data-n="4" aria-pressed="false">4</button>
+          </div>
+          <div class="addbar-step">
+            <button type="button" class="icon-btn" id="addBarCntDown" aria-label="마디 수 줄이기">−</button>
+            <input id="addBarCnt" type="number" inputmode="numeric" min="1" max="99" step="1" value="1" aria-label="추가할 마디 수">
+            <button type="button" class="icon-btn" id="addBarCntUp" aria-label="마디 수 늘리기">+</button>
+          </div>
+          <button class="btn primary addbar-go" id="addBarGo" type="button">＋ 빈 마디 추가</button>
+        </div>
+      </div>
+    </div>
+
     <div class="levelbar">
       <div class="seg" role="group" aria-label="난이도">
         <button type="button" id="level1Btn" data-level="1" class="active" aria-pressed="true">level1<em>첫 박자</em></button>
@@ -702,7 +791,7 @@
         <div class="sheet-tip" id="sheetTip">마디를 누르면 <b>가사와 화성</b>을 바로 수정할 수 있어요 — 화성이 틀렸다면 그 자리에서 고치세요</div>
       </div>
       <div class="measure-grid" id="measureGrid"></div>
-      <button class="btn block inline-add" id="inlineAddMeasure" type="button">+ 마디 추가</button>
+      <button class="btn block inline-add" id="inlineAddMeasure" type="button">＋ 빈 마디 추가</button>
       <div class="sheet-foot" id="sheetFoot">색깔이 있는 음절에서 악기를 연주하세요 — <b>1도 빨강 · 4도 초록 · 5도 파랑</b></div>
     </article>
 
@@ -1049,7 +1138,7 @@
       <div class="rule-row" style="color:var(--ink-3)">색이 있는 곳에서만 악기를 연주하고, 색이 없는 가사는 그냥 노래합니다.</div>
       <div class="rule-row" style="color:var(--ink-3)">중간 박자에 다른 화음이 오면 그 색으로 칠해집니다(예: 4도 → 1도).</div>
     </div>
-    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요. 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. 마디를 <b>원하는 자리에 원하는 만큼</b> 넣으려면 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>나 악보 아래 <b>＋ 마디 추가</b>를 누르세요. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다.</p>
+    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요. 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다.</p>
     <p class="hint">‘멜로디 포함’을 켜면 악보에 음이름이 보이고, 들을 때 멜로디도 함께 연주됩니다. 이 악보는 이 브라우저에 자동 저장되고, JSON으로 내려받아 다른 기기로 옮길 수 있어요. 사진은 저장되지 않습니다.</p>
   </div>
 </div>
@@ -1885,6 +1974,7 @@
     renderDegreeStrip();
     renderMeasureList();
     renderSheet();
+    barSync();
   }
 
   /* ============================================================
@@ -2096,8 +2186,8 @@
     if (!$('addMeasureModal').hidden) $('addMeasureModal').hidden = true;
   }
 
-  function focusNewMeasures(at){
-    if (!addState.focusNew) return;
+  function focusNewMeasures(at, force){
+    if (!(force || addState.focusNew)) return;
     if (!(at >= 0 && at < totalMeasures())) return;
     if ($('view-score').classList.contains('active')){
       var card = msCard(at);
@@ -2188,6 +2278,161 @@
     var i = mmIndex;
     closeMeasureEditor();
     openAddMeasure({ mode:'after', index: i + 1, count:1, focusNew:true });
+  });
+
+  /* ============================================================
+     INLINE ADD BAR — 악보 화면에서 모달 없이 바로 마디 넣기
+     위치(맨 앞·마디 앞·마디 뒤·맨 뒤)와 개수(1·2·4·직접 입력)를
+     지금 화면에서 고르고 ‘＋ 빈 마디 추가’를 누르면 즉시 삽입됩니다.
+     ============================================================ */
+  var bar = { mode:'end', index:1, count:1 };
+
+  function barInsertAt(){
+    var total = totalMeasures();
+    if (bar.mode === 'start') return 0;
+    if (bar.mode === 'end') return total;
+    var idx = clamp(parseInt(bar.index, 10) || 1, 1, Math.max(1, total));
+    return (bar.mode === 'before') ? idx - 1 : idx;
+  }
+
+  function barWhereLabel(){
+    var total = totalMeasures();
+    if (bar.mode === 'start') return '맨 앞';
+    if (bar.mode === 'end') return '맨 뒤';
+    var idx = clamp(parseInt(bar.index, 10) || 1, 1, Math.max(1, total));
+    return idx + '번 마디 ' + (bar.mode === 'before' ? '앞' : '뒤');
+  }
+
+  function barSummary(){
+    var at = barInsertAt(), n = bar.count, total = totalMeasures();
+    var first = at + 1, last = at + n;
+    var span = (n === 1) ? (first + '번') : (first + '~' + last + '번');
+    return '<b>' + esc(barWhereLabel()) + '</b>에 ' + n + '마디 · 새 ' + span + ' · 전체 ' + (total + n) + '마디';
+  }
+
+  function barSync(resetInputs){
+    var total = totalMeasures();
+    if (total === 0 && (bar.mode === 'before' || bar.mode === 'after')) bar.mode = 'end';
+    bar.count = clamp(parseInt(bar.count, 10) || 1, 1, 99);
+    bar.index = clamp(parseInt(bar.index, 10) || 1, 1, Math.max(1, total));
+
+    var modes = $('addBarModes').querySelectorAll('button');
+    for (var i = 0; i < modes.length; i++){
+      var mode = modes[i].getAttribute('data-amode');
+      var on = (mode === bar.mode);
+      modes[i].classList.toggle('active', on);
+      modes[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+      modes[i].disabled = (total === 0 && (mode === 'before' || mode === 'after'));
+    }
+
+    var mid = (bar.mode === 'before' || bar.mode === 'after');
+    $('addBarIdxLine').hidden = !mid;
+    if (resetInputs || document.activeElement !== $('addBarIdx')) $('addBarIdx').value = String(bar.index);
+    if (resetInputs || document.activeElement !== $('addBarCnt')) $('addBarCnt').value = String(bar.count);
+
+    var qs = $('addBarQuick').querySelectorAll('.aq');
+    for (var j = 0; j < qs.length; j++){
+      var qOn = (parseInt(qs[j].getAttribute('data-n'), 10) === bar.count);
+      qs[j].classList.toggle('on', qOn);
+      qs[j].setAttribute('aria-pressed', qOn ? 'true' : 'false');
+    }
+
+    $('addBarSum').innerHTML = barSummary();
+    $('inlineAddMeasure').textContent = '＋ 빈 마디 추가 · ' + barWhereLabel() + ' ' + bar.count + '마디';
+  }
+
+  /* 인라인 바에서 고른 자리에 빈 마디를 바로 넣기 */
+  function barAdd(){
+    if (totalMeasures() >= ADD_MAX){
+      toast('한 악보에는 ' + ADD_MAX + '마디까지 넣을 수 있어요');
+      return 0;
+    }
+    var at = barInsertAt();
+    var want = clamp(parseInt(bar.count, 10) || 1, 1, 99);
+    var where = barWhereLabel();
+    var prev = snapshot();
+    var n = insertMeasures(at, want);
+    if (!n){ toast('더 넣을 수 있는 마디가 없어요'); return 0; }
+    renderMeasureList();
+    renderSheet();
+    save();
+    barSync(true);
+    focusNewMeasures(at, true);
+    var first = at + 1, last = at + n;
+    toast('‘' + where + '’에 빈 마디 ' + n + '개 — 새 ' +
+          (n === 1 ? first + '번' : first + '~' + last + '번') + ' · 전체 ' + totalMeasures() + '마디',
+          '되돌리기', function(){ restore(prev); barSync(true); });
+    return n;
+  }
+
+  /* 마디 안 ‘＋ 앞에 / ＋ 뒤에’ — 누르는 즉시 빈 마디 1개 */
+  function barOneTap(i, where){
+    if (!(i >= 0 && i < totalMeasures())) return 0;
+    if (totalMeasures() >= ADD_MAX){
+      toast('한 악보에는 ' + ADD_MAX + '마디까지 넣을 수 있어요');
+      return 0;
+    }
+    var at = (where === 'before') ? i : i + 1;
+    var prev = snapshot();
+    var n = insertMeasures(at, 1);
+    if (!n) return 0;
+    bar.mode = (where === 'before') ? 'before' : 'after';
+    bar.index = i + 1;
+    bar.count = 1;
+    renderMeasureList();
+    renderSheet();
+    save();
+    barSync(true);
+    focusNewMeasures(at, true);
+    toast((i + 1) + '번 마디 ' + (where === 'before' ? '앞' : '뒤') + '에 빈 마디 1개 — 전체 ' + totalMeasures() + '마디',
+          '되돌리기', function(){ restore(prev); barSync(true); });
+    return n;
+  }
+
+  $('addBarModes').addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('button[data-amode]') : null;
+    if (!btn || btn.disabled) return;
+    if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
+    bar.mode = btn.getAttribute('data-amode');
+    barSync(true);
+  });
+
+  $('addBarIdx').addEventListener('input', function(){ bar.index = this.value; barSync(false); });
+  $('addBarIdx').addEventListener('change', function(){ barSync(true); });
+  $('addBarIdxDown').addEventListener('click', function(){
+    bar.index = clamp((parseInt(bar.index, 10) || 1) - 1, 1, Math.max(1, totalMeasures()));
+    barSync(true);
+  });
+  $('addBarIdxUp').addEventListener('click', function(){
+    bar.index = clamp((parseInt(bar.index, 10) || 1) + 1, 1, Math.max(1, totalMeasures()));
+    barSync(true);
+  });
+
+  $('addBarCnt').addEventListener('input', function(){ bar.count = this.value; barSync(false); });
+  $('addBarCnt').addEventListener('change', function(){ barSync(true); });
+  $('addBarCntDown').addEventListener('click', function(){
+    bar.count = clamp((parseInt(bar.count, 10) || 1) - 1, 1, 99);
+    barSync(true);
+  });
+  $('addBarCntUp').addEventListener('click', function(){
+    bar.count = clamp((parseInt(bar.count, 10) || 1) + 1, 1, 99);
+    barSync(true);
+  });
+
+  $('addBarQuick').addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.aq') : null;
+    if (!btn) return;
+    bar.count = parseInt(btn.getAttribute('data-n'), 10) || 1;
+    barSync(true);
+  });
+
+  $('addBarGo').addEventListener('click', function(){ barAdd(); });
+
+  $('addBarFold').addEventListener('click', function(){
+    var open = !$('addBarBody').hidden;
+    $('addBarBody').hidden = open;
+    this.setAttribute('aria-expanded', open ? 'false' : 'true');
+    this.textContent = open ? '펼치기' : '접기';
   });
 
   $('titleInput').addEventListener('input', function(){
@@ -2974,7 +3219,7 @@
   }
 
   var TIP_TAP = '마디를 누르면 <b>가사와 화성</b>을 바로 수정할 수 있어요 — 화성이 틀렸다면 그 자리에서 고치세요';
-  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>로 원하는 자리에 마디를 넣을 수 있어요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
+  var TIP_ALL = '<b>바로 수정하는 중</b> — 칸에 가사를 입력하고 <b>1도·4도·5도</b> 색 단추를 눌러 화성을 바꾸세요. 마디 안의 <b>＋ 앞에 · ＋ 뒤에</b>를 누르면 그 자리에 빈 마디가 바로 하나 들어가고, 여러 마디는 위쪽 <b>＋ 마디 추가</b>에서 개수를 고르세요. 끝나면 ‘✏️ 바로 수정’을 다시 누르세요';
   function updateSheetTip(){
     var tip = $('sheetTip');
     if (!tip) return;
@@ -3086,7 +3331,8 @@
   $('inlineEditBtn').addEventListener('click', function(){ setInlineAll(!inline.all); });
 
   $('inlineAddMeasure').addEventListener('click', function(){
-    openAddMeasure({ mode:'end', index: totalMeasures(), count:1, focusNew:true });
+    /* 악보 아래 단추도 모달 없이 바로 — 위쪽 인라인 바에서 고른 위치·개수대로 */
+    barAdd();
   });
 
   $('measureGrid').addEventListener('input', function(e){
@@ -3148,7 +3394,7 @@
     var ins = t.closest('[data-ins]');
     if (ins){
       var insCell = t.closest('.ms');
-      if (insCell) openAddMeasure({ mode: ins.getAttribute('data-ins'), index: msIndex(insCell) + 1, count: 1, focusNew: true });
+      if (insCell) barOneTap(msIndex(insCell), ins.getAttribute('data-ins'));
       return;
     }
 
@@ -3390,6 +3636,7 @@
 
     renderAll();
     updateSheetTip();
+    barSync(true);
     showView('score');
     $('helpModal').hidden = true;
   }
@@ -3421,7 +3668,11 @@
     openAddMeasure: openAddMeasure,
     closeAddMeasure: closeAddMeasure,
     addMeasures: addMeasuresNow,
-    insertMeasures: function(at, n){ var k = insertMeasures(at, n); renderMeasureList(); renderSheet(); save(); return k; },
+    addBar: barAdd,
+    barState: bar,
+    barSync: barSync,
+    barOneTap: barOneTap,
+    insertMeasures: function(at, n){ var k = insertMeasures(at, n); renderMeasureList(); renderSheet(); save(); barSync(); return k; },
     blankMeasure: BLANK_MEASURE,
     openInlineLyric: openInlineLyric,
     commitInlineLyric: commitInlineLyric,
@@ -3437,7 +3688,7 @@
     splitRest: splitRest,
     prompt: AI_PROMPT,
     schema: AI_SCHEMA,
-    version: '3.1.0'
+    version: '3.2.0'
   };
 
   if (document.readyState === 'loading'){
