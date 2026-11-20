@@ -615,7 +615,7 @@
 
   /* ---------- toast ---------- */
   .toast{
-    position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));z-index:80;
+    position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));z-index:130;
     transform:translate(-50%,14px);opacity:0;pointer-events:none;
     display:flex;flex-direction:column;align-items:stretch;gap:7px;
     background:rgba(34,30,26,.94);color:#FFF7E9;
@@ -768,6 +768,75 @@
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
 
+  /* ---------- 내 악보 목록 (여러 악보 저장) ---------- */
+  .libbar{
+    background:#fff;border:1px solid var(--line);border-radius:15px;
+    padding:8px 10px 9px;margin-bottom:12px;box-shadow:0 2px 10px rgba(70,52,24,.05);
+  }
+  .libbar-row{display:flex;gap:7px;align-items:stretch}
+  .libbar-row .btn{
+    flex:1 1 0;min-width:0;min-height:38px;padding:8px;border-radius:11px;
+    font-size:12.5px;gap:5px;justify-content:center;letter-spacing:-.02em;
+  }
+  .libbar-state{
+    margin-top:6px;font-size:10.5px;font-weight:700;color:var(--ink-3);line-height:1.45;
+    letter-spacing:-.01em;
+  }
+  .libbar-state b{color:#5E4718;font-weight:800}
+  .lib-count{
+    display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;
+    padding:0 5px;border-radius:9px;background:#F2E9DA;color:#7A6644;
+    font-size:10.5px;font-weight:800;font-variant-numeric:tabular-nums;flex:0 0 auto;
+  }
+  .btn.primary .lib-count{background:rgba(255,247,233,.26);color:#FFF7E9}
+
+  #libModal .modal-card{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+  .lib-sub{font-size:11.5px;color:var(--ink-3);margin-top:3px;line-height:1.5;letter-spacing:-.01em}
+  .lib-newbtn{margin-top:11px}
+  .lib-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .lib-item{
+    position:relative;display:flex;align-items:flex-start;gap:6px;
+    border:1px solid var(--line);border-radius:14px;background:#fff;
+    padding:10px 8px 10px 13px;cursor:pointer;
+  }
+  .lib-item::before{
+    content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;
+    background:var(--deg,#D8D0C2);
+  }
+  .lib-item.on{border-color:#C9B99C;box-shadow:0 0 0 2px rgba(201,185,156,.18)}
+  .lib-item:active{background:#FBF6EC}
+  .lib-main{flex:1 1 auto;min-width:0}
+  .lib-title-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .lib-title{
+    font-size:14px;font-weight:800;letter-spacing:-.02em;line-height:1.3;word-break:keep-all;
+    overflow:hidden;text-overflow:ellipsis;
+  }
+  .lib-badge{
+    flex:0 0 auto;font-size:9.5px;font-weight:800;color:#1E6B33;background:#E8F5E9;
+    border-radius:7px;padding:2px 5px;letter-spacing:-.01em;
+  }
+  .lib-meta{font-size:11px;font-weight:700;color:var(--ink-2);margin-top:3px;letter-spacing:-.01em}
+  .lib-when{font-size:10.5px;font-weight:600;color:#B0A695;margin-top:2px;letter-spacing:-.01em}
+  .lib-acts{display:flex;gap:3px;flex:0 0 auto}
+  .lib-act{
+    width:30px;height:30px;border:1px solid var(--line);border-radius:9px;background:#FCF8F0;
+    color:var(--ink-2);font-size:13px;line-height:1;cursor:pointer;padding:0;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .lib-act:active{background:#F3EADC}
+  .lib-act.del{color:#B3261E;border-color:#EFDAD6;background:#FFFBFA}
+  .lib-rename{
+    width:100%;min-height:38px;border-radius:10px;border:1px solid #C9B99C;background:#fff;
+    padding:7px 9px;font-size:15px;font-weight:800;outline:none;
+    box-shadow:0 0 0 3px rgba(201,185,156,.22);
+  }
+  .lib-empty{
+    margin:0;padding:16px 12px;border:1px dashed #E2D6C2;border-radius:13px;background:#FCF8F0;
+    font-size:12px;color:var(--ink-3);line-height:1.6;text-align:center;letter-spacing:-.01em;
+  }
+  .lib-empty b{color:var(--ink-2)}
+  .lib-foot{margin-top:11px;font-size:10.5px;color:#B0A695;line-height:1.5;letter-spacing:-.01em}
+
   /* ---------- print ---------- */
   @media print{
     @page{size:A4;margin:12mm}
@@ -777,7 +846,7 @@
     main{padding:0 !important}
     .view{display:none !important;padding:0 !important;max-width:none !important}
     #view-score{display:block !important}
-    .toolbar,.levelbar,.quickbar,.tiny-note,.sheet-tip,.addbar{display:none !important}
+    .toolbar,.levelbar,.quickbar,.tiny-note,.sheet-tip,.addbar,.libbar{display:none !important}
     .ms-more{display:none !important}
     .ms-edit{display:none !important}
     .ms-lyric{display:flex !important}
@@ -818,6 +887,14 @@
 
   <!-- ================= 색깔 악보 ================= -->
   <section class="view active" id="view-score" aria-label="색깔 악보">
+    <div class="libbar" id="libBar" role="group" aria-label="내 악보 목록">
+      <div class="libbar-row">
+        <button class="btn" id="libBtn" type="button" aria-haspopup="dialog" aria-controls="libModal">📚 내 악보 목록<span class="lib-count" id="libCount">0</span></button>
+        <button class="btn primary" id="libSaveBtn" type="button" aria-label="지금 악보를 목록에 저장">💾 목록에 저장</button>
+      </div>
+      <div class="libbar-state" id="libState" role="status" aria-live="polite">아직 목록에 저장하지 않았어요</div>
+    </div>
+
     <div class="toolbar">
       <button class="btn primary" id="playBtn" type="button" aria-pressed="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5 19 12 7 19.5z" fill="currentColor" stroke="none"/></svg>
@@ -1325,6 +1402,23 @@
     </div>
     <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요(상세 창의 <b>🎹 건반</b>을 터치하면 피아노 건반으로 멜로디를 넣을 수 있어요). 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다 — <b>조성을 바꾸면 그 곡의 멜로디가 새 조성으로 함께 전조</b>되고(가까운 쪽 반음으로 옮겨 옥타브가 튀지 않게, 샤프 조성은 #·플랫 조성은 b 표기), 바뀐 직후 <b>되돌리기</b>로 원래 조성·멜로디로 돌아갈 수 있어요. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭을 열어 악보 마디마다 나타나는 <b>체크박스</b>로 원하는 마디를 골라(연속되지 않아도 됩니다) <b>🗑 선택한 N마디 삭제</b>를 누르거나, <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다.</p>
     <p class="hint">‘멜로디 포함’을 켜면 악보에 음이름이 보이고, 들을 때 멜로디도 함께 연주됩니다. 이 악보는 이 브라우저에 자동 저장되고, JSON으로 내려받아 다른 기기로 옮길 수 있어요. 사진은 저장되지 않습니다.</p>
+    <p class="hint"><b>여러 곡을 모아 두려면 위의 📚 내 악보 목록</b>을 쓰세요. <b>💾 목록에 저장</b>을 누르면 지금 악보가 목록에 들어가고, 그 뒤로는 고칠 때마다 목록에도 자동으로 저장됩니다. 목록에서 다른 곡을 눌러 바로 열 수 있고, 같은 곡을 다른 조성·난이도로 남기려면 목록의 <b>＋ 지금 악보를 새 항목으로 저장</b>을 누르세요.</p>
+  </div>
+</div>
+
+<div class="modal" id="libModal" hidden>
+  <div class="modal-bg" data-close="1"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="libTitle">
+    <div class="row-between" style="align-items:flex-start">
+      <div style="min-width:0">
+        <h2 id="libTitle">📚 내 악보 목록 <span class="lib-count" id="libTitleCount">0</span></h2>
+        <p class="lib-sub">항목을 누르면 그 악보가 바로 열려요. 열었거나 저장한 악보는 고칠 때마다 목록에도 자동으로 저장됩니다.</p>
+      </div>
+      <button class="round-btn" id="libClose" type="button" aria-label="닫기">✕</button>
+    </div>
+    <button class="btn block lib-newbtn" id="libNewBtn" type="button" title="지금 열린 악보를 목록에 새 항목으로 하나 더 저장합니다(다른 조성·버전을 남길 때)">＋ 지금 악보를 새 항목으로 저장</button>
+    <div class="lib-list" id="libList"></div>
+    <p class="lib-foot">목록은 이 브라우저에만 저장돼요. 기기를 바꾸려면 각 악보를 JSON으로 내려받아 두세요.</p>
   </div>
 </div>
 
@@ -1336,6 +1430,7 @@
      DATA
      ============================================================ */
   var STORE_KEY = 'colorScoreApp.v1';   /* v1 키를 그대로 써서 예전에 저장한 악보도 살립니다 */
+  var LIB_KEY = 'colorScoreLibrary.v1'; /* 내 악보 목록 — 여러 악보를 따로 모아 둘립니다 */
 
   var DEG = {
     I:     { key:'I',     color:'#E53935', soft:'#FDECEA', label:'1도' },
@@ -1675,7 +1770,8 @@
     imageName:'',
     zoom:100,
     rotate:0,
-    collapsed:false
+    collapsed:false,
+    libId:''          /* 내 악보 목록에서 열었거나 저장한 악보의 id — 비어 있으면 목록에 없음 */
   };
 
   var audio = { ctx:null, master:null, nodes:[], playing:false, startAt:0, measDur:0, timer:0, idx:-1 };
@@ -1690,12 +1786,16 @@
   function save(){
     try{
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        v:2,
+        v:3,
+        libId:str(state.libId),
         title:state.title, key:state.key, bpm:state.bpm, beats:state.beats,
         midBeat:state.midBeat, level:state.level, melodyOn:state.melodyOn,
         measures:state.measures
       }));
     }catch(e){ /* 저장 공간이 없거나 막힌 경우 조용히 넘어감 */ }
+    /* 목록에서 열었거나 저장한 악보는 고칠 때마다 목록에도 자동으로 반영합니다 */
+    libSyncCurrent();
+    libSyncUI();
   }
 
   function loadSaved(){
@@ -1712,6 +1812,7 @@
       state.midBeat = (mb >= 2 && mb <= state.beats) ? mb : (MID_BEAT_DEFAULT[state.beats] || 3);
       state.level = (o.level === 2) ? 2 : 1;
       state.melodyOn = !!o.melodyOn;
+      state.libId = (typeof o.libId === 'string') ? o.libId : '';
       state.measures = o.measures.map(coerceMeasure);
       return true;
     }catch(e){ return false; }
@@ -1734,6 +1835,390 @@
     state.measures = clone(snap.measures);
     renderAll(); save();
   }
+
+  /* ============================================================
+     LIBRARY — 작업한 색깔악보를 목록으로 모아 두기
+     ------------------------------------------------------------
+     · 지금 열린 악보는 예전처럼 STORE_KEY에 자동 저장됩니다.
+     · 💾 목록에 저장을 누르면 그 악보가 LIB_KEY 목록에 한 칸으로 들어가고,
+       그 뒤로는 고칠 때마다 목록 항목도 같이 최신으로 바뀞니다(자동 반영).
+     ============================================================ */
+  var lib = { renaming:'' };
+
+  function libNewId(){
+    return 'sc' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  function libTitleOf(t){
+    var s = str(t).replace(/\s+/g, ' ').trim();
+    return s ? s.slice(0, 60) : '제목 없는 악보';
+  }
+
+  /* 저장된 목록 — 읽을 때마다 새로 읽어 탭을 바꾸거나 새로고침해도 같은 내용을 봅니다 */
+  function libLoad(){
+    try{
+      var raw = localStorage.getItem(LIB_KEY);
+      if (!raw) return [];
+      var o = JSON.parse(raw);
+      var items = (o && Array.isArray(o.items)) ? o.items : (Array.isArray(o) ? o : []);
+      var out = [];
+      for (var i = 0; i < items.length; i++){
+        var it = items[i];
+        if (!it || typeof it.id !== 'string' || !Array.isArray(it.measures) || !it.measures.length) continue;
+        out.push(it);
+      }
+      return out;
+    }catch(e){ return []; }
+  }
+
+  function libWrite(items){
+    try{
+      localStorage.setItem(LIB_KEY, JSON.stringify({ v:1, items:items }));
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function libFind(id){
+    if (!id) return null;
+    var items = libLoad();
+    for (var i = 0; i < items.length; i++){ if (items[i].id === id) return items[i]; }
+    return null;
+  }
+
+  function libCurrentItem(){ return libFind(str(state.libId)); }
+
+  /* 지금 열린 악보의 내용 */
+  function libContent(){
+    return {
+      title:libTitleOf(state.title),
+      key:state.key, bpm:state.bpm, beats:state.beats, midBeat:state.midBeat,
+      level:state.level, melodyOn:!!state.melodyOn,
+      measures:clone(state.measures)
+    };
+  }
+
+  function libSig(o){
+    return JSON.stringify([o.title, o.key, o.bpm, o.beats, o.midBeat, o.level, o.melodyOn ? 1 : 0, o.measures]);
+  }
+
+  function libFill(item, c, now){
+    item.title = c.title; item.key = c.key; item.bpm = c.bpm; item.beats = c.beats;
+    item.midBeat = c.midBeat; item.level = c.level; item.melodyOn = c.melodyOn;
+    item.measures = c.measures; item.updatedAt = now;
+    return item;
+  }
+
+  /* 같은 이름이 이미 있으면 ‘(2)’, ‘(3)’을 붙입니다 (새 항목으로 저장할 때) */
+  function libUniqueTitle(name){
+    var base = libTitleOf(name);
+    var items = libLoad();
+    var taken = {};
+    for (var i = 0; i < items.length; i++){ taken[libTitleOf(items[i].title)] = true; }
+    if (!taken[base]) return base;
+    var root = base.replace(/\s*\(\d+\)$/, '');
+    for (var n = 2; n < 100; n++){
+      var cand = root + ' (' + n + ')';
+      if (!taken[cand]) return cand.slice(0, 60);
+    }
+    return base.slice(0, 56) + ' (2)';
+  }
+
+  /* 자동 반영 — 열었거나 저장한 악보를 고치면 목록 항목도 같이 갱신(내용이 달라졌을 때만) */
+  function libSyncCurrent(){
+    var id = str(state.libId);
+    if (!id) return false;
+    var items = libLoad();
+    for (var i = 0; i < items.length; i++){
+      if (items[i].id !== id) continue;
+      var c = libContent();
+      if (libSig(items[i]) === libSig(c)) return true;
+      libFill(items[i], c, Date.now());
+      return libWrite(items);
+    }
+    return false;   /* 목록에서 사라진 항목을 가리키고 있었으면 그대로 둡니다 */
+  }
+
+  /* 목록에 저장 — 같은 항목에 덮어쓰거나(asNew=false) 새 항목으로 추가(asNew=true) */
+  function libSaveCurrent(asNew){
+    var items = libLoad();
+    var c = libContent();
+    var now = Date.now();
+    var renamed = false;
+
+    if (asNew){
+      var t = libUniqueTitle(c.title);
+      if (t !== c.title){ c.title = t; state.title = t; renamed = true; }
+    }
+
+    var hit = -1;
+    if (!asNew && state.libId){
+      for (var i = 0; i < items.length; i++){ if (items[i].id === state.libId) hit = i; }
+    }
+
+    if (hit >= 0){
+      libFill(items[hit], c, now);
+      if (!libWrite(items)) return { error:true };
+      if (renamed) renderAll();
+      libSyncUI(); libRenderList();
+      return { item:items[hit], created:false };
+    }
+
+    var item = libFill({ id:libNewId(), createdAt:now }, c, now);
+    items.unshift(item);               /* 최근 저장한 악보가 목록 맨 위 */
+    if (!libWrite(items)) return { error:true };
+    state.libId = item.id;
+    if (renamed) renderAll();
+    save();                            /* 지금 악보의 libId도 함께 저장 (‘편집 중’ 표시 유지) */
+    libSyncUI(); libRenderList();
+    return { item:item, created:true };
+  }
+
+  function libSaveNow(){
+    var wasNew = !libCurrentItem();
+    var r = libSaveCurrent(false);
+    if (r.error){ toast('저장 공간이 부족해 목록에 저장하지 못했어요 — JSON으로 내려받아 두세요'); return null; }
+    toast(wasNew
+      ? ('‘' + libTitleOf(r.item.title) + '’을 내 악보 목록에 저장했어요')
+      : ('‘' + libTitleOf(r.item.title) + '’ 목록을 최신 내용으로 저장했어요'));
+    return r.item;
+  }
+
+  function libSaveNew(){
+    var r = libSaveCurrent(true);
+    if (r.error){ toast('저장 공간이 부족해 목록에 저장하지 못했어요 — JSON으로 내려받아 두세요'); return null; }
+    libRenderList();
+    toast('‘' + libTitleOf(r.item.title) + '’을 새 항목으로 저장했어요');
+    return r.item;
+  }
+
+  function libRename(id, name){
+    var items = libLoad();
+    var hit = null;
+    for (var i = 0; i < items.length; i++){ if (items[i].id === id) hit = items[i]; }
+    if (!hit) return null;
+    var before = libTitleOf(hit.title);
+    hit.title = libTitleOf(name);
+    hit.updatedAt = Date.now();
+    libWrite(items);
+    if (str(state.libId) === id){
+      state.title = hit.title;
+      renderAll();
+      save();
+    }
+    libRenderList();
+    libSyncUI();
+    if (before !== hit.title) toast('이름을 ‘' + hit.title + '’로 바꿨어요');
+    return hit;
+  }
+
+  function libDelete(id){
+    var items = libLoad();
+    var idx = -1, removed = null;
+    for (var i = 0; i < items.length; i++){ if (items[i].id === id){ idx = i; removed = items[i]; } }
+    if (!removed) return null;
+    items.splice(idx, 1);
+    libWrite(items);
+    if (str(state.libId) === id){
+      state.libId = '';            /* 열려 있던 악보는 ‘목록에 없음’ 상태로 */
+      save();
+    }
+    libRenderList(); libSyncUI();
+    toast('‘' + libTitleOf(removed.title) + '’을 목록에서 지웠어요', '되돌리기', function(){
+      var cur = libLoad();
+      cur.splice(clamp(idx, 0, cur.length), 0, removed);
+      libWrite(cur);
+      libRenderList(); libSyncUI();
+    });
+    return removed;
+  }
+
+  function libOpenItem(id){
+    var it = libFind(id);
+    if (!it) return false;
+    if (lib.renaming) libCommitRename();
+    if (audio.playing) stopScore();
+    var prev = { snap:snapshot(), libId:str(state.libId) };
+
+    state.title = libTitleOf(it.title);
+    state.key = KEYS[it.key] ? it.key : 'C';
+    state.bpm = clamp(parseInt(it.bpm, 10) || 96, 40, 240);
+    var bt = parseInt(it.beats, 10);
+    state.beats = [2,3,4].indexOf(bt) >= 0 ? bt : 4;
+    var mb = parseInt(it.midBeat, 10);
+    state.midBeat = (mb >= 2 && mb <= state.beats) ? mb : (MID_BEAT_DEFAULT[state.beats] || 3);
+    state.level = (it.level === 2) ? 2 : 1;
+    state.melodyOn = !!it.melodyOn;
+    state.measures = it.measures.map(coerceMeasure);
+    state.libId = it.id;
+
+    libClosePanel();
+    renderAll();
+    save();
+    showView('score');
+    toast('‘' + state.title + '’을 열었어요', '되돌리기', function(){
+      state.libId = prev.libId;
+      restore(prev.snap);
+      showView('score');
+    });
+    return true;
+  }
+
+  /* ---------- 목록 화면 ---------- */
+  function libWhen(ts){
+    var n = parseInt(ts, 10);
+    if (!n) return '';
+    var d = new Date(n);
+    if (isNaN(d.getTime())) return '';
+    var now = new Date();
+    var hm = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+    if (d.toDateString() === now.toDateString()) return '오늘 ' + hm;
+    var y = new Date(now.getTime() - 86400000);
+    if (d.toDateString() === y.toDateString()) return '어제 ' + hm;
+    return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + hm;
+  }
+
+  function libMetaLine(it){
+    var key = KEYS[it.key] ? it.key : 'C';
+    var bpm = clamp(parseInt(it.bpm, 10) || 96, 40, 240);
+    var lvl = (it.level === 2) ? 'level2' : 'level1';
+    return key + '장조 · ♩=' + bpm + ' · ' + lvl + ' · ' + it.measures.length + '마디';
+  }
+
+  /* 목록 항목 왼쪽 금—첫 마디 화음 색 */
+  function libStripe(it){
+    var m = (it.measures && it.measures[0]) || null;
+    var id = m ? str(m.beat1Chord) : 'I';
+    var deg = /^I7?$/.test(id) ? 'I' : (/^IV7?$/.test(id) ? 'IV' : (/^V7?$/.test(id) ? 'V' : 'other'));
+    return (DEG[deg] || DEG.other).color;
+  }
+
+  function libItemHTML(it){
+    var on = (str(state.libId) && it.id === state.libId);
+    var title = libTitleOf(it.title);
+    var when = libWhen(it.updatedAt || it.createdAt) || '방금';
+    return '<div class="lib-item' + (on ? ' on' : '') + '" data-libid="' + esc(it.id) + '" role="button" tabindex="0"' +
+      ' aria-label="' + esc(title) + ' 열기"' + (on ? ' aria-current="true"' : '') + ' style="--deg:' + libStripe(it) + '">' +
+      '<div class="lib-main">' +
+        '<div class="lib-title-row"><b class="lib-title">' + esc(title) + '</b>' +
+          (on ? '<span class="lib-badge">편집 중</span>' : '') + '</div>' +
+        '<div class="lib-meta">' + esc(libMetaLine(it)) + '</div>' +
+        '<div class="lib-when">' + esc(when) + ' 저장</div>' +
+      '</div>' +
+      '<div class="lib-acts">' +
+        '<button class="lib-act" type="button" data-libact="rename" data-libid="' + esc(it.id) + '"' +
+          ' aria-label="' + esc(title) + ' 이름 바꾸기" title="이름 바꾸기">✏️</button>' +
+        '<button class="lib-act del" type="button" data-libact="del" data-libid="' + esc(it.id) + '"' +
+          ' aria-label="' + esc(title) + ' 목록에서 지우기" title="목록에서 지우기">🗑</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function libRenderList(){
+    var list = $('libList');
+    if (!list) return;
+    var items = libLoad();
+    if (!items.length){
+      list.innerHTML = '<p class="lib-empty">아직 저장한 악보가 없어요.<br>악보 위 <b>💾 목록에 저장</b>을 누르면 여기에 쌓입니다.</p>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < items.length; i++) html += libItemHTML(items[i]);
+    list.innerHTML = html;
+  }
+
+  function libSyncUI(){
+    var items = libLoad();
+    var n = String(items.length);
+    var c = $('libCount'), tc = $('libTitleCount');
+    if (c) c.textContent = n;
+    if (tc) tc.textContent = n;
+    var cur = libCurrentItem();
+    var btn = $('libSaveBtn'), st = $('libState');
+    if (btn){
+      btn.textContent = cur ? '💾 저장' : '💾 목록에 저장';
+      btn.setAttribute('aria-label', cur
+        ? ('지금 악보를 목록의 ‘' + cur.title + '’에 저장')
+        : '지금 악보를 내 악보 목록에 저장');
+    }
+    if (st){
+      st.innerHTML = cur
+        ? ('<b>' + esc(libTitleOf(cur.title)) + '</b> 목록에 저장됨 — 고치면 자동 저장돼요')
+        : '아직 목록에 저장하지 않았어요 — <b>💾 목록에 저장</b>을 누르면 여기에 쌓여요';
+    }
+  }
+
+  function libOpenPanel(){
+    if (audio.playing) stopScore();
+    libRenderList();
+    libSyncUI();
+    $('libModal').hidden = false;
+  }
+
+  function libClosePanel(){
+    if (lib.renaming) libCommitRename();
+    $('libModal').hidden = true;
+  }
+
+  function libStartRename(id){
+    var it = libFind(id);
+    if (!it) return;
+    var el = document.querySelector('.lib-item[data-libid="' + id + '"]');
+    if (!el) return;
+    var row = el.querySelector('.lib-title-row');
+    if (!row) return;
+    lib.renaming = id;
+    row.innerHTML = '<input class="lib-rename" id="libRenameInput" type="text" maxlength="60" ' +
+      'value="' + esc(libTitleOf(it.title)) + '" aria-label="악보 이름">';
+    var inp = $('libRenameInput');
+    if (inp){ inp.focus(); try{ inp.select(); }catch(e){} }
+  }
+
+  function libCommitRename(){
+    var id = lib.renaming;
+    var inp = $('libRenameInput');
+    lib.renaming = '';
+    if (!id) return null;
+    if (!inp){ libRenderList(); return null; }
+    return libRename(id, inp.value);
+  }
+
+  $('libSaveBtn').addEventListener('click', function(){ libSaveNow(); });
+  $('libBtn').addEventListener('click', function(){ libOpenPanel(); });
+  $('libClose').addEventListener('click', function(){ libClosePanel(); });
+  $('libNewBtn').addEventListener('click', function(){ libSaveNew(); });
+  $('libModal').addEventListener('click', function(e){
+    if (e.target && e.target.getAttribute && e.target.getAttribute('data-close')) libClosePanel();
+  });
+  $('libList').addEventListener('click', function(e){
+    var act = (e.target && e.target.closest) ? e.target.closest('[data-libact]') : null;
+    if (act){
+      if (lib.renaming) libCommitRename();
+      var actId = act.getAttribute('data-libid');
+      if (act.getAttribute('data-libact') === 'rename') libStartRename(actId);
+      else libDelete(actId);
+      return;
+    }
+    if (e.target && e.target.id === 'libRenameInput') return;
+    var row = (e.target && e.target.closest) ? e.target.closest('.lib-item') : null;
+    if (row) libOpenItem(row.getAttribute('data-libid'));
+  });
+  $('libList').addEventListener('keydown', function(e){
+    var t = e.target;
+    if (t && t.id === 'libRenameInput'){
+      if (e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); libCommitRename(); }
+      else if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); lib.renaming = ''; libRenderList(); }
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && t && t.classList && t.classList.contains('lib-item')){
+      e.preventDefault();
+      libOpenItem(t.getAttribute('data-libid'));
+    }
+  });
+  $('libList').addEventListener('focusout', function(e){
+    if (!lib.renaming) return;
+    var t = e.target;
+    if (t && t.id === 'libRenameInput') setTimeout(function(){ if (lib.renaming) libCommitRename(); }, 40);
+  });
 
   /* ============================================================
      TOAST
@@ -3187,6 +3672,7 @@
     state.beats = p.beats;
     state.midBeat = p.midBeat || MID_BEAT_DEFAULT[p.beats] || 3;
     state.measures = p.measures.map(coerceMeasure);
+    state.libId = '';            /* 예시 악보를 불러왔으니 목록에 있던 악보를 덮어쓰지 않습니다 */
     renderAll();
     save();
     toast('‘' + p.menu + '’을(를) 불러왔어요', '되돌리기', function(){ restore(prev); });
@@ -3280,6 +3766,8 @@
     if (opts.useMelody && typeof obj.melodyOn === 'boolean') state.melodyOn = obj.melodyOn;
 
     state.measures = ms.slice(0, 200).map(coerceMeasure);
+    /* 불러온 악보는 다른 곡이므로, 목록에 있던 악보를 임의로 덮어쓰지 않도록 연결을 끓습니다 */
+    if (!opts.keepLib) state.libId = '';
     renderAll();
     save();
     return { count: state.measures.length, prev: prev };
@@ -4424,7 +4912,10 @@
     if (e.target && e.target.getAttribute && e.target.getAttribute('data-close')) openHelp(false);
   });
   document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape'){ openHelp(false); closeMeasureEditor(); closeInlineChord(); closeAddMeasure(); }
+    if (e.key === 'Escape'){
+      if (lib.renaming){ lib.renaming = ''; libRenderList(); return; }
+      openHelp(false); closeMeasureEditor(); closeInlineChord(); closeAddMeasure(); libClosePanel();
+    }
   });
 
   /* ============================================================
@@ -4452,6 +4943,7 @@
     barSync(true);
     showView('score');
     $('helpModal').hidden = true;
+    libSyncUI();
   }
 
   /* small debug/verification handle (harmless) */
@@ -4524,7 +5016,20 @@
     splitRest: splitRest,
     prompt: AI_PROMPT,
     schema: AI_SCHEMA,
-    version: '3.5.0'
+    libKey: LIB_KEY,
+    libItems: function(){ return libLoad(); },
+    libCurrent: function(){ return str(state.libId); },
+    libSave: libSaveNow,
+    libSaveNew: libSaveNew,
+    libOpenPanel: libOpenPanel,
+    libClosePanel: libClosePanel,
+    libOpenItem: libOpenItem,
+    libRename: libRename,
+    libDelete: libDelete,
+    libRenderList: libRenderList,
+    libSyncUI: libSyncUI,
+    libSyncCurrent: libSyncCurrent,
+    version: '3.6.0'
   };
 
   if (document.readyState === 'loading'){
