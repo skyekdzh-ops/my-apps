@@ -1193,7 +1193,7 @@
         </div>
         <div class="field">
           <label for="aiModel">모델</label>
-          <input id="aiModel" type="text" value="gemini-2.5-flash" autocomplete="off" spellcheck="false">
+          <input id="aiModel" type="text" value="gemini-3.8-flash" autocomplete="off" spellcheck="false">
         </div>
         <div class="field">
           <label for="aiKey">API 키</label>
@@ -4156,8 +4156,17 @@
     }
     var parts = (cands[0].content && cands[0].content.parts) || [];
     var out = '';
-    for (var i = 0; i < parts.length; i++){ if (parts[i].text) out += parts[i].text; }
-    if (!out) throw new Error('응답에 텍스트가 없습니다');
+    for (var i = 0; i < parts.length; i++){
+      /* Gemini 3.x는 기본으로 ‘생각’을 하고 그 조각도 함께 보냅니다(thought:true) — 결과 JSON이 아니므로 건너뜁니다 */
+      if (parts[i].thought) continue;
+      if (parts[i].text) out += parts[i].text;
+    }
+    if (!out){
+      var fr = cands[0].finishReason || '';
+      throw new Error(fr === 'MAX_TOKENS'
+        ? '응답이 길이 제한에서 잘렸습니다 — 한 번에 읽을 마디 수를 줄여 다시 시도해 주세요'
+        : '응답에 텍스트가 없습니다');
+    }
     return out;
   }
 
@@ -4187,14 +4196,23 @@
     return r;
   }
 
+  /* 예전 모델명이 남아 있어도 최신 모델로 바꿔 부릅니다
+     (2026-11 Google이 gemini-2.5-flash를 신규 사용자에게 막아 gemini-3.8-flash로 안내) */
+  var MODEL_ALIASES = { 'gemini-2.5-flash':'gemini-3.8-flash' };
+  function normalizeModel(m){
+    m = str(m).trim();
+    return MODEL_ALIASES[m] || m;
+  }
+
   $('aiProvider').addEventListener('change', function(){
-    $('aiModel').value = this.value === 'openai' ? 'gpt-4o-mini' : 'gemini-2.5-flash';
+    $('aiModel').value = this.value === 'openai' ? 'gpt-4o-mini' : 'gemini-3.8-flash';
   });
 
   $('aiRun').addEventListener('click', function(){
     var provider = $('aiProvider').value;
     var key = $('aiKey').value.trim();
-    var model = $('aiModel').value.trim();
+    var model = normalizeModel($('aiModel').value);
+    if (model !== $('aiModel').value) $('aiModel').value = model;   /* 옛 모델명 자동 교체 */
 
     if (!state.image){ aiStatus('먼저 위에서 악보 사진을 올려 주세요.', 'err'); return; }
     if (!key){ aiStatus('API 키를 입력해 주세요. (키 없이도 ‘AI 앱에 붙여넣기’를 쓸 수 있어요)', 'err'); return; }
@@ -4924,6 +4942,8 @@
   function boot(){
     fillKeySelects();
     $('aiPromptBox').value = AI_PROMPT;
+    /* 브라우저가 예전 모델명을 되살렸을 때도 최신 모델로 맞춥니다 */
+    $('aiModel').value = normalizeModel($('aiModel').value) || 'gemini-3.8-flash';
 
     var loaded = loadSaved();
     if (!loaded){
@@ -5029,7 +5049,7 @@
     libRenderList: libRenderList,
     libSyncUI: libSyncUI,
     libSyncCurrent: libSyncCurrent,
-    version: '3.6.0'
+    version: '3.6.1'
   };
 
   if (document.readyState === 'loading'){
