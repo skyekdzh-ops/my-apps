@@ -4239,7 +4239,7 @@
             { inline_data:{ mime_type:mime, data:b64 } }
           ]}],
           generationConfig:{
-            temperature:0.1,
+            /* Gemini 3 세대부터 temperature·top_p·top_k는 폐지 — 보내면 오류가 날 수 있어 뺐습니다 */
             responseMimeType:'application/json',
             responseSchema: AI_SCHEMA
           }
