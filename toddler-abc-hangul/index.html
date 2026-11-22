@@ -679,7 +679,7 @@ html[data-theme="mono"] .bubble,html[data-theme="mono"] .dance-caption,html[data
 }
 
 /* ============================================================
-   부모님 설정 (GPT 연동)
+   부모님 설정
    ============================================================ */
 .gear-btn{
   position:relative;width:38px;height:38px;border-radius:50%;background:var(--card);
@@ -690,12 +690,6 @@ html[data-theme="mono"] .bubble,html[data-theme="mono"] .dance-caption,html[data
 html[data-theme="mono"] .gear-btn{background:#fff;box-shadow:0 3px 0 #000}
 .gear-btn .ico-gear{line-height:1;display:block}
 html[data-theme="mono"] .gear-btn .ico-gear{filter:grayscale(1)}
-.gear-btn .on-dot{
-  position:absolute;right:-2px;top:-2px;width:12px;height:12px;border-radius:50%;
-  background:var(--green);border:2px solid var(--ink);display:none;
-}
-.gear-btn.on .on-dot{display:block}
-html[data-theme="mono"] .gear-btn .on-dot{background:#000}
 
 .sheet-backdrop{
   position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center;
@@ -734,89 +728,8 @@ html[data-theme="mono"] .sheet-head .tag{background:#fff;color:#000}
 html[data-theme="mono"] .sheet-close{background:#fff;box-shadow:0 2px 0 #000}
 .sheet-body{padding:13px 16px calc(16px + env(safe-area-inset-bottom,0px));overflow-y:auto;display:flex;flex-direction:column;gap:11px;-webkit-overflow-scrolling:touch}
 
-.conn-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.badge{
-  display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;font-size:11.5px;font-weight:900;
-  border:2.5px solid var(--ink);background:var(--yellow-soft);letter-spacing:-.02em;
-}
-.badge i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:block}
-html[data-theme="mono"] .badge{background:#fff}
-.badge[data-status="none"]{background:var(--card)}
-.badge[data-status="none"] i{background:var(--muted)}
-.badge[data-status="entered"]{background:var(--yellow-soft)}
-.badge[data-status="entered"] i{background:var(--yellow)}
-.badge[data-status="checking"]{background:var(--sky-soft)}
-.badge[data-status="checking"] i{background:var(--sky);animation:badgeBlink .9s ease-in-out infinite}
-.badge[data-status="ok"]{background:var(--green-soft)}
-.badge[data-status="ok"] i{background:var(--green)}
-.badge[data-status="error"]{background:var(--red-soft)}
-.badge[data-status="error"] i{background:var(--red)}
-@keyframes badgeBlink{0%,100%{opacity:1}50%{opacity:.25}}
-.mini-btn{
-  margin-left:auto;min-height:36px;padding:0 12px;border-radius:12px;font-size:11.5px;font-weight:900;
-  background:var(--card);border:2.5px solid var(--ink);box-shadow:0 2px 0 var(--ink);color:var(--ink);
-}
-.mini-btn:active{transform:translateY(2px);box-shadow:none}
-html[data-theme="mono"] .mini-btn{background:#fff;box-shadow:0 2px 0 #000}
-.conn-msg{margin:0;font-size:11px;line-height:1.4;font-weight:800;color:var(--ink-soft);display:none;background:var(--paper-2);border-radius:10px;padding:7px 9px}
-.conn-msg.show{display:block}
-.conn-msg.bad{background:var(--red-soft)}
-html[data-theme="mono"] .conn-msg{background:#fff;border:2px solid #000;color:#000}
-
-.field{display:flex;flex-direction:column;gap:5px}
 .field-lbl{font-size:11.5px;font-weight:900;color:var(--ink-soft);letter-spacing:-.01em}
 html[data-theme="mono"] .field-lbl{color:#000}
-.key-wrap{position:relative;display:flex}
-.key-wrap input{
-  width:100%;height:46px;border-radius:13px;border:2.5px solid var(--ink);background:#fff;
-  padding:0 44px 0 12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--ink);
-  box-shadow:inset 0 -2px 0 rgba(43,45,66,.06);
-}
-.key-wrap input:focus{outline:3px solid var(--sky);outline-offset:1px}
-.key-eye{
-  position:absolute;right:5px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;
-  display:grid;place-items:center;font-size:14px;background:var(--paper-2);border:1.5px solid var(--frame);
-}
-html[data-theme="mono"] .key-eye{background:#fff;border-color:#000}
-
-.check{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;font-weight:800;color:var(--ink-soft);line-height:1.35;cursor:pointer}
-.check input{position:absolute;opacity:0;pointer-events:none}
-.check .box{
-  width:22px;height:22px;border-radius:7px;border:2.5px solid var(--ink);background:#fff;flex:0 0 auto;
-  display:grid;place-items:center;margin-top:-1px;
-}
-.check input:checked + .box{background:var(--green);}
-.check input:checked + .box::after{content:"✓";font-size:14px;font-weight:900;color:#fff;line-height:1}
-.check input:focus-visible + .box{outline:3px solid var(--sky);outline-offset:2px}
-html[data-theme="mono"] .check input:checked + .box{background:#000}
-.check small{color:var(--muted);font-weight:700}
-html[data-theme="mono"] .check small{color:#333}
-
-.switches{display:flex;flex-direction:column;gap:8px}
-.switch{
-  display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:13px;background:var(--paper-2);
-  border:2px solid var(--frame);cursor:pointer;
-}
-html[data-theme="mono"] .switch{background:#fff;border:2px solid #000}
-.switch input{position:absolute;opacity:0;pointer-events:none}
-.switch .track{
-  width:44px;height:26px;border-radius:999px;background:#fff;border:2.5px solid var(--ink);position:relative;flex:0 0 auto;
-  transition:background .18s ease;
-}
-.switch .track::after{
-  content:"";position:absolute;left:2px;top:2px;width:17px;height:17px;border-radius:50%;background:var(--ink);
-  transition:transform .18s cubic-bezier(.2,1.3,.4,1),background .18s ease;
-}
-.switch input:checked + .track{background:var(--green)}
-.switch input:checked + .track::after{transform:translateX(18px);background:#fff}
-html[data-theme="mono"] .switch input:checked + .track{background:#000}
-html[data-theme="mono"] .switch input:checked + .track::after{background:#fff}
-.switch input:focus-visible + .track{outline:3px solid var(--sky);outline-offset:2px}
-.sw-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
-.sw-txt b{font-size:12px;font-weight:900;letter-spacing:-.02em;color:var(--ink)}
-.sw-txt small{font-size:10px;font-weight:700;color:var(--muted);line-height:1.3}
-html[data-theme="mono"] .sw-txt b{color:#000}
-html[data-theme="mono"] .sw-txt small{color:#333}
 .fine{font-size:10px;line-height:1.45;color:var(--muted);font-weight:700;margin:0}
 html[data-theme="mono"] .fine{color:#333}
 .fine b{color:var(--ink-soft)}
@@ -874,8 +787,6 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
 }
 @media (max-height:700px){
   .sheet-body{gap:9px}
-  .switch{padding:6px 8px}
-  .key-wrap input{height:42px}
 }
 </style>
 </head>
@@ -925,8 +836,8 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
         <span class="ico" aria-hidden="true">◐</span>흑백
       </button>
     </div>
-    <button class="gear-btn" id="btnSettings" type="button" aria-label="부모님 설정 (음성인식 민감도 · GPT 연동)" title="부모님 설정 (음성인식 민감도 · GPT 연동)">
-      <span class="ico-gear" aria-hidden="true">⚙️</span><span class="on-dot" aria-hidden="true"></span>
+    <button class="gear-btn" id="btnSettings" type="button" aria-label="부모님 설정 (음성인식 민감도)" title="부모님 설정 (음성인식 민감도)">
+      <span class="ico-gear" aria-hidden="true">⚙️</span>
     </button>
   </header>
 
@@ -1051,11 +962,11 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
   </nav>
 </div>
 
-<!-- 부모님 설정 (GPT 연동) -->
+<!-- 부모님 설정 -->
 <div class="sheet-backdrop" id="settingsBackdrop" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="sheet-head">
-      <h2 id="settingsTitle">⚙️ 부모님 설정 <span class="tag">음성인식 · GPT</span></h2>
+      <h2 id="settingsTitle">⚙️ 부모님 설정 <span class="tag">음성인식</span></h2>
       <button class="sheet-close" id="settingsClose" type="button" aria-label="설정 닫기">✕</button>
     </div>
     <div class="sheet-body">
@@ -1070,49 +981,10 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
         <p class="fine" id="sensHint">작은 소리·짧은 소리도 알아듣고, 비슷한 발음(ㄱ/ㅋ, ㅏ/ㅑ, 에프/에푸)도 정답으로 봐요. 아기가 한 글자만 말해도 알아들어요.</p>
       </div>
 
-      <div class="conn-row">
-        <span class="badge" id="gptBadge" data-status="none"><i aria-hidden="true"></i><span id="gptBadgeText">키 없음 · 기본 모드</span></span>
-        <button class="mini-btn" id="gptTest" type="button">연결 확인</button>
-      </div>
-      <p class="conn-msg" id="gptMsg" role="status"></p>
-
-      <label class="field">
-        <span class="field-lbl">OpenAI API 키</span>
-        <span class="key-wrap">
-          <input id="gptKey" type="password" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-..." aria-label="OpenAI API 키">
-          <button class="key-eye" id="gptEye" type="button" aria-label="키 보기">👁</button>
-        </span>
-      </label>
-
-      <label class="check">
-        <input type="checkbox" id="gptSave">
-        <span class="box" aria-hidden="true"></span>
-        <span>이 기기에 키 저장 <small>(localStorage · 끄면 메모리에만 있어요)</small></span>
-      </label>
-
-      <div class="switches">
-        <label class="switch">
-          <input type="checkbox" id="gptSmart" checked>
-          <span class="track" aria-hidden="true"></span>
-          <span class="sw-txt"><b>GPT 똑똑한 판정</b><small>아기 발음을 gpt-4o-mini가 한 번 더 봐 줘요</small></span>
-        </label>
-        <label class="switch">
-          <input type="checkbox" id="gptVoice">
-          <span class="track" aria-hidden="true"></span>
-          <span class="sw-txt"><b>자연스러운 목소리 (TTS)</b><small>글자·칭찬을 OpenAI 목소리로 읽어 줘요</small></span>
-        </label>
-        <label class="switch">
-          <input type="checkbox" id="gptWhisper">
-          <span class="track" aria-hidden="true"></span>
-          <span class="sw-txt"><b>Whisper 녹음 듣기</b><small>마이크 인식이 안 될 때 4초 녹음해서 듣어요</small></span>
-        </label>
-      </div>
-
-      <p class="fine">키는 이 기기 브라우저에만 있어요. <b>GPT 판정</b>을 켜면 아이가 말한 글자(텍스트)가 OpenAI로 전송되고, 요금은 부모님 OpenAI 계정에 청구돼요. 키가 없어도 <b>기본 사전 판정</b>으로 모든 놀이가 그대로 동작해요.</p>
+      <p class="fine">설정은 이 기기에만 저장돼요. 부모님이 고른 민감도는 다음에 앱을 열어도 그대로 유지돼요.</p>
 
       <div class="sheet-actions">
-        <button class="s-btn ghost" id="gptClear" type="button">키 삭제</button>
-        <button class="s-btn primary" id="gptDone" type="button">저장하고 닫기</button>
+        <button class="s-btn primary" id="settingsDone" type="button">닫기</button>
       </div>
     </div>
   </div>
@@ -1318,10 +1190,7 @@ const el = {
   themeBtns:document.querySelectorAll('.theme-toggle button'),
   btnSettings:$('btnSettings'),
   settingsBackdrop:$('settingsBackdrop'), settingsClose:$('settingsClose'),
-  gptKey:$('gptKey'), gptEye:$('gptEye'), gptSave:$('gptSave'),
-  gptSmart:$('gptSmart'), gptVoice:$('gptVoice'), gptWhisper:$('gptWhisper'),
-  gptBadge:$('gptBadge'), gptBadgeText:$('gptBadgeText'), gptMsg:$('gptMsg'),
-  gptTest:$('gptTest'), gptClear:$('gptClear'), gptDone:$('gptDone'),
+  settingsDone:$('settingsDone'),
   sensSeg:$('sensSeg'), sensHint:$('sensHint'),
   hearingBars:document.querySelector('#hearing .bars')
 };
@@ -1483,7 +1352,7 @@ function pickVoice(lang){
      ③ 음성/언어 오류(synthesis-failed 등)면 u.voice=null로 재시도하며,
      ④ speak 전에 paused 상태를 풀고 rate/pitch를 허용 범위로 자른다.
    ※ 첫 발화는 반드시 사용자 제스처(클릭) 안에서 동기적으로 불러야 iOS가
-     소리를 허용하므로, say()/speakCurrent()는 await·setTimeout 없이 부른다.
+     소리를 허용하므로, speak()/speakCurrent()는 await·setTimeout 없이 부른다.
    ============================================================ */
 const VOICE_GUARD = { seq:0, started:false, attempts:0, lastError:'', lastStartAt:0, lastSpeakAt:0, suppressUntil:0 };
 
@@ -1818,9 +1687,9 @@ function recSpeakBuiltin(key){
   const item = hit ? hit.item : currentItem();
   const mode = hit ? hit.mode : state.mode;
   if(mode === 'alphabet'){
-    say(item.ch + '. ' + item.ch, 'en-US', {rate:0.95, pitch:1.34, chime:true});
+    speak(item.ch + '. ' + item.ch, 'en-US', {rate:0.95, pitch:1.34, chime:true});
   }else{
-    say(item.sub, 'ko-KR', {rate:0.94, pitch:1.35, chime:true});
+    speak(item.sub, 'ko-KR', {rate:0.94, pitch:1.35, chime:true});
   }
 }
 function recPlay(key){
@@ -1828,7 +1697,6 @@ function recPlay(key){
   const e = Rec.cache.get(k);
   if(!e || !e.url) return false;
   cancelSpeech();
-  try{ if(gptAudio) gptAudio.pause(); }catch(err){}
   let a = Rec.player;
   if(!a){
     try{ a = new Audio(); a.preload = 'auto'; }catch(err){ return false; }
@@ -2013,73 +1881,14 @@ Rec.syncUI = function(){
 };
 
 /* ============================================================
-   6-b. OpenAI(GPT) 연동 — 선택 사항, 키가 없으면 조용히 기본 모드
+   6-b. 부모님 설정 — 음성인식 민감도
    ============================================================ */
-const GPT_STORE_KEY = 'toddlerSpeak.gpt.v1';
-const GPT = {
-  key:'', save:false, smart:true, voice:false, whisper:false,
-  status:'none',        // none | entered | checking | ok | error
-  msg:'', msgBad:false,
-  lastPraise:'', lastSource:'local',
-  testedKey:''
-};
-let gptObjUrl = null;
-let gptAudio = null;
-let gptTimer = null;
-
-function gptHasKey(){ return !!(GPT.key && GPT.key.trim().length >= 10); }
-function gptLoad(){
-  try{
-    const raw = localStorage.getItem(GPT_STORE_KEY);
-    if(raw){
-      const j = JSON.parse(raw);
-      if(j && typeof j==='object'){
-        if(typeof j.smart==='boolean') GPT.smart = j.smart;
-        if(typeof j.voice==='boolean') GPT.voice = j.voice;
-        if(typeof j.whisper==='boolean') GPT.whisper = j.whisper;
-        GPT.save = !!j.save;
-        if(GPT.save && typeof j.key==='string') GPT.key = j.key;
-      }
-    }
-  }catch(e){}
-  if(gptHasKey()) GPT.status = 'entered';
-}
-function gptPersist(){
-  try{
-    const payload = {save:!!GPT.save, smart:!!GPT.smart, voice:!!GPT.voice, whisper:!!GPT.whisper};
-    if(GPT.save && GPT.key) payload.key = GPT.key;
-    localStorage.setItem(GPT_STORE_KEY, JSON.stringify(payload));
-  }catch(e){}
-}
-function gptBadgeInfo(){
-  if(!gptHasKey()) return {status:'none', text:'키 없음 · 기본 모드'};
-  if(GPT.status==='checking') return {status:'checking', text:'연결 확인 중…'};
-  if(GPT.status==='ok') return {status:'ok', text:'연결됨 ✓' };
-  if(GPT.status==='error') return {status:'error', text:'연결 실패'};
-  return {status:'entered', text:'키 입력됨 · 확인 전'};
-}
-function renderGpt(){
-  const info = gptBadgeInfo();
-  if(el.gptBadge){
-    el.gptBadge.dataset.status = info.status;
-    el.gptBadgeText.textContent = info.text;
-  }
-  if(el.gptMsg){
-    el.gptMsg.textContent = GPT.msg || '';
-    el.gptMsg.classList.toggle('show', !!GPT.msg);
-    el.gptMsg.classList.toggle('bad', !!GPT.msgBad);
-  }
-  if(el.btnSettings) el.btnSettings.classList.toggle('on', info.status==='ok');
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function openSettings(){
-  el.gptKey.value = GPT.key || '';
-  el.gptSave.checked = !!GPT.save;
-  el.gptSmart.checked = !!GPT.smart;
-  el.gptVoice.checked = !!GPT.voice;
-  el.gptWhisper.checked = !!GPT.whisper;
   paintSensitivity();
-  renderGpt();
   el.settingsBackdrop.hidden = false;
   void el.settingsBackdrop.offsetWidth;
   el.settingsBackdrop.classList.add('show');
@@ -2110,271 +1919,6 @@ function setSensitivity(v){
   paintSensitivity();
   if(changed && state.listening){ try{ startListening(); }catch(e){} }   // 듣는 중이면 새 설정으로 다시
   return state.sensitivity;
-}
-function readSettingsInputs(){
-  const prevKey = GPT.key;
-  GPT.key = (el.gptKey.value || '').trim();
-  GPT.save = !!el.gptSave.checked;
-  GPT.smart = !!el.gptSmart.checked;
-  GPT.voice = !!el.gptVoice.checked;
-  GPT.whisper = !!el.gptWhisper.checked;
-  if(GPT.key !== prevKey){
-    GPT.status = gptHasKey() ? 'entered' : 'none';
-    GPT.msg = '';
-    GPT.msgBad = false;
-    GPT.lastPraise = '';
-  }
-  if(!gptHasKey()) GPT.status = 'none';
-  gptPersist();
-  renderGpt();
-}
-function clearGptKey(){
-  GPT.key = '';
-  GPT.status = 'none';
-  GPT.msg = '키를 지웠어요. 이제 기본 사전 판정으로 놀이해요.';
-  GPT.msgBad = false;
-  el.gptKey.value = '';
-  gptPersist();
-  renderGpt();
-}
-
-function gptAbort(ms){
-  const c = {ctrl:null, id:null};
-  try{
-    if(window.AbortController){
-      c.ctrl = new AbortController();
-      c.id = setTimeout(()=>{ try{ c.ctrl.abort(); }catch(e){} }, ms);
-    }
-  }catch(e){}
-  return c;
-}
-function gptClearAbort(c){ if(c && c.id) clearTimeout(c.id); }
-function gptNetMessage(err){
-  const s = String(err && err.message || err || '');
-  if(/abort/i.test(s)) return '응답이 늦어요. 잠시 후 다시 시도해 주세요.';
-  if(/Failed to fetch|NetworkError|Load failed|CORS/i.test(s)){
-    return '브라우저에서 OpenAI로 직접 연결이 막혔어요(CORS/네트워크). 기본 사전 판정으로 계속 놀이할 수 있어요.';
-  }
-  return '연결하지 못했어요: ' + s;
-}
-
-async function testConnection(){
-  readSettingsInputs();
-  if(!gptHasKey()){
-    GPT.status='none'; GPT.msg='키를 먼저 입력해 주세요.'; GPT.msgBad=true; renderGpt();
-    return {ok:false, reason:'no-key'};
-  }
-  GPT.status='checking'; GPT.msg=''; GPT.msgBad=false; renderGpt();
-  const ac = gptAbort(9000);
-  try{
-    const r = await fetch('https://api.openai.com/v1/models', {
-      method:'GET',
-      headers:{ 'Authorization':'Bearer ' + GPT.key },
-      signal: ac.ctrl ? ac.ctrl.signal : undefined
-    });
-    if(!r.ok){
-      let t='';
-      try{ const j = await r.json(); t = (j && j.error && j.error.message) || ''; }catch(e){}
-      GPT.status='error'; GPT.msgBad=true;
-      GPT.msg = r.status===401 ? '키가 올바르지 않아요(401). 다시 확인해 주세요.'
-             : r.status===429 ? '요청이 너무 많아요(429). 잠시 후 다시 확인해 주세요.'
-             : ('연결 실패 (HTTP ' + r.status + ') ' + t).trim();
-      renderGpt();
-      return {ok:false, reason:'http-'+r.status};
-    }
-    const j = await r.json();
-    const models = (j && j.data) || [];
-    GPT.status='ok'; GPT.msgBad=false;
-    GPT.msg = '연결됐어요! ' + (GPT.voice ? 'GPT 판정과 자연스러운 목소리를' : 'GPT 판정을') + ' 쓸 수 있어요.';
-    GPT.testedKey = GPT.key;
-    renderGpt();
-    return {ok:true, models:models.length};
-  }catch(e){
-    GPT.status='error'; GPT.msgBad=true; GPT.msg = gptNetMessage(e);
-    renderGpt();
-    return {ok:false, reason:'network', message:GPT.msg};
-  }finally{
-    gptClearAbort(ac);
-  }
-}
-
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-async function gptJudge(text, item){
-  if(!gptHasKey()) throw new Error('no-key');
-  const ac = gptAbort(7000);
-  try{
-    const sys = [
-      'You are a gentle Korean speech teacher for a 3-year-old toddler.',
-      'Decide whether the child\u2019s utterance is an acceptable attempt at the target letter.',
-      'Be very lenient: toddler approximations, baby talk, and Korean-accented pronunciation all count.',
-      'For an English letter accept its English name and common Korean transliterations (A: "ay", "에이"; W: "double you", "더블유").',
-      'For a Hangul consonant accept its name (기역), a rough reading (그), or the jamo itself.',
-      'Reply with JSON ONLY in this shape: {"correct": true or false, "praise": "<one short warm Korean sentence for the child>"}.',
-      'praise must be at most 20 Korean words, cheerful, and never scold.'
-    ].join(' ');
-    const user = JSON.stringify({
-      target:{ kind: state.mode, letter:item.ch, name:item.sub, english:item.roman||'', acceptable:item.say.slice(0,10) },
-      child_said: text
-    });
-    const r = await fetch('https://api.openai.com/v1/chat/completions', {
-      method:'POST',
-      headers:{ 'Authorization':'Bearer ' + GPT.key, 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        model:'gpt-4o-mini',
-        temperature:0.2,
-        max_tokens:120,
-        response_format:{ type:'json_object' },
-        messages:[{role:'system', content:sys},{role:'user', content:user}]
-      }),
-      signal: ac.ctrl ? ac.ctrl.signal : undefined
-    });
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
-    let content = j && j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : '';
-    content = String(content||'').trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
-    let parsed = null;
-    try{ parsed = JSON.parse(content); }
-    catch(e){ const m = content.match(/\{[\s\S]*\}/); if(m) parsed = JSON.parse(m[0]); }
-    if(!parsed || typeof parsed.correct === 'undefined') throw new Error('bad-json');
-    const correct = parsed.correct === true || parsed.correct === 'true';
-    let praise = String(parsed.praise || '').replace(/\s+/g,' ').trim();
-    if(praise.length > 120) praise = praise.slice(0, 118) + '…';
-    return {correct:correct, praise:praise};
-  }catch(e){
-    GPT.msgBad = true;
-    if(/HTTP 401|HTTP 403/.test(String(e && e.message))) GPT.status = 'error';
-    GPT.msg = gptNetMessage(e);
-    renderGpt();
-    throw e;
-  }finally{
-    gptClearAbort(ac);
-  }
-}
-
-async function openaiSpeech(text, opts){
-  opts = opts || {};
-  if(!gptHasKey() || !GPT.voice) return false;
-  const ac = gptAbort(9000);
-  const attempt = async (model, extra)=>{
-    const r = await fetch('https://api.openai.com/v1/audio/speech', {
-      method:'POST',
-      headers:{ 'Authorization':'Bearer ' + GPT.key, 'Content-Type':'application/json' },
-      body: JSON.stringify(Object.assign({
-        model:model, voice:'echo', input:text, response_format:'mp3'
-      }, extra||{})),
-      signal: ac.ctrl ? ac.ctrl.signal : undefined
-    });
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    const blob = await r.blob();
-    if(!blob || blob.size < 80) throw new Error('empty-audio');
-    const url = URL.createObjectURL(blob);
-    if(gptObjUrl){ try{ URL.revokeObjectURL(gptObjUrl); }catch(e){} }
-    gptObjUrl = url;
-    if(gptAudio){ try{ gptAudio.pause(); }catch(e){} }
-    gptAudio = new Audio(url);
-    gptAudio.volume = 1;
-    VoiceLog.last = { text:String(text), lang:'openai', rate:1, pitch:1.35, voice:'echo', at:Date.now() };
-    gptAudio.onended = ()=>{ if(opts.chime) elephantChime(); };
-    await gptAudio.play();
-    return true;
-  };
-  try{
-    try{
-      return await attempt('gpt-4o-mini-tts', {instructions:
-        '뽀로로처럼 장난기 많고 밝고 에너지 넘치는 3~4세 귀여운 남자아기 목소리로 또랑또랑하게 말해 주세요.'});
-    }catch(e){
-      return await attempt('tts-1', {speed:1.04});
-    }
-  }catch(e){
-    GPT.msgBad = true; GPT.msg = gptNetMessage(e) + ' 기본 목소리로 읽어 줄게요.';
-    renderGpt();
-    return false;
-  }finally{ gptClearAbort(ac); }
-}
-
-function say(text, lang, opts){
-  if(!text) return false;
-  if(gptHasKey() && GPT.voice){
-    openaiSpeech(text, opts).then(ok=>{ if(!ok) speak(text, lang, opts); }).catch(()=>{ speak(text, lang, opts); });
-    return true;
-  }
-  return speak(text, lang, opts);
-}
-
-/* ---------- Whisper 녹음 듣기 (SpeechRecognition이 없을 때) ---------- */
-function whisperAvailable(){
-  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
-}
-async function whisperTranscribe(blob){
-  const fd = new FormData();
-  const ext = (blob.type && blob.type.indexOf('mp4')>=0) ? 'mp4' : 'webm';
-  fd.append('file', blob, 'toddler.' + ext);
-  fd.append('model', 'whisper-1');
-  fd.append('language', state.mode==='alphabet' ? 'en' : 'ko');
-  const ac = gptAbort(15000);
-  try{
-    const r = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method:'POST',
-      headers:{ 'Authorization':'Bearer ' + GPT.key },
-      body: fd,
-      signal: ac.ctrl ? ac.ctrl.signal : undefined
-    });
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
-    return String((j && j.text) || '').trim();
-  } finally { gptClearAbort(ac); }
-}
-let whisperStream = null;
-let whisperRec = null;
-async function startWhisperListening(){
-  if(state.celebrating) return;
-  hideFeedback();
-  stopRecognition();
-  let stream;
-  try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
-  catch(e){
-    showSRNotice('마이크를 켤 수 없어요. 아래 <b>부모님 도움</b>에서 <b>정답</b>을 눌러 주세요.');
-    gentlePrompt('마이크를 켜 주세요', '부모님이 허용을 확인해 주세요.', 'retry');
-    return;
-  }
-  whisperStream = stream;
-  let rec;
-  try{ rec = new MediaRecorder(stream); }
-  catch(e){ stopWhisperTracks(); gentlePrompt('녹음을 할 수 없어요', '부모님이 <b>정답</b>을 눌러 주세요.', 'retry'); return; }
-  whisperRec = rec;
-  const chunks = [];
-  rec.ondataavailable = (e)=>{ if(e.data && e.data.size) chunks.push(e.data); };
-  const stopped = new Promise(res=>{ rec.onstop = ()=>res(); });
-  rec.start();
-  setListening(true);
-  el.hearingTxt.textContent = '4초 동안 듣고 있어요…';
-  await new Promise(r=>setTimeout(r, 4000));
-  try{ if(rec.state!=='inactive') rec.stop(); }catch(e){}
-  await stopped;
-  stopWhisperTracks();
-  setListening(false);
-  const blob = new Blob(chunks, {type: rec.mimeType || 'audio/webm'});
-  if(!blob.size){ gentlePrompt('하나도 못 들었어요', '조금 더 크게, 천천히 말해 볼까요?', 'retry'); return; }
-  el.hearing.classList.add('on');
-  el.hearingTxt.textContent = '들은 말을 글로 적고 있어요…';
-  try{
-    const text = await whisperTranscribe(blob);
-    el.hearing.classList.remove('on');
-    evaluateTranscripts([text]);
-  }catch(e){
-    el.hearing.classList.remove('on');
-    GPT.msgBad = true; GPT.msg = gptNetMessage(e); renderGpt();
-    showSRNotice('녹음 듣기를 하지 못했어요. <b>부모님 도움</b>의 <b>정답</b>으로도 놀이할 수 있어요.');
-    gentlePrompt('잠깐 연결이 안 됐어요', '부모님이 도와주세요.', 'retry');
-  }
-}
-function stopWhisperTracks(){
-  try{ if(whisperStream) whisperStream.getTracks().forEach(t=>t.stop()); }catch(e){}
-  whisperStream = null;
-  whisperRec = null;
 }
 
 /* ============================================================
@@ -3305,7 +2849,6 @@ function micSync(){
 let recog = null;
 let recTimer = null;
 let recGeneration = 0;
-let judgeToken = 0;
 const SR_MAX_ALTERNATIVES = 12;      // 모든 대안을 본다(민감도별로 5~12)
 const SR_LISTEN_MS = 7200;
 const SR_RETRY_MS = 6200;
@@ -3333,7 +2876,6 @@ function stopRecognition(){
   recog = null;
   if(recTimer){ clearTimeout(recTimer); recTimer=null; }
   if(r){ try{ r.onresult=null; r.onerror=null; r.onend=null; r.abort(); }catch(e){} }
-  if(whisperStream) stopWhisperTracks();
   if(Rec.recording) { try{ recStop(); }catch(e){} }
   recGeneration++;
   srSession = null;
@@ -3341,7 +2883,7 @@ function stopRecognition(){
   setListening(false);
 }
 
-/* 인식된 문장들 → 정답/오답 (사전 → 필요하면 GPT) */
+/* 인식된 문장들 → 정답/오답 (3세 발음 사전) */
 function evaluateTranscripts(texts){
   const item = currentItem();
   let matched=null, heard='';
@@ -3361,34 +2903,6 @@ function evaluateTranscripts(texts){
   }
   state.lastHeard = heard || '';
   state.attempts++;
-
-  if(gptHasKey() && GPT.smart){
-    const token = ++judgeToken;
-    el.hearing.classList.add('on');
-    el.hearingTxt.textContent = 'GPT 선생님이 한 번 더 듣고 있어요…';
-    gptJudge(heard || '(잘 안 들림)', item).then(res=>{
-      if(token!==judgeToken || state.celebrating) return;
-      el.hearing.classList.remove('on');
-      if(res && res.correct){
-        GPT.lastPraise = res.praise || '';
-        GPT.lastSource = 'gpt';
-        state.lastSource = 'gpt';
-        hideSRNotice();
-        celebrate(item, {praise:res.praise, source:'gpt'});
-      }else{
-        GPT.lastSource = 'gpt';
-        GPT.lastPraise = (res && res.praise) || '';
-        gentlePrompt('다시 한 번 말해볼까요? 🐘',
-          heard ? ('들린 말: ' + heard) : '조금 더 크게 말해 볼까요?', 'wrong');
-      }
-    }).catch(()=>{
-      if(token!==judgeToken || state.celebrating) return;
-      el.hearing.classList.remove('on');
-      gentlePrompt('다시 한 번 말해볼까요? 🐘',
-        heard ? ('들린 말: ' + heard) : '잘 안 들렸어요. 조금 더 크게!', 'wrong');
-    });
-    return false;
-  }
 
   gentlePrompt('다시 한 번 말해볼까요? 🐘',
     heard ? ('들린 말: ' + heard) : '잘 안 들렸어요. 조금 더 크게!', 'wrong');
@@ -3549,10 +3063,6 @@ function startListening(){
   MIC.sound = false;
   if(!srAvailable()){
     state.srError='unsupported';
-    if(gptHasKey() && GPT.whisper && whisperAvailable()){
-      startWhisperListening();
-      return;
-    }
     showSRNotice();
     gentlePrompt('마이크를 쓸 수 없어요', '부모님이 아래 <b>정답</b> 단추를 눌러 주세요.', 'retry');
     return;
@@ -3610,7 +3120,6 @@ function render(animate){
 }
 function setMode(mode, opts){
   if(ORDER.indexOf(mode)<0) return;
-  judgeToken++;
   stopRecognition();
   if(state.celebrating) finishCelebration(false, true);
   state.mode = mode;
@@ -3634,7 +3143,6 @@ function setTheme(theme){
 }
 function step(dir){
   if(state.celebrating) return;
-  judgeToken++;
   const m = MODES[state.mode];
   const n = m.items.length;
   state.index[state.mode] = (state.index[state.mode] + dir + n) % n;
@@ -3647,7 +3155,6 @@ function next(){ step(1); }
 function prev(){ step(-1); }
 function random(){
   if(state.celebrating) return;
-  judgeToken++;
   const m = MODES[state.mode];
   const n = m.items.length;
   if(n<2){ render(true); return; }
@@ -3788,7 +3295,7 @@ function celebrate(item, opts){
   const cheerLang = state.mode==='alphabet' ? 'en-US' : 'ko-KR';
   const cheerText = (praise && praise.length <= 18) ? praise
                   : (state.mode==='alphabet' ? ('와! ' + item.ch + '!') : ('와! ' + item.sub + '!'));
-  setTimeout(()=>{ if(state.celebrating) say(cheerText, cheerLang, {rate:0.96, pitch:1.35}); }, 90);
+  setTimeout(()=>{ if(state.celebrating) speak(cheerText, cheerLang, {rate:0.96, pitch:1.35}); }, 90);
 
   // 가라오케 — 노래의 음표에 맞춰 가사 음절을 하나하나 반짝인다
   clearLyricTimers();
@@ -3893,11 +3400,11 @@ el.themeBtns.forEach(b=>{
   b.addEventListener('click', ()=> setTheme(b.dataset.themeValue));
 });
 
-/* ---------- 부모님 설정 (GPT) ---------- */
+/* ---------- 부모님 설정 (음성인식 민감도) ---------- */
 el.btnSettings.addEventListener('click', openSettings);
 el.settingsClose.addEventListener('click', closeSettings);
 el.settingsBackdrop.addEventListener('click', (e)=>{ if(e.target===el.settingsBackdrop) closeSettings(); });
-el.gptDone.addEventListener('click', ()=>{ readSettingsInputs(); closeSettings(); });
+if(el.settingsDone) el.settingsDone.addEventListener('click', closeSettings);
 if(el.sensSeg){
   el.sensSeg.addEventListener('click', (e)=>{
     const b = (e.target && e.target.closest) ? e.target.closest('button[data-sens]') : null;
@@ -3915,28 +3422,6 @@ if(el.sensSeg){
     if(btn) btn.focus();
   });
 }
-el.gptTest.addEventListener('click', ()=>{ testConnection(); });
-el.gptClear.addEventListener('click', clearGptKey);
-el.gptEye.addEventListener('click', ()=>{
-  const show = el.gptKey.type === 'password';
-  el.gptKey.type = show ? 'text' : 'password';
-  el.gptEye.textContent = show ? '🙈' : '👁';
-  el.gptEye.setAttribute('aria-label', show ? '키 가리기' : '키 보기');
-});
-el.gptKey.addEventListener('input', ()=>{
-  const k = (el.gptKey.value || '').trim();
-  if(k !== GPT.key){
-    GPT.key = k;
-    GPT.status = gptHasKey() ? 'entered' : 'none';
-    GPT.msg = ''; GPT.msgBad = false;
-    if(!gptHasKey()){ GPT.status='none'; }
-  }
-  gptPersist();
-  renderGpt();
-});
-[el.gptSave, el.gptSmart, el.gptVoice, el.gptWhisper].forEach(cb=>{
-  cb.addEventListener('change', ()=>{ readSettingsInputs(); });
-});
 
 document.addEventListener('keydown', (e)=>{
   const tag = (e.target && e.target.tagName) ? e.target.tagName : '';
@@ -4092,36 +3577,20 @@ ToddlerApp.rec = {
   })
 };
 ToddlerApp.reset = ()=>{ state.index = {consonant:0, vowel:0, alphabet:0}; state.attempts=0; render(true); };
-ToddlerApp.gpt = {
-  state: GPT,
-  hasKey: gptHasKey,
+ToddlerApp.settings = {
   open: openSettings,
   close: closeSettings,
-  test: testConnection,
-  judge: (text)=> gptJudge(text, currentItem()),
-  speak: say,
-  setKey: (key, saveFlag)=>{
-    GPT.key = key || '';
-    GPT.save = !!saveFlag;
-    GPT.status = gptHasKey() ? 'entered' : 'none';
-    GPT.msg = ''; GPT.msgBad = false;
-    gptPersist(); renderGpt();
-  },
-  readInputs: readSettingsInputs,
-  clear: clearGptKey,
-  whisperAvailable: whisperAvailable,
-  badge: ()=> gptBadgeInfo()
+  sensitivity: ()=> state.sensitivity,
+  setSensitivity: setSensitivity
 };
 
 /* ============================================================
    14. 시작
    ============================================================ */
 loadStore();
-gptLoad();
 setTheme(state.theme);
 buildLyrics();
 render(false);
-renderGpt();
 paintSensitivity();
 try{ Rec.boot(); }catch(e){ Rec.mem = true; Rec.ready = true; }
 if(!srAvailable()){
