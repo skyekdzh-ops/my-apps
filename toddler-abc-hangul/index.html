@@ -3293,7 +3293,7 @@ async function micStart(){
     return false;
   }
 }
-function micSawSound(){ return !!(MIC.on && MIC.sound); }
+function micSawSound(){ return !!MIC.sound; }
 function micSync(){
   if(state.listening) micStart(); else micStop();
 }
@@ -3545,6 +3545,7 @@ function startListening(){
   stopRecognition();
   state.srSoftRetries = 0;
   MIC.skip = false;              // 새로 듣기 시작할 때만 음량 모니터를 다시 시도한다
+  MIC.sound = false;
   if(!srAvailable()){
     state.srError='unsupported';
     if(gptHasKey() && GPT.whisper && whisperAvailable()){
