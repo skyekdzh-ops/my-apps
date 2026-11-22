@@ -348,24 +348,26 @@ html[data-theme="mono"] #btnRecord.recording .label{color:#000}
   50%{transform:scale(1.06);box-shadow:0 5px 0 #000,0 0 0 13px rgba(0,0,0,0)}
 }
 
-/* 저장된 '내 목소리' 표시 — 카드 위쪽 작은 배지 + 지우기 */
+/* 저장된 '내 목소리' 표시 — 카드 위쪽 작은 배지. 누르면 녹음 목록이 열린다 */
 .rec-chip{
-  display:inline-flex;align-items:center;gap:3px;margin-right:auto;
-  padding:1px 2px 1px 9px;border-radius:999px;white-space:nowrap;
+  display:inline-flex;align-items:center;margin-right:auto;
+  border-radius:999px;white-space:nowrap;
   background:var(--green-soft);border:2.5px solid var(--ink);box-shadow:0 2.5px 0 var(--ink);
   font-size:10.5px;font-weight:900;color:var(--ink);letter-spacing:-.02em;
   animation:chipIn .32s cubic-bezier(.2,1.5,.4,1);
+  overflow:hidden;
 }
 .rec-chip[hidden]{display:none}
 html[data-theme="mono"] .rec-chip{background:#fff;color:#000;box-shadow:0 2.5px 0 #000}
-.rec-chip .rc-txt{line-height:1.25}
-.rec-chip .rc-del{
-  width:26px;height:26px;border-radius:50%;display:grid;place-items:center;line-height:1;
-  font-size:13px;background:var(--card);border:2px solid var(--ink);box-shadow:0 1.5px 0 var(--ink);
-  transition:transform .12s ease;
+.rec-chip .rc-open{
+  display:inline-flex;align-items:center;gap:3px;max-width:100%;
+  padding:3px 9px;border:0;background:transparent;font:inherit;color:inherit;line-height:1.25;
+  min-height:26px;
 }
-html[data-theme="mono"] .rec-chip .rc-del{background:#fff;box-shadow:0 1.5px 0 #000;filter:grayscale(1)}
-.rec-chip .rc-del:active{transform:translateY(1.5px);box-shadow:none}
+.rec-chip .rc-open:active{transform:translateY(1.5px)}
+.rec-chip .rc-txt{line-height:1.25;overflow:hidden;text-overflow:ellipsis}
+.rec-chip .rc-go{font-size:9px;opacity:.6}
+html[data-theme="mono"] .rec-chip .rc-open{filter:grayscale(1)}
 @keyframes chipIn{0%{transform:scale(.55);opacity:0}100%{transform:scale(1);opacity:1}}
 
 .mic-ico{display:block;width:1em;height:1em}
@@ -705,6 +707,7 @@ html[data-theme="mono"] .gear-btn .ico-gear{filter:grayscale(1)}
   transform:translateY(22px);transition:transform .26s cubic-bezier(.2,1.1,.4,1);
 }
 .sheet-backdrop.show .sheet{transform:translateY(0)}
+.sheet:focus{outline:none}
 html[data-theme="mono"] .sheet{background:#fff;box-shadow:0 -5px 0 #000}
 @media (min-width:760px){
   .sheet-backdrop{align-items:center;padding:24px}
@@ -768,6 +771,100 @@ html[data-theme="mono"] .seg button[aria-checked="true"] small{color:#fff}
 html[data-theme="mono"] .s-btn.primary{background:#000;color:#fff}
 .s-btn.ghost{background:var(--card);color:var(--ink-soft)}
 html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
+.s-btn[disabled]{opacity:.45;box-shadow:none}
+
+/* ---------- 🎙️ 내 목소리 녹음 목록 (버전 관리) ---------- */
+.voice-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.voice-list .vempty{
+  margin:0;padding:16px 12px;border:2.5px dashed var(--frame);border-radius:16px;text-align:center;
+  font-size:11.5px;font-weight:800;color:var(--muted);line-height:1.5;
+}
+html[data-theme="mono"] .voice-list .vempty{border-color:#000;color:#333}
+.vrow{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px;
+  padding:8px;border:2.5px solid var(--ink);border-radius:16px;background:#fff;
+  box-shadow:0 3px 0 var(--ink);
+}
+.vrow.is-active{background:var(--green-soft);border-color:var(--ink)}
+html[data-theme="mono"] .vrow{background:#fff;box-shadow:0 3px 0 #000}
+html[data-theme="mono"] .vrow.is-active{background:#efefef}
+.vpick{
+  width:34px;height:34px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;
+  font-size:15px;font-weight:900;color:var(--muted);line-height:1;box-shadow:0 2px 0 var(--ink);
+  display:grid;place-items:center;flex:0 0 auto;
+}
+.vpick:active{transform:translateY(2px);box-shadow:none}
+.vrow.is-active .vpick{background:var(--green);color:#fff}
+html[data-theme="mono"] .vrow.is-active .vpick{background:#000;color:#fff}
+.vmain{min-width:0;display:flex;flex-direction:column;gap:2px}
+.vlabel{display:flex;align-items:center;gap:4px;min-width:0;font-size:12px}
+.vlabel b{font-weight:900;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vbadge{
+  font-size:8.5px;font-weight:900;padding:1px 5px;border-radius:999px;
+  background:var(--sky-soft);border:1.5px solid var(--ink);white-space:nowrap;flex:0 0 auto;
+}
+.vbadge.new{background:var(--yellow)}
+html[data-theme="mono"] .vbadge{background:#fff;color:#000}
+.vmeta{font-size:9.5px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-theme="mono"] .vmeta{color:#333}
+.vbtns{display:flex;gap:3px;flex:0 0 auto}
+.vico{
+  width:29px;height:29px;border-radius:50%;border:2px solid var(--ink);background:#fff;
+  font-size:12px;line-height:1;box-shadow:0 1.5px 0 var(--ink);display:grid;place-items:center;
+}
+.vico:active{transform:translateY(1.5px);box-shadow:none}
+.vico.del{color:var(--red)}
+html[data-theme="mono"] .vico{color:#000}
+html[data-theme="mono"] .vico.del{color:#000;filter:grayscale(1)}
+.vrename,.vconfirm{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.vconfirm>span{font-size:10.5px;font-weight:800;color:var(--ink-soft)}
+html[data-theme="mono"] .vconfirm>span{color:#000}
+.vinput{
+  height:32px;border:2.5px solid var(--ink);border-radius:10px;padding:0 8px;width:100%;
+  font:inherit;font-size:12px;font-weight:800;background:#fff;color:var(--ink);
+}
+.vchips{display:flex;flex-wrap:wrap;gap:4px}
+.vchip{
+  font-size:9.5px;font-weight:900;padding:3px 7px;border-radius:999px;
+  border:2px solid var(--ink);background:var(--sky-soft);color:var(--ink);
+}
+.vchip:active{transform:translateY(1px)}
+html[data-theme="mono"] .vchip{background:#fff;color:#000}
+.vrow-actions{display:flex;gap:5px;flex-wrap:wrap}
+.vgo,.vghost{
+  font-size:10.5px;font-weight:900;padding:5px 9px;border-radius:10px;border:2px solid var(--ink);
+  box-shadow:0 2px 0 var(--ink);letter-spacing:-.02em;
+}
+.vgo{background:var(--green);color:#fff}
+.vgo.danger{background:var(--red)}
+html[data-theme="mono"] .vgo{background:#000;color:#fff}
+.vghost{background:#fff;color:var(--ink-soft)}
+html[data-theme="mono"] .vghost{color:#000}
+.vgo:active,.vghost:active{transform:translateY(2px);box-shadow:none}
+.voice-body{padding-bottom:0}
+.vfoot{display:flex;flex-direction:column;gap:6px;position:sticky;bottom:0;margin-top:-2px;
+  padding:8px 0 calc(13px + env(safe-area-inset-bottom,0px));background:var(--card);
+  box-shadow:0 -10px 14px -8px rgba(43,45,66,.28)}
+html[data-theme="mono"] .vfoot{background:#fff;box-shadow:0 -10px 14px -8px rgba(0,0,0,.35)}
+.vallconfirm{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10.5px;font-weight:800;color:var(--ink-soft)}
+.vallconfirm[hidden]{display:none}
+html[data-theme="mono"] .vallconfirm{color:#000}
+.vstats{font-size:9.5px;font-weight:700;color:var(--muted);text-align:center}
+html[data-theme="mono"] .vstats{color:#333}
+
+/* 잠깐 뜨는 알림(저장·삭제) */
+.rec-toast{
+  position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom,0px));z-index:95;
+  transform:translate(-50%,10px);opacity:0;transition:opacity .2s ease,transform .2s ease;
+  padding:7px 14px;border-radius:999px;border:2.5px solid var(--ink);background:var(--ink);color:#fff;
+  font-size:11.5px;font-weight:900;letter-spacing:-.02em;white-space:nowrap;pointer-events:none;
+  max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;
+}
+.rec-toast[hidden]{display:none}
+.rec-toast.show{opacity:1;transform:translate(-50%,0)}
+.rec-toast.is-top{top:calc(10px + env(safe-area-inset-top,0px));bottom:auto;transform:translate(-50%,-10px)}
+.rec-toast.is-top.show{transform:translate(-50%,0)}
+html[data-theme="mono"] .rec-toast{background:#fff;color:#000;border-color:#000}
 @media (max-width:560px){
   .brand p{display:none}
   .brand h1{font-size:15px}
@@ -878,8 +975,10 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
       <div class="stage-top">
         <span class="counter" id="counter">1 / 14</span>
         <span class="rec-chip" id="recChip" hidden>
-          <span class="rc-txt" id="recChipTxt">내 목소리</span>
-          <button class="rc-del" id="btnRecClear" type="button" aria-label="내 목소리 녹음 지우기" title="내 목소리 녹음 지우기">🗑️</button>
+          <button class="rc-open" id="btnRecClear" type="button" aria-label="내 목소리 녹음 목록" title="내 목소리 녹음 목록 열기">
+            <span class="rc-txt" id="recChipTxt">🎙️ 내 목소리</span>
+            <span class="rc-go" aria-hidden="true">▸</span>
+          </button>
         </span>
         <div class="stars" id="stars" title="정답 스티커">
           <span class="star-glyph" aria-hidden="true">★</span><span id="starNum">0</span>
@@ -989,6 +1088,33 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
     </div>
   </div>
 </div>
+
+<!-- 🎙️ 내 목소리 녹음 목록 (버전 관리) -->
+<div class="sheet-backdrop" id="voiceBackdrop" hidden>
+  <div class="sheet" id="voiceSheet" role="dialog" aria-modal="true" aria-labelledby="voiceTitle" tabindex="-1">
+    <div class="sheet-head">
+      <h2 id="voiceTitle">🎙️ 내 목소리 <span class="tag" id="voiceTag">ㄱ</span></h2>
+      <button class="sheet-close" id="voiceClose" type="button" aria-label="녹음 목록 닫기">✕</button>
+    </div>
+    <div class="sheet-body voice-body">
+      <p class="fine" id="voiceHint">녹음은 지우기 전까지 계속 남아 있어요.</p>
+      <ul class="voice-list" id="voiceList" aria-label="내 목소리 녹음 버전 목록"></ul>
+      <div class="vfoot">
+        <button class="s-btn primary" id="voiceNew" type="button">➕ 새 버전 녹음하기</button>
+        <button class="s-btn ghost" id="voiceClearAll" type="button">이 글자 녹음 모두 지우기</button>
+        <div class="vallconfirm" id="voiceAllConfirm" hidden>
+          <span>정말 모두 지울까요?</span>
+          <button class="vgo danger" id="voiceAllYes" type="button">모두 지우기</button>
+          <button class="vghost" id="voiceAllNo" type="button">취소</button>
+        </div>
+        <p class="vstats" id="voiceStats">저장된 버전 <b id="voiceCount">0개</b> · 지우기 전까지 유지</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 잠깐 뜨는 알림 -->
+<div class="rec-toast" id="recToast" role="status" aria-live="polite" hidden></div>
 
 <!-- 축하 화면 -->
 <div class="overlay" id="overlay" hidden aria-hidden="true">
@@ -1174,7 +1300,12 @@ const el = {
   hearing:$('hearing'), hearingTxt:$('hearingTxt'),
   btnSpeak:$('btnSpeak'), btnListen:$('btnListen'),
   btnRecord:$('btnRecord'), recBtnLabel:$('recBtnLabel'), recIco:$('recIco'),
-  recChip:$('recChip'), btnRecClear:$('btnRecClear'),
+  recChip:$('recChip'), btnRecClear:$('btnRecClear'), recChipTxt:$('recChipTxt'),
+  recToast:$('recToast'),
+  voiceBackdrop:$('voiceBackdrop'), voiceSheet:$('voiceSheet'), voiceClose:$('voiceClose'), voiceTag:$('voiceTag'),
+  voiceHint:$('voiceHint'), voiceList:$('voiceList'), voiceNew:$('voiceNew'),
+  voiceClearAll:$('voiceClearAll'), voiceAllConfirm:$('voiceAllConfirm'),
+  voiceAllYes:$('voiceAllYes'), voiceAllNo:$('voiceAllNo'), voiceCount:$('voiceCount'),
   feedback:$('feedback'), fbTitle:$('fbTitle'), fbHeard:$('fbHeard'), fbHear:$('fbHear'), fbRetry:$('fbRetry'),
   srNotice:$('srNotice'), srNoticeText:$('srNoticeText'),
   pbCorrect:$('pbCorrect'), pbRetry:$('pbRetry'),
@@ -1519,34 +1650,50 @@ function speakCurrent(){
   const item = currentItem();
   const key = recKeyFor(item, state.mode);
   // 글자마다 저장해 둔 '내 목소리'가 있으면 그것부터 들려준다.
-  if(Rec.cache.has(key) && recPlay(key)) return;
+  if(recHas(key) && recPlay(key)) return;   // 지금 고른(활성) 버전을 들려준다
   recSpeakBuiltin(key);            // 없으면(또는 바로 재생할 수 없으면) 내장 목소리
 }
 
 /* ============================================================
-   6-c. 🎙️ 내 목소리 녹음 — 글자마다 엄마·아빠 목소리를 담아 들려준다
-   · 저장: IndexedDB 글자별(모드:글자) → 새로고침·홈화면 PWA 실행에도 유지
-     (사생활 보호 모드처럼 IndexedDB를 못 쓰면 메모리에만 저장)
+   6-c. 🎙️ 내 목소리 녹음 — 글자마다 여러 '버전'으로 담아 두고 골라 쓴다
+   · 저장: IndexedDB v2 `versions`(버전마다 1행) + localStorage 미러 백업(이중화)
+     - v1 `recordings`에 이미 있던 녹음은 지우지 않고 '버전 1'로 그대로 옮겨 온다
+     - 사용자가 직접 지우기 전에는 새로고침·업데이트·PWA 재실행에도 리셋되지 않는다
    · iOS Safari: audio/mp4로 녹음, 정지 즉시 마이크 반납 → '따라 말해요'와 충돌 없음
    · 재생: 탭 제스처 안에서 곧바로 new Audio(blob).play() → iOS 자동재생 정책 통과
      실패하면 조용히 내장 목소리(speak)로 되돌아간다.
    ============================================================ */
 const REC_DB_NAME = 'toddlerSpeak.voice';
-const REC_DB_VER = 1;
-const REC_STORE = 'recordings';
-const REC_MAX_MS = 5000;      // 5초에서 자동 정지 (아이가 켜 둔 채 잊어도 안전)
-const REC_MIN_MS = 300;       // 너무 짧으면 저장하지 않음
-const REC_TICK_MS = 200;      // 남은 시간 표시 갱신
+const REC_DB_VER = 2;
+const REC_STORE = 'recordings';       // v1 저장소 — 지우지 않고 그대로 보존한다
+const REC_VSTORE = 'versions';        // v2 {id,key,label,mime,at,dur,seq,blob}
+const REC_MSTORE = 'meta';            // v2 활성 버전·마이그레이션 표시
+const REC_MIRROR_KEY = 'toddlerSpeak.voice.backup.v1';
+const REC_ACTIVE_KEY = 'toddlerSpeak.voice.active.v1';
+const REC_TOMB_KEY = 'toddlerSpeak.voice.deleted.v1';
+const REC_MIRROR_BUDGET = 3000000;    // localStorage 미러 예산(base64 문자열 길이)
+const REC_DB_TIMEOUT = 6000;          // IndexedDB 열기 기다리는 시간(느린 기기 배려)
+const REC_MAX_MS = 5000;              // 5초에서 자동 정지 (아이가 켜 둔 채 잊어도 안전)
+const REC_MIN_MS = 300;               // 너무 짧으면 저장하지 않음
+const REC_TICK_MS = 200;              // 남은 시간 표시 갱신
+const REC_LABEL_CHIPS = ['엄마','아빠','할머니','할아버지','선생님','신나게','천천히'];
 
 const Rec = {
-  cache:new Map(),        // key -> {blob, url, mime, at}
-  mem:false,              // IndexedDB 대신 메모리에만 저장
+  cache:new Map(),          // key -> [{id,key,label,mime,at,dur,seq,blob,url}]
+  activeIds:{},             // key -> 활성 버전 id
+  mirrorItems:[], mirrorActive:null, mirrorAt:0, mirrorBytes:0, mirrorRestored:0, mirrorDropped:0,
+  deleted:{},               // 지운 버전 id — 미러가 되살리지 못하게 하는 표식
+  mem:false,                // IndexedDB 자체를 못 쓰는 환경(사생활 보호 모드)
   ready:false, booted:false, lastError:null,
+  dbState:'idle',           // idle | ok | retry | unsupported
+  dbHardFail:false, dbTries:0, retryTimer:null, persist:null,
   recording:false, saving:false, startedAt:0, finishedAt:0, recKey:null,
-  stream:null, recorder:null, chunks:[],
+  stream:null, recorder:null, recorderMime:'', chunks:[],
   tickTimer:null, stopTimer:null, guardTimer:null,
   player:null, playToken:0, played:null, lastSaved:null,
-  autoStopped:0, discarded:0
+  autoStopped:0, discarded:0,
+  panelKey:null, renameId:null, confirmId:null, confirmAll:false, panelReturn:false,
+  toastTimer:null, mirrorBusy:false, mirrorAgain:false, mirrorTimer:null
 };
 
 function recSupported(){
@@ -1567,6 +1714,8 @@ function recKeyFor(item, mode){
   const m = mode || state.mode;
   return m + ':' + (it && it.ch ? it.ch : '');
 }
+function recKeySafe(){ try{ return recKeyFor(); }catch(e){ return ''; } }
+function recRecKeySafe(){ return recKeySafe(); }        // 기존 이름 호환
 function recItemByKey(key){
   const s = String(key || '');
   const i = s.indexOf(':');
@@ -1577,42 +1726,171 @@ function recItemByKey(key){
   for(let k=0;k<m.items.length;k++){ if(m.items[k].ch === ch) return {item:m.items[k], mode:mode}; }
   return null;
 }
-function recHas(key){ return Rec.cache.has(key || recKeyFor()); }
 function recRemainSec(){
   const left = REC_MAX_MS - (Date.now() - Rec.startedAt);
   return Math.max(0, Math.ceil(left / 1000));
 }
 
-/* ---------- IndexedDB (실패하면 메모리 저장으로) ---------- */
+/* ---------- 버전 조회 ---------- */
+function recVersionsOf(key){
+  const k = key || recKeySafe();
+  const arr = Rec.cache.get(k);
+  return arr ? arr.slice().sort((a,b)=> (a.at||0)-(b.at||0)) : [];
+}
+function recFindVersion(key, id){
+  if(!key || !id) return null;
+  const arr = Rec.cache.get(key);
+  if(!arr) return null;
+  for(let i=0;i<arr.length;i++){ if(arr[i].id === id) return arr[i]; }
+  return null;
+}
+function recActiveVersion(key){
+  const k = key || recKeySafe();
+  const arr = recVersionsOf(k);
+  if(!arr.length) return null;
+  const id = Rec.activeIds[k];
+  if(id){ for(let i=0;i<arr.length;i++){ if(arr[i].id === id) return arr[i]; } }
+  return arr[arr.length - 1];
+}
+function recActiveVersionId(key){ const v = recActiveVersion(key); return v ? v.id : null; }
+function recHas(key){ return recVersionsOf(key || recKeySafe()).length > 0; }
+function recNextSeq(key){
+  return recVersionsOf(key).reduce((m,v)=> Math.max(m, v.seq || 0), 0) + 1;
+}
+function recNewId(){
+  return 'v' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
+}
+function recIsDefaultLabel(label){
+  return !label || /^버전\s*\d+$/.test(String(label).trim());
+}
+function recChipLabel(key){
+  const v = recActiveVersion(key);
+  if(!v) return '내 목소리';
+  return recIsDefaultLabel(v.label) ? '내 목소리' : String(v.label);
+}
+function recNormalizeActive(){
+  Rec.cache.forEach((arr, key)=>{
+    if(!arr.length) return;
+    const id = Rec.activeIds[key];
+    let hit = false;
+    if(id){ for(let i=0;i<arr.length;i++){ if(arr[i].id === id){ hit = true; break; } } }
+    if(!hit) Rec.activeIds[key] = arr[arr.length - 1].id;
+  });
+  Object.keys(Rec.activeIds).forEach(k=>{ if(!Rec.cache.has(k) || !Rec.cache.get(k).length) delete Rec.activeIds[k]; });
+}
+
+/* ---------- 메모리 캐시 ---------- */
+function recObjectUrl(blob){
+  try{ return URL.createObjectURL(blob); }catch(e){ return ''; }
+}
+function recCacheAdd(v){
+  if(!v || !v.key || !v.id) return null;
+  const arr = Rec.cache.get(v.key) || [];
+  let idx = -1;
+  for(let i=0;i<arr.length;i++){ if(arr[i].id === v.id){ idx = i; break; } }
+  const url = v.url || recObjectUrl(v.blob);
+  const row = {
+    id:v.id, key:v.key, label:v.label || '버전 1', mime:v.mime || (v.blob && v.blob.type) || '',
+    at:v.at || Date.now(), dur:v.dur || 0, seq:v.seq || 0,
+    blob:v.blob, url:url, b64:v.b64 || '', legacy:!!v.legacy, pending:!!v.pending
+  };
+  if(idx >= 0){
+    const old = arr[idx];
+    if(old && old.url && old.url !== url){ try{ URL.revokeObjectURL(old.url); }catch(e){} }
+    arr[idx] = row;
+  }else{
+    arr.push(row);
+  }
+  arr.sort((a,b)=> (a.at||0) - (b.at||0));
+  Rec.cache.set(v.key, arr);
+  return row;
+}
+function recCacheRemove(key, id){
+  const arr = Rec.cache.get(key);
+  if(!arr) return false;
+  for(let i=0;i<arr.length;i++){
+    if(arr[i].id === id){
+      if(arr[i].url){ try{ URL.revokeObjectURL(arr[i].url); }catch(e){} }
+      arr.splice(i,1);
+      if(!arr.length) Rec.cache.delete(key);
+      return true;
+    }
+  }
+  return false;
+}
+function recCacheDropKey(key){
+  const arr = Rec.cache.get(key) || [];
+  arr.forEach(v=>{ if(v.url){ try{ URL.revokeObjectURL(v.url); }catch(e){} } });
+  Rec.cache.delete(key);
+}
+function recRowOf(v){
+  return { id:v.id, key:v.key, label:v.label || '버전 1', mime:v.mime || '',
+           at:v.at || Date.now(), dur:v.dur || 0, seq:v.seq || 0, blob:v.blob,
+           legacy:!!v.legacy };
+}
+
+/* ---------- IndexedDB (일시 실패는 재시도 · 정말 못 쓰면 메모리) ---------- */
 let recDbP = null;
+function recDbUpgrade(req){
+  const db = req.result;
+  const tx = req.transaction;
+  try{
+    if(!db.objectStoreNames.contains(REC_VSTORE)){
+      const vs = db.createObjectStore(REC_VSTORE, {keyPath:'id'});
+      vs.createIndex('key', 'key', {unique:false});
+      vs.createIndex('at', 'at', {unique:false});
+    }
+  }catch(e){}
+  try{ if(!db.objectStoreNames.contains(REC_MSTORE)) db.createObjectStore(REC_MSTORE, {keyPath:'k'}); }catch(e){}
+  // v1 `recordings`의 녹음 → '버전 1'로 복사. 원본 행은 절대 지우지 않는다.
+  try{
+    if(!db.objectStoreNames.contains(REC_STORE)) return;
+    const src = tx.objectStore(REC_STORE);
+    const dst = tx.objectStore(REC_VSTORE);
+    const mst = tx.objectStore(REC_MSTORE);
+    const all = src.getAll();
+    all.onsuccess = ()=>{
+      const rows = all.result || [];
+      rows.forEach((row, i)=>{
+        if(!row || !row.key || !row.blob) return;
+        try{
+          dst.put({ id:'legacy:' + row.key, key:row.key, label:'버전 1',
+                    mime: row.mime || (row.blob && row.blob.type) || '',
+                    at: row.at || (Date.now() - (rows.length - i)), dur:0, seq:1,
+                    legacy:true, blob:row.blob });
+        }catch(e){}
+      });
+      try{ mst.put({k:'legacyMerged', v:1, at:Date.now(), count:rows.length}); }catch(e){}
+    };
+  }catch(e){}
+}
 function recDbOpen(){
   if(recDbP) return recDbP;
-  recDbP = new Promise((res, rej)=>{
+  const p = new Promise((res, rej)=>{
     let req = null;
     try{ req = window.indexedDB.open(REC_DB_NAME, REC_DB_VER); }
-    catch(e){ recDbP = null; rej(e); return; }
-    let settled = false;
-    const fail = (e)=>{ if(settled) return; settled = true; recDbP = null; rej(e || new Error('idb')); };
-    req.onupgradeneeded = ()=>{
-      try{
-        const db = req.result;
-        if(db && !db.objectStoreNames.contains(REC_STORE)) db.createObjectStore(REC_STORE, {keyPath:'key'});
-      }catch(e){}
-    };
-    req.onsuccess = ()=>{ if(settled) return; settled = true; res(req.result); };
-    req.onerror = ()=>{ fail(req.error); };
-    req.onblocked = ()=>{ fail(new Error('idb-blocked')); };
-    setTimeout(()=>{ fail(new Error('idb-timeout')); }, 2500);
+    catch(e){ Rec.dbHardFail = true; rej(e); return; }
+    let settled = false, timer = null;
+    const ok = (db)=>{ if(settled) return; settled = true; if(timer) clearTimeout(timer); res(db); };
+    const bad = (e)=>{ if(settled) return; settled = true; if(timer) clearTimeout(timer); rej(e || new Error('idb')); };
+    req.onupgradeneeded = ()=>{ try{ recDbUpgrade(req); }catch(e){} };
+    req.onsuccess = ()=>{ ok(req.result); };
+    req.onerror = ()=>{ bad(req.error); };
+    req.onblocked = ()=>{ bad(new Error('idb-blocked')); };
+    timer = setTimeout(()=>{ bad(new Error('idb-timeout')); }, REC_DB_TIMEOUT);
   });
-  return recDbP;
+  recDbP = p;
+  p.catch(()=>{ if(recDbP === p) recDbP = null; });
+  return p;
 }
-function recDbRun(mode, pick){
+function recDbRun(mode, pick, store){
+  const name = store || REC_VSTORE;
   return recDbOpen().then(db=> new Promise((res, rej)=>{
     let tx = null;
-    try{ tx = db.transaction(REC_STORE, mode); }
-    catch(e){ rej(e); return; }
+    try{ tx = db.transaction(name, mode); }
+    catch(e){ try{ db.close(); }catch(e2){} recDbP = null; rej(e); return; }
     let req = null, out = null;
-    try{ req = pick(tx.objectStore(REC_STORE)); }
+    try{ req = pick(tx.objectStore(name), tx); }
     catch(e){ rej(e); return; }
     if(req) req.onsuccess = ()=>{ out = req.result; };
     tx.oncomplete = ()=>{ res(out); };
@@ -1620,66 +1898,385 @@ function recDbRun(mode, pick){
     tx.onabort = ()=>{ rej(tx.error || new Error('idb-abort')); };
   }));
 }
-function recObjectUrl(blob){
-  try{ return URL.createObjectURL(blob); }catch(e){ return ''; }
+function recDbLoadAll(){
+  return recDbRun('readonly', s=> s.getAll()).then(rows=> rows || []);
 }
-function recCachePut(key, row){
-  const old = Rec.cache.get(key);
-  if(old && old.url){ try{ URL.revokeObjectURL(old.url); }catch(e){} }
-  Rec.cache.set(key, {
-    blob:row.blob, url:recObjectUrl(row.blob),
-    mime:row.mime || (row.blob && row.blob.type) || '', at:row.at || Date.now()
+function recDbLoadMeta(){
+  return recDbRun('readonly', s=> s.getAll(), REC_MSTORE).then(rows=> rows || []).catch(()=> []);
+}
+function recDbPut(v){
+  if(Rec.mem || Rec.dbState === 'unsupported') return Promise.resolve(false);
+  return recDbRun('readwrite', s=> s.put(recRowOf(v))).then(()=>{
+    Rec.dbState = 'ok';
+    return true;
+  }).catch(e=>{
+    Rec.lastError = 'put:' + String((e && e.message) || e);
+    v.pending = true;
+    if(!Rec.mem){ Rec.dbState = 'retry'; recScheduleDbRetry(); }
+    return false;
   });
 }
-function recCacheDrop(key){
-  const old = Rec.cache.get(key);
-  if(old && old.url){ try{ URL.revokeObjectURL(old.url); }catch(e){} }
-  Rec.cache.delete(key);
+function recDbDeleteIds(ids){
+  if(Rec.mem || Rec.dbState === 'unsupported' || !ids || !ids.length) return Promise.resolve(false);
+  return recDbRun('readwrite', s=>{ ids.forEach(id=>{ try{ s.delete(id); }catch(e){} }); return null; })
+    .then(()=>true)
+    .catch(e=>{ Rec.lastError = 'del:' + String((e && e.message) || e); return false; });
+}
+function recScheduleDbRetry(){
+  if(Rec.mem || Rec.retryTimer || Rec.dbTries >= 4) return;
+  const wait = Math.min(30000, 1500 * Math.pow(2, Rec.dbTries));
+  Rec.dbTries++;
+  Rec.retryTimer = setTimeout(()=>{
+    Rec.retryTimer = null;
+    if(Rec.mem) return;
+    recDbLoadAll().then(rows=>{
+      rows.forEach(row=>{ if(row && row.id && row.key && row.blob) recCacheAdd(row); });
+      Rec.dbState = 'ok';
+      Rec.dbTries = 0;
+      // 이번에 메모리에만 담겼던 것도 DB로 되살린다
+      const flush = [];
+      Rec.cache.forEach(arr=> arr.forEach(v=>{ if(v.pending){ v.pending = false; flush.push(v); } }));
+      flush.forEach(v=> recDbPut(v));
+      recNormalizeActive();
+      Rec.syncUI(); recPaintList();
+    }).catch(()=>{ recScheduleDbRetry(); });
+  }, wait);
 }
 
+/* ---------- localStorage 미러 백업 (IndexedDB가 비어도 되살린다) ---------- */
+function recBlobToB64(blob){
+  return new Promise((res)=>{
+    try{
+      const fr = new FileReader();
+      fr.onload = ()=>{
+        const s = String(fr.result || '');
+        const i = s.indexOf(',');
+        res(i >= 0 ? s.slice(i + 1) : '');
+      };
+      fr.onerror = ()=>{ res(''); };
+      fr.readAsDataURL(blob);
+    }catch(e){ res(''); }
+  });
+}
+function recB64ToBlob(b64, mime){
+  try{
+    const bin = atob(b64);
+    const u = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i);
+    return new Blob([u], {type: mime || 'audio/webm'});
+  }catch(e){ return null; }
+}
+function recLoadMirror(){
+  let raw = '';
+  try{ raw = localStorage.getItem(REC_MIRROR_KEY) || ''; }catch(e){ Rec.lastError = 'mirror-read:' + String((e && e.message) || e); return; }
+  Rec.mirrorBytes = raw.length;
+  if(!raw) return;
+  try{
+    const d = JSON.parse(raw);
+    if(!d || !Array.isArray(d.items)) return;
+    Rec.mirrorItems = d.items.filter(it=> it && it.id && it.key && it.b64);
+    Rec.mirrorActive = (d.active && typeof d.active === 'object') ? d.active : null;
+    Rec.mirrorAt = d.at || 0;
+  }catch(e){ Rec.lastError = 'mirror-parse:' + String((e && e.message) || e); }
+}
+function recApplyMirror(){
+  const items = Rec.mirrorItems || [];
+  let added = 0;
+  items.forEach(it=>{
+    if(!it || !it.id || !it.b64) return;
+    if(Rec.deleted[it.id]) return;
+    if(recFindVersion(it.key, it.id)) return;
+    const blob = recB64ToBlob(it.b64, it.mime);
+    if(!blob || !blob.size) return;
+    const v = recCacheAdd({ id:it.id, key:it.key, label:it.label || '버전 1', mime:it.mime || blob.type || '',
+                            at: it.at || Date.now(), dur: it.dur || 0, seq: it.seq || 0,
+                            blob:blob, b64:it.b64, pending:true });
+    if(v){ v.fromMirror = true; added++; recDbPut(v); }
+  });
+  if(Rec.mirrorActive){
+    Object.keys(Rec.mirrorActive).forEach(k=>{
+      const id = Rec.mirrorActive[k];
+      if(id && !Rec.activeIds[k] && recFindVersion(k, id)) Rec.activeIds[k] = id;
+    });
+  }
+  if(added){ Rec.mirrorRestored += added; recNormalizeActive(); }
+  return added;
+}
+function recWriteMirror(){
+  if(Rec.mirrorTimer){ clearTimeout(Rec.mirrorTimer); Rec.mirrorTimer = null; }
+  if(Rec.mirrorBusy){ Rec.mirrorAgain = true; return; }
+  Rec.mirrorBusy = true;
+  Rec.mirrorAgain = false;
+  const list = [];
+  Rec.cache.forEach((arr, key)=> arr.forEach(v=> list.push(v)));
+  list.sort((a,b)=> (b.at || 0) - (a.at || 0));       // 최신 것부터 담는다
+  const items = [];
+  let budget = REC_MIRROR_BUDGET;
+  const write = ()=>{
+    let payload = '';
+    try{
+      payload = JSON.stringify({v:1, at:Date.now(), active:Object.assign({}, Rec.activeIds), items:items});
+    }catch(e){
+      Rec.lastError = 'mirror-json:' + String((e && e.message) || e);
+      Rec.mirrorBusy = false;
+      return false;
+    }
+    try{
+      localStorage.setItem(REC_MIRROR_KEY, payload);
+      Rec.mirrorBytes = payload.length;
+      Rec.mirrorDropped = list.length - items.length;
+      Rec.mirrorAt = Date.now();
+      Rec.mirrorItems = items.slice();
+      Rec.mirrorBusy = false;
+      if(Rec.mirrorAgain){ Rec.mirrorAgain = false; recWriteMirror(); }
+      return true;
+    }catch(e){
+      Rec.lastError = 'mirror-write:' + String((e && e.name) || e);
+      if(items.length > 1){
+        items.splice(Math.max(1, Math.ceil(items.length * 0.35)));   // 오래된 것부터 버리고 다시
+        return write();
+      }
+      Rec.mirrorBytes = 0; Rec.mirrorDropped = list.length;
+      Rec.mirrorBusy = false;
+      if(Rec.mirrorAgain){ Rec.mirrorAgain = false; recWriteMirror(); }
+      return false;
+    }
+  };
+  const step = (i)=>{
+    if(i >= list.length || budget <= 0) return write();
+    const v = list[i];
+    const take = (b64)=>{
+      if(b64){
+        const cost = b64.length + 160;
+        if(cost <= budget){
+          budget -= cost;
+          items.push({id:v.id, key:v.key, label:v.label, mime:v.mime, at:v.at, dur:v.dur, seq:v.seq, b64:b64});
+        }
+      }
+      step(i + 1);
+    };
+    if(v.b64) return take(v.b64);
+    recBlobToB64(v.blob).then(b64=>{
+      if(b64) v.b64 = b64;
+      take(b64);
+    }).catch(()=>{ take(''); });
+  };
+  step(0);
+  return true;
+}
+
+/* ---------- 활성 버전 · 지운 표식 저장 ---------- */
+function recLoadActiveLS(){
+  try{
+    const raw = localStorage.getItem(REC_ACTIVE_KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      if(d && typeof d === 'object' && !Array.isArray(d)){
+        Object.keys(d).forEach(k=>{ if(typeof d[k] === 'string') Rec.activeIds[k] = d[k]; });
+      }
+    }
+  }catch(e){}
+  try{
+    const t = localStorage.getItem(REC_TOMB_KEY);
+    if(t){
+      const d = JSON.parse(t);
+      if(Array.isArray(d)) d.forEach(id=>{ if(id) Rec.deleted[id] = 1; });
+    }
+  }catch(e){}
+}
+function recPersistActive(){
+  try{ localStorage.setItem(REC_ACTIVE_KEY, JSON.stringify(Rec.activeIds)); }
+  catch(e){ Rec.lastError = 'active-write:' + String((e && e.name) || e); }
+  if(Rec.mem || Rec.dbState === 'unsupported') return;
+  recDbRun('readwrite', s=> s.put({k:'active', map:Object.assign({}, Rec.activeIds), at:Date.now()}), REC_MSTORE)
+    .catch(()=>{});
+}
+function recApplyActiveMeta(rows){
+  (rows || []).forEach(row=>{
+    if(row && row.k === 'active' && row.map && typeof row.map === 'object'){
+      Object.keys(row.map).forEach(k=>{
+        if(!Rec.activeIds[k] && recFindVersion(k, row.map[k])) Rec.activeIds[k] = row.map[k];
+      });
+    }
+  });
+}
+function recMarkDeleted(id){
+  if(!id) return;
+  Rec.deleted[id] = Date.now();
+  const keys = Object.keys(Rec.deleted);
+  if(keys.length > 400) keys.slice(0, keys.length - 400).forEach(k=>{ delete Rec.deleted[k]; });
+  try{ localStorage.setItem(REC_TOMB_KEY, JSON.stringify(Object.keys(Rec.deleted))); }catch(e){}
+}
+
+/* ---------- 브라우저 스토리지 정리 방지 ---------- */
+function recAskPersist(){
+  try{
+    const s = window.navigator && navigator.storage;
+    if(!s || typeof s.persist !== 'function'){ Rec.persist = 'unavailable'; return; }
+    const grant = (v)=>{ Rec.persist = v ? 'granted' : 'denied'; };
+    if(typeof s.persisted === 'function'){
+      s.persisted().then(p=>{
+        if(p){ Rec.persist = 'granted'; return; }
+        return s.persist().then(grant).catch(()=>{ Rec.persist = 'error'; });
+      }).catch(()=>{ Rec.persist = 'error'; });
+    }else{
+      s.persist().then(grant).catch(()=>{ Rec.persist = 'error'; });
+    }
+  }catch(e){ Rec.persist = 'error'; }
+}
+
+/* ---------- 시작 ---------- */
 Rec.boot = function(){
   if(Rec.booted) return Promise.resolve();
   Rec.booted = true;
-  const finish = ()=>{ Rec.ready = true; Rec.syncUI(); };
-  if(!window.indexedDB){ Rec.mem = true; Rec.lastError = 'no-indexeddb'; finish(); return Promise.resolve(); }
-  return recDbRun('readonly', s=> s.getAll()).then(rows=>{
-    (rows || []).forEach(row=>{ if(row && row.key && row.blob) recCachePut(row.key, row); });
+  recLoadMirror();
+  recLoadActiveLS();
+  recAskPersist();
+  const finish = ()=>{
+    Rec.ready = true;
+    recApplyMirror();
+    recNormalizeActive();
+    if(Rec.cache.size) recWriteMirror();   // 미러도 지금 상태로 맞춰 둔다(이중 백업)
+    Rec.syncUI();
+    recPaintList();
+  };
+  if(!window.indexedDB){
+    Rec.mem = true; Rec.dbState = 'unsupported'; Rec.lastError = 'no-indexeddb';
+    finish();
+    return Promise.resolve();
+  }
+  return recDbLoadAll().then(rows=>{
+    rows.forEach(row=>{ if(row && row.id && row.key && row.blob) recCacheAdd(row); });
+    Rec.dbState = 'ok';
+    Rec.dbTries = 0;
+    return recDbLoadMeta();
+  }).then(meta=>{
+    recApplyActiveMeta(meta);
+    return recMergeLegacyRows();
+  }).then(()=>{
     finish();
   }).catch(e=>{
-    Rec.mem = true;
+    if(Rec.dbHardFail){
+      // 이 환경에서는 IndexedDB를 아예 못 쓴다(사생활 보호 모드 등) → 메모리+미러로 동작
+      Rec.mem = true;
+      Rec.dbState = 'unsupported';
+      Rec.lastError = 'no-indexeddb:' + String((e && e.message) || e);
+      finish();
+      return;
+    }
+    // 일시 실패 — mem으로 굳히지 않고 미러로 살린 뒤 다시 시도한다
+    Rec.dbState = 'retry';
     Rec.lastError = 'open:' + String((e && e.message) || e);
     finish();
+    recScheduleDbRetry();
   });
 };
+/* v2로 올릴 때 못 옮긴 v1 행이 남아 있으면 여기서 한 번 더 옮긴다(지운 것은 되살리지 않음) */
+function recMergeLegacyRows(){
+  if(Rec.mem || Rec.dbState !== 'ok') return Promise.resolve(0);
+  return recDbRun('readonly', s=> s.getAll(), REC_STORE).then(rows=>{
+    const fresh = [];
+    (rows || []).forEach(row=>{
+      if(!row || !row.key || !row.blob) return;
+      if(recFindVersion(row.key, 'legacy:' + row.key)) return;    // 이미 옮겨짐
+      if((Rec.cache.get(row.key) || []).length) return;           // 이 글자엔 이미 버전이 있음
+      if(Rec.deleted['legacy:' + row.key]) return;                // 사용자가 지운 녹음
+      const v = recCacheAdd({ id:'legacy:' + row.key, key:row.key, label:'버전 1',
+                              mime: row.mime || (row.blob && row.blob.type) || '',
+                              at: row.at || Date.now(), dur:0, seq:1, legacy:true, blob:row.blob });
+      if(v) fresh.push(v);
+    });
+    if(!fresh.length) return 0;
+    return recDbRun('readwrite', s=>{ fresh.forEach(v=>{ try{ s.put(recRowOf(v)); }catch(e){} }); return null; })
+      .then(()=> fresh.length).catch(()=> 0);
+  }).catch(()=> 0);
+}
 
-/* ---------- 저장 · 지우기 ---------- */
-Rec.save = function(key, blob, mime){
-  const k = key || recKeyFor();
-  if(!blob || !blob.size) return Promise.resolve(false);
-  const row = { key:k, blob:blob, mime:mime || blob.type || '', at:Date.now() };
-  recCachePut(k, row);                 // 곧바로 재생할 수 있게 메모리에 먼저
-  Rec.lastSaved = { key:k, size:blob.size, mime:row.mime, at:row.at };
-  Rec.syncUI();
-  if(Rec.mem) return Promise.resolve(true);
-  return recDbRun('readwrite', s=> s.put(row)).then(()=>{ Rec.syncUI(); return true; }).catch(e=>{
-    Rec.mem = true;                    // 저장 실패 → 이번 세션은 메모리에
-    Rec.lastError = 'put:' + String((e && e.message) || e);
-    Rec.syncUI();
-    return false;
+/* ---------- 저장 · 이름 · 선택 · 지우기 ---------- */
+Rec.addVersion = function(key, blob, mime, opts){
+  const k = key || recKeySafe();
+  if(!k || !blob || !blob.size) return Promise.resolve(null);
+  const seq = recNextSeq(k);
+  const label = (opts && opts.label) || ('버전 ' + seq);
+  const v = recCacheAdd({
+    id: (opts && opts.id) || recNewId(), key:k, label:label,
+    mime: mime || blob.type || '', at: Date.now(), dur: (opts && opts.dur) || 0, seq:seq, blob:blob
   });
+  Rec.activeIds[k] = v.id;
+  Rec.lastSaved = { key:k, id:v.id, label:v.label, size:blob.size, mime:v.mime, at:v.at, seq:seq };
+  recPersistActive();
+  Rec.syncUI();
+  recPaintList();
+  const job = recDbPut(v).then(()=>{
+    recWriteMirror();
+    Rec.syncUI();
+    recPaintList();
+    return v;
+  });
+  return job;
+};
+Rec.save = function(key, blob, mime){                 // 기존 시그니처(불리언) 호환
+  return Rec.addVersion(key, blob, mime).then(v=> !!v);
+};
+Rec.selectVersion = function(key, id){
+  const k = key || recKeySafe();
+  if(!recFindVersion(k, id)) return false;
+  Rec.activeIds[k] = id;
+  recPersistActive();
+  recWriteMirror();
+  Rec.syncUI();
+  recPaintList();
+  return true;
+};
+Rec.renameVersion = function(key, id, label){
+  const k = key || recKeySafe();
+  const v = recFindVersion(k, id);
+  if(!v) return Promise.resolve(false);
+  const clean = String(label || '').replace(/\s+/g, ' ').trim().slice(0, 16);
+  if(!clean) return Promise.resolve(false);
+  v.label = clean;
+  recWriteMirror();
+  Rec.syncUI();
+  recPaintList();
+  return recDbPut(v).then(()=> true);
+};
+Rec.removeVersion = function(key, id){
+  const k = key || recKeySafe();
+  const v = recFindVersion(k, id);
+  if(!v) return Promise.resolve(false);
+  const wasActive = (Rec.activeIds[k] === id);
+  recCacheRemove(k, id);
+  recMarkDeleted(id);
+  if(wasActive){
+    const rest = recVersionsOf(k);
+    if(rest.length) Rec.activeIds[k] = rest[rest.length - 1].id;
+    else delete Rec.activeIds[k];
+  }
+  if(Rec.played && Rec.played.id === id){ Rec.played = null; recStopPlayer(); }
+  recPersistActive();
+  recWriteMirror();
+  Rec.syncUI();
+  recPaintList();
+  return recDbDeleteIds([id]).then(()=> true);
 };
 Rec.clear = function(key){
   const k = key || recRecKeySafe();
-  recCacheDrop(k);
-  if(Rec.played && Rec.played.key === k) Rec.played = null;
+  const arr = recVersionsOf(k);
+  const ids = arr.map(v=> v.id);
+  ids.forEach(id=>{ recCacheRemove(k, id); recMarkDeleted(id); });
+  recCacheDropKey(k);
+  delete Rec.activeIds[k];
+  if(Rec.played && Rec.played.key === k){ Rec.played = null; recStopPlayer(); }
+  recPersistActive();
+  recWriteMirror();
   Rec.syncUI();
-  if(Rec.mem) return Promise.resolve(true);
-  return recDbRun('readwrite', s=> s.delete(k)).then(()=>true).catch(e=>{
-    Rec.lastError = 'del:' + String((e && e.message) || e);
-    return false;
-  });
+  recPaintList();
+  if(!ids.length) return Promise.resolve(true);
+  return recDbDeleteIds(ids).then(()=> true);
 };
-function recRecKeySafe(){ try{ return recKeyFor(); }catch(e){ return ''; } }
+Rec.clearAll = function(){
+  return Promise.all(Array.from(Rec.cache.keys()).map(k=> Rec.clear(k))).then(()=> true);
+};
 
 /* ---------- 재생 ---------- */
 function recSpeakBuiltin(key){
@@ -1692,9 +2289,9 @@ function recSpeakBuiltin(key){
     speak(item.sub, 'ko-KR', {rate:0.94, pitch:1.35, chime:true});
   }
 }
-function recPlay(key){
-  const k = key || recKeyFor();
-  const e = Rec.cache.get(k);
+function recPlay(key, id){
+  const k = key || recKeySafe();
+  const e = id ? recFindVersion(k, id) : recActiveVersion(k);
   if(!e || !e.url) return false;
   cancelSpeech();
   let a = Rec.player;
@@ -1708,7 +2305,7 @@ function recPlay(key){
   const settle = (kind)=>{
     if(done || token !== Rec.playToken) return;
     done = true;
-    Rec.played = { key:k, kind:kind, at:Date.now() };
+    Rec.played = { key:k, id:e.id, label:e.label, kind:kind, at:Date.now() };
     if(kind !== 'custom') recSpeakBuiltin(k);      // 재생 실패 → 내장 목소리로
   };
   try{ a.pause(); }catch(err){}
@@ -1745,7 +2342,7 @@ function recClearTimers(){
   if(Rec.guardTimer){ clearTimeout(Rec.guardTimer); Rec.guardTimer = null; }
 }
 function recFinish(stream, rec, mime){
-  if(!Rec.recording && !Rec.saving) { recStopTracks(stream); return; }
+  if(!Rec.recording && !Rec.saving){ recStopTracks(stream); return; }
   recStopTracks(stream);           // iOS: 마이크를 곧바로 놓아준다
   recClearTimers();
   Rec.recording = false;
@@ -1763,11 +2360,20 @@ function recFinish(stream, rec, mime){
   if(!blob || !blob.size || dur < REC_MIN_MS){
     Rec.discarded++;
     Rec.lastError = 'too-short';
+    Rec.panelReturn = false;
     Rec.syncUI();
     gentlePrompt('잘 안 담겼어요', '조금 더 길게, 천천히 말해 볼까요?', 'retry');
     return;
   }
-  Rec.save(key, blob, type);
+  // 기존 녹음은 그대로 두고 '새 버전'으로 하나 더 담는다
+  Rec.addVersion(key, blob, type, {dur:dur}).then(v=>{
+    Rec.syncUI();
+    if(v){
+      const n = recVersionsOf(key).length;
+      recShowToast('🎙️ 새 버전으로 담았어요 · ' + n + '개');
+      if(Rec.panelReturn){ Rec.panelReturn = false; openVoicePanel(key); }
+    }
+  });
   Rec.syncUI();
 }
 function recStop(){
@@ -1784,6 +2390,8 @@ function recStop(){
   return true;
 }
 async function recStart(){
+  const fromPanel = !!Rec.panelReturn;
+  Rec.panelReturn = false;
   if(Rec.recording || Rec.saving) return false;
   if(state.celebrating) return false;
   if(!recSupported()){
@@ -1797,6 +2405,7 @@ async function recStart(){
   cancelSpeech();
   recStopPlayer();
   hideFeedback();
+  try{ if(Rec.panelKey) closeVoicePanel(); }catch(e){}
   const key = recKeyFor();
   let stream = null;
   try{
@@ -1849,6 +2458,7 @@ async function recStart(){
     return false;
   }
   Rec.recording = true;
+  Rec.panelReturn = fromPanel;
   Rec.startedAt = Date.now();
   Rec.syncUI();
   Rec.tickTimer = setInterval(()=>{ Rec.syncUI(); }, REC_TICK_MS);
@@ -1860,15 +2470,15 @@ async function recStart(){
 Rec.syncUI = function(){
   const btn = el.btnRecord;
   if(!btn) return;
-  let key = '';
-  try{ key = recKeyFor(); }catch(e){ key = ''; }
-  const has = !!key && Rec.cache.has(key);
+  const key = recKeySafe();
+  const arr = key ? recVersionsOf(key) : [];
+  const has = arr.length > 0;
   const rec = !!Rec.recording;
   btn.classList.toggle('recording', rec);
   btn.classList.toggle('saved', has && !rec);
   btn.setAttribute('aria-pressed', rec ? 'true' : 'false');
   btn.setAttribute('aria-label', rec ? '녹음 끝내기'
-    : (has ? '내 목소리 다시 녹음하기' : '내 목소리로 녹음하기'));
+    : (has ? ('내 목소리 다시 녹음하기 (저장된 버전 ' + arr.length + '개)') : '내 목소리로 녹음하기'));
   if(el.recBtnLabel){
     const next = rec ? ('녹음 끝 ' + recRemainSec()) : (has ? '다시 녹음' : '목소리 녹음');
     if(el.recBtnLabel.textContent !== next) el.recBtnLabel.textContent = next;   // 낭독기 소음 줄이기
@@ -1877,8 +2487,167 @@ Rec.syncUI = function(){
     const ico = rec ? '⏹️' : '🎙️';
     if(el.recIco.textContent !== ico) el.recIco.textContent = ico;
   }
-  if(el.recChip) el.recChip.hidden = !has || rec;
+  if(el.recChip){
+    el.recChip.hidden = !has || rec;
+  }
+  if(el.btnRecClear){
+    el.btnRecClear.setAttribute('aria-label', '내 목소리 녹음 목록 · ' + arr.length + '개');
+  }
+  if(el.recChipTxt){
+    const next = '🎙️ ' + recChipLabel(key) + ' · ' + arr.length + '개';
+    if(el.recChipTxt.textContent !== next) el.recChipTxt.textContent = next;
+  }
+  // 패널이 열려 있으면 내용도 지금 글자에 맞춰 갱신
+  if(Rec.panelKey){
+    if(Rec.panelKey !== key) closeVoicePanel();
+    else recPaintList();
+  }
 };
+
+/* ---------- 🎙️ 버전 목록 시트 ---------- */
+function recFmtDur(ms){
+  const s = Math.max(0, (ms || 0) / 1000);
+  return s >= 0.05 ? s.toFixed(1) + '초' : '길이 미상';
+}
+function recFmtWhen(at){
+  const d = new Date(at || Date.now());
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + hh + ':' + mm;
+}
+function recFmtSize(bytes){
+  const b = bytes || 0;
+  if(b >= 1024 * 1024) return (b / 1024 / 1024).toFixed(1) + 'MB';
+  return b >= 1024 ? Math.round(b / 1024) + 'KB' : b + 'B';
+}
+function recRowHTML(v, active){
+  const renaming = (Rec.renameId === v.id);
+  const confirming = (Rec.confirmId === v.id);
+  const isNew = !!(Rec.lastSaved && Rec.lastSaved.id === v.id);
+  const chips = REC_LABEL_CHIPS.map(c=>
+    '<button type="button" class="vchip" data-act="tag" data-label="' + escapeHtml(c) + '">' + escapeHtml(c) + '</button>'
+  ).join('');
+  return '<li class="vrow' + (active ? ' is-active' : '') + (renaming ? ' is-renaming' : '') + (confirming ? ' is-confirming' : '')
+    + '" data-id="' + escapeHtml(v.id) + '">'
+    +   '<button type="button" class="vpick" data-act="select" aria-pressed="' + (active ? 'true' : 'false') + '"'
+    +     ' aria-label="이 버전을 소리 듣기에 쓰기">' + (active ? '✓' : '○') + '</button>'
+    +   '<div class="vmain">'
+    +     '<div class="vlabel"><b>' + escapeHtml(v.label || '버전') + '</b>'
+    +       (active ? '<span class="vbadge">지금 사용</span>' : '')
+    +       (isNew ? '<span class="vbadge new">방금 담음</span>' : '')
+    +     '</div>'
+    +     '<div class="vmeta">' + recFmtDur(v.dur) + ' · ' + recFmtWhen(v.at) + ' · ' + recFmtSize(v.blob ? v.blob.size : 0) + '</div>'
+    +     (renaming
+        ? '<div class="vrename"><input class="vinput" type="text" maxlength="16" value="' + escapeHtml(v.label || '') + '"'
+          + ' aria-label="버전 이름" enterkeyhint="done">'
+          + '<div class="vchips">' + chips + '</div>'
+          + '<div class="vrow-actions"><button type="button" class="vgo" data-act="rename-save">이 이름으로</button>'
+          + '<button type="button" class="vghost" data-act="rename-cancel">취소</button></div></div>'
+        : '')
+    +     (confirming
+        ? '<div class="vconfirm"><span>이 버전만 지울까요?</span>'
+          + '<div class="vrow-actions"><button type="button" class="vgo danger" data-act="del-yes">지우기</button>'
+          + '<button type="button" class="vghost" data-act="del-no">취소</button></div></div>'
+        : '')
+    +   '</div>'
+    +   '<div class="vbtns">'
+    +     '<button type="button" class="vico" data-act="play" aria-label="이 버전 미리 듣기">▶</button>'
+    +     '<button type="button" class="vico" data-act="rename" aria-label="이 버전 이름 바꾸기">✏️</button>'
+    +     '<button type="button" class="vico del" data-act="del" aria-label="이 버전 지우기">🗑️</button>'
+    +   '</div>'
+    + '</li>';
+}
+function recPaintList(){
+  if(!el.voiceList) return;
+  if(!Rec.panelKey) return;
+  if(el.voiceBackdrop && el.voiceBackdrop.hidden) return;
+  const k = Rec.panelKey;
+  const hit = recItemByKey(k);
+  const item = hit ? hit.item : null;
+  if(el.voiceTag) el.voiceTag.textContent = item ? (item.ch + (item.sub ? ' · ' + item.sub : '')) : '';
+  const arr = recVersionsOf(k);
+  const activeId = recActiveVersionId(k);
+  if(!arr.length){
+    el.voiceList.innerHTML = '<li class="vempty">아직 담은 목소리가 없어요.<br>아래 <b>새 버전 녹음하기</b>를 눌러 주세요.</li>';
+  }else{
+    el.voiceList.innerHTML = arr.map(v=> recRowHTML(v, v.id === activeId)).join('');
+  }
+  if(el.voiceCount) el.voiceCount.textContent = arr.length + '개';
+  if(el.voiceHint){
+    el.voiceHint.textContent = arr.length
+      ? '✓를 누르면 ‘소리 듣기’에서 그 목소리가 나와요. 지우기 전까지 계속 남아 있어요.'
+      : '녹음은 지우기 전까지 계속 남아 있어요. 여러 목소리를 버전으로 담아 두고 골라 쓸 수 있어요.';
+  }
+  if(el.voiceClearAll){
+    el.voiceClearAll.hidden = !!Rec.confirmAll;
+    el.voiceClearAll.disabled = !arr.length;
+  }
+  if(el.voiceAllConfirm) el.voiceAllConfirm.hidden = !Rec.confirmAll;
+  if(Rec.renameId){
+    const inp = el.voiceList.querySelector('.vinput');
+    if(inp){ try{ inp.focus({preventScroll:true}); inp.select(); }catch(e){} }
+  }
+}
+function openVoicePanel(key){
+  const k = key || recRecKeySafe();
+  if(!k) return false;
+  Rec.panelKey = k;
+  Rec.renameId = null;
+  Rec.confirmId = null;
+  Rec.confirmAll = false;
+  if(!el.voiceBackdrop) return false;
+  el.voiceBackdrop.hidden = false;
+  void el.voiceBackdrop.offsetWidth;
+  el.voiceBackdrop.classList.add('show');
+  recPaintList();
+  if(el.recToast && el.recToast.classList.contains('show')){ recPlaceToast(); setTimeout(recPlaceToast, 320); }
+  if(el.voiceSheet){ try{ el.voiceSheet.focus({preventScroll:true}); }catch(e){} }
+  return true;
+}
+function closeVoicePanel(){
+  if(!el.voiceBackdrop) return;
+  el.voiceBackdrop.classList.remove('show');
+  Rec.renameId = null; Rec.confirmId = null; Rec.confirmAll = false;
+  const key = Rec.panelKey;
+  Rec.panelKey = null;
+  setTimeout(()=>{
+    if(!el.voiceBackdrop.classList.contains('show')) el.voiceBackdrop.hidden = true;
+  }, 240);
+  if(Rec.player && Rec.player.paused === false){
+    // 미리 듣던 소리는 닫을 때 멈춘다
+    recStopPlayer();
+  }
+  return key;
+}
+function recPlaceToast(){
+  if(!el.recToast) return;
+  el.recToast.classList.remove('is-top');
+  el.recToast.style.bottom = '';
+  if(!Rec.panelKey && !(el.voiceBackdrop && el.voiceBackdrop.classList.contains('show'))) return;
+  const sheet = el.voiceBackdrop ? el.voiceBackdrop.querySelector('.sheet') : null;
+  const r = sheet ? sheet.getBoundingClientRect() : null;
+  if(r && r.top > 96){
+    el.recToast.style.bottom = (window.innerHeight - r.top + 10) + 'px';   // 시트 바로 위에
+  }else{
+    el.recToast.classList.add('is-top');                                   // 자리가 없으면 맨 위에
+  }
+}
+function recShowToast(msg){
+  if(!el.recToast || !msg) return;
+  el.recToast.textContent = msg;
+  el.recToast.hidden = false;
+  recPlaceToast();
+  void el.recToast.offsetWidth;
+  el.recToast.classList.add('show');
+  if(Rec.panelKey) setTimeout(recPlaceToast, 320);   // 시트가 다 올라온 뒤 다시 자리 잡기
+  if(Rec.toastTimer) clearTimeout(Rec.toastTimer);
+  Rec.toastTimer = setTimeout(()=>{
+    el.recToast.classList.remove('show');
+    Rec.toastTimer = setTimeout(()=>{
+      if(!el.recToast.classList.contains('show')) el.recToast.hidden = true;
+    }, 260);
+  }, 2300);
+}
 
 /* ============================================================
    6-b. 부모님 설정 — 음성인식 민감도
@@ -3362,8 +4131,9 @@ el.btnRecord.addEventListener('click', ()=>{
 });
 el.btnRecClear.addEventListener('click', (ev)=>{
   if(ev){ ev.preventDefault(); ev.stopPropagation(); }
-  Rec.clear(recRecKeySafe());
+  // 실수로 한 번에 지워지지 않도록 → 지우지 않고 녹음 목록을 연다
   hideFeedback();
+  openVoicePanel(recRecKeySafe());
 });
 el.btnPrev.addEventListener('click', ()=> prev());
 el.btnNext.addEventListener('click', ()=> next());
@@ -3423,9 +4193,70 @@ if(el.sensSeg){
   });
 }
 
+/* ---------- 🎙️ 내 목소리 녹음 목록 ---------- */
+el.voiceClose.addEventListener('click', closeVoicePanel);
+el.voiceBackdrop.addEventListener('click', (e)=>{ if(e.target === el.voiceBackdrop) closeVoicePanel(); });
+el.voiceNew.addEventListener('click', ()=>{ Rec.panelReturn = true; closeVoicePanel(); setTimeout(()=>{ recStart(); }, 260); });
+el.voiceClearAll.addEventListener('click', ()=>{ Rec.confirmAll = true; recPaintList(); });
+el.voiceAllNo.addEventListener('click', ()=>{ Rec.confirmAll = false; recPaintList(); });
+el.voiceAllYes.addEventListener('click', ()=>{
+  const k = Rec.panelKey || recRecKeySafe();
+  Rec.confirmAll = false;
+  Rec.clear(k).then(()=>{ recShowToast('🗑️ 이 글자 녹음을 모두 지웠어요'); recPaintList(); });
+});
+el.voiceList.addEventListener('click', (e)=>{
+  const t = e.target;
+  const btn = (t && t.closest) ? t.closest('[data-act]') : null;
+  if(!btn) return;
+  const row = btn.closest('.vrow');
+  const id = row ? row.dataset.id : '';
+  const k = Rec.panelKey || recRecKeySafe();
+  const act = btn.dataset.act;
+  if(act === 'select'){
+    if(Rec.selectVersion(k, id)) recShowToast('✓ 이 목소리로 들려줄게요');
+  }else if(act === 'play'){
+    recPlay(k, id);
+  }else if(act === 'rename'){
+    Rec.renameId = (Rec.renameId === id) ? null : id;
+    Rec.confirmId = null;
+    recPaintList();
+  }else if(act === 'rename-cancel'){
+    Rec.renameId = null; recPaintList();
+  }else if(act === 'rename-save'){
+    const inp = row ? row.querySelector('.vinput') : null;
+    Rec.renameVersion(k, id, inp ? inp.value : '').then(()=>{ Rec.renameId = null; recPaintList(); });
+  }else if(act === 'tag'){
+    Rec.renameVersion(k, id, btn.dataset.label).then(()=>{ Rec.renameId = null; recPaintList(); });
+  }else if(act === 'del'){
+    Rec.confirmId = id; Rec.renameId = null; recPaintList();
+  }else if(act === 'del-no'){
+    Rec.confirmId = null; recPaintList();
+  }else if(act === 'del-yes'){
+    Rec.confirmId = null;
+    Rec.removeVersion(k, id).then(()=>{ recPaintList(); recShowToast('🗑️ 이 버전을 지웠어요'); });
+  }
+});
+el.voiceList.addEventListener('keydown', (e)=>{
+  const t = e.target;
+  if(!t || !t.classList || !t.classList.contains('vinput')) return;
+  const row = t.closest('.vrow');
+  const k = Rec.panelKey || recRecKeySafe();
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    if(row) Rec.renameVersion(k, row.dataset.id, t.value).then(()=>{ Rec.renameId = null; recPaintList(); });
+  }else if(e.key === 'Escape'){
+    e.preventDefault();
+    Rec.renameId = null; recPaintList();
+  }
+});
+
 document.addEventListener('keydown', (e)=>{
   const tag = (e.target && e.target.tagName) ? e.target.tagName : '';
   if(tag==='INPUT' || tag==='TEXTAREA') return;
+  if(el.voiceBackdrop && !el.voiceBackdrop.hidden){
+    if(e.key==='Escape'){ e.preventDefault(); closeVoicePanel(); }
+    return;
+  }
   if(!el.settingsBackdrop.hidden){
     if(e.key==='Escape'){ e.preventDefault(); closeSettings(); }
     return;
@@ -3553,27 +4384,57 @@ ToddlerApp.sr = {
 };
 ToddlerApp.sens = SENS_LEVELS;
 ToddlerApp.matchesAt = (text, level)=> matchesItem(text, currentItem(), level);
-/* 🎙️ 내 목소리 녹음 훅 (테스트용) */
+/* 🎙️ 내 목소리 녹음 훅 (테스트용) — 여러 버전 저장·목록 관리 */
 ToddlerApp.rec = {
   supported: recSupported,
   mime: recPickMime,
   key: ()=> recKeyFor(),
   has: (k)=> recHas(k),
   keys: ()=> Array.from(Rec.cache.keys()),
-  size: (k)=>{ const e = Rec.cache.get(k || recKeyFor()); return e && e.blob ? e.blob.size : 0; },
+  size: (k)=>{ const v = recActiveVersion(k || recKeyFor()); return v && v.blob ? v.blob.size : 0; },
   played: ()=> Rec.played,
   lastSaved: ()=> Rec.lastSaved,
   start: ()=> recStart(),
   stop: ()=> recStop(),
   clear: (k)=> Rec.clear(k || recRecKeySafe()),
-  play: (k)=> recPlay(k || recRecKeySafe()),
+  clearAll: ()=> Rec.clearAll(),
+  play: (k, id)=> recPlay(k || recRecKeySafe(), id),
   /* 가짜 녹음 데이터 바로 넣기 (재생 실패·폴백 검증용) */
-  put: (k, bytes, type)=>{ Rec.save(k || recRecKeySafe(), new Blob([bytes || 'x'], {type:type || 'audio/wav'}), type || 'audio/wav'); },
+  put: (k, bytes, type, label)=> Rec.addVersion(k || recRecKeySafe(),
+    new Blob([bytes || 'x'], {type:type || 'audio/wav'}), type || 'audio/wav', label ? {label:label} : null)
+    .then(v=> v ? {id:v.id, label:v.label, key:v.key} : null),
+  /* 다중 버전 관리 */
+  list: (k)=>{ const key = k || recKeySafe(); const act = recActiveVersionId(key);
+    return recVersionsOf(key).map(v=> ({ id:v.id, key:v.key, label:v.label, mime:v.mime, at:v.at,
+      dur:v.dur, seq:v.seq, size:(v.blob && v.blob.size) || 0, active:(v.id === act),
+      legacy:!!v.legacy, fromMirror:!!v.fromMirror })); },
+  active: (k)=>{ const v = recActiveVersion(k || recKeySafe());
+    return v ? { id:v.id, key:v.key, label:v.label, mime:v.mime, at:v.at, dur:v.dur,
+      size:(v.blob && v.blob.size) || 0 } : null; },
+  select: (k, id)=> Rec.selectVersion(k || recKeySafe(), id),
+  rename: (k, id, label)=> Rec.renameVersion(k || recKeySafe(), id, label),
+  remove: (k, id)=> Rec.removeVersion(k || recKeySafe(), id),
+  /* 목록 시트 */
+  open: (k)=> openVoicePanel(k || recRecKeySafe()),
+  close: ()=> closeVoicePanel(),
+  panel: ()=> ({ open: !!(el.voiceBackdrop && !el.voiceBackdrop.hidden && el.voiceBackdrop.classList.contains('show')),
+    key: Rec.panelKey, rows: el.voiceList ? el.voiceList.querySelectorAll('.vrow').length : 0,
+    activeRows: el.voiceList ? el.voiceList.querySelectorAll('.vrow.is-active').length : 0,
+    empty: !!(el.voiceList && el.voiceList.querySelector('.vempty')),
+    toast: el.recToast ? el.recToast.textContent : null }),
+  storage: ()=>({ mem:Rec.mem, dbState:Rec.dbState, persist:Rec.persist,
+    mirrorBytes:Rec.mirrorBytes, mirrorItems:(Rec.mirrorItems || []).length,
+    mirrorRestored:Rec.mirrorRestored, mirrorDropped:Rec.mirrorDropped, mirrorAt:Rec.mirrorAt,
+    tombstones:Object.keys(Rec.deleted).length,
+    activeMap:Object.assign({}, Rec.activeIds),
+    mirrorKey:REC_MIRROR_KEY, activeKey:REC_ACTIVE_KEY }),
+  mirror: ()=>{ recWriteMirror(); return true; },
   state: ()=> ({
     recording:Rec.recording, saving:Rec.saving, ready:Rec.ready, mem:Rec.mem, booted:Rec.booted,
     key:Rec.recKey, remain:recRemainSec(), autoStopped:Rec.autoStopped, discarded:Rec.discarded,
     lastError:Rec.lastError, playing:!!(Rec.player && Rec.player.paused === false),
-    endedAt:Rec.finishedAt
+    endedAt:Rec.finishedAt, dbState:Rec.dbState, persist:Rec.persist,
+    versions: recVersionsOf(recKeySafe()).length, activeId: recActiveVersionId(recKeySafe())
   })
 };
 ToddlerApp.reset = ()=>{ state.index = {consonant:0, vowel:0, alphabet:0}; state.attempts=0; render(true); };
