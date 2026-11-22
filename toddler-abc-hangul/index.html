@@ -820,6 +820,31 @@ html[data-theme="mono"] .sw-txt small{color:#333}
 .fine{font-size:10px;line-height:1.45;color:var(--muted);font-weight:700;margin:0}
 html[data-theme="mono"] .fine{color:#333}
 .fine b{color:var(--ink-soft)}
+
+/* ---------- 음성인식 민감도 (아기 모드) ---------- */
+.sens{display:flex;flex-direction:column;gap:6px}
+.seg{display:flex;gap:6px}
+.seg button{
+  flex:1 1 0;min-width:0;min-height:46px;padding:6px 3px;border-radius:13px;
+  border:2.5px solid var(--ink);background:#fff;color:var(--ink-soft);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  font-size:11.5px;font-weight:900;letter-spacing:-.02em;line-height:1.15;
+  box-shadow:0 3px 0 var(--ink);transition:transform .12s,box-shadow .12s,background .15s,color .15s;
+}
+.seg button small{font-size:8.5px;font-weight:800;color:var(--muted);letter-spacing:0}
+.seg button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.seg button[aria-checked="true"]{background:var(--green);color:#fff}
+.seg button[aria-checked="true"] small{color:#fff;opacity:.92}
+.seg button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+html[data-theme="mono"] .seg button{background:#fff;color:#000}
+html[data-theme="mono"] .seg button small{color:#333}
+html[data-theme="mono"] .seg button[aria-checked="true"]{background:#000;color:#fff}
+html[data-theme="mono"] .seg button[aria-checked="true"] small{color:#fff}
+.sens-tip{display:flex;align-items:center;gap:5px}
+
+/* 마이크 음량 게이지 — 듣는 동안 막대가 아이 목소리에 반응한다 */
+.hearing .bars i{min-height:3px}
+.hearing .bars.live i{animation:none;will-change:height}
 .sheet-actions{display:flex;gap:8px;align-items:center;padding-top:2px}
 .s-btn{
   min-height:48px;padding:0 16px;border-radius:14px;font-size:13px;font-weight:900;border:3px solid var(--ink);
@@ -900,7 +925,7 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
         <span class="ico" aria-hidden="true">◐</span>흑백
       </button>
     </div>
-    <button class="gear-btn" id="btnSettings" type="button" aria-label="부모님 설정 (GPT 연동)" title="부모님 설정 (GPT 연동)">
+    <button class="gear-btn" id="btnSettings" type="button" aria-label="부모님 설정 (음성인식 민감도 · GPT 연동)" title="부모님 설정 (음성인식 민감도 · GPT 연동)">
       <span class="ico-gear" aria-hidden="true">⚙️</span><span class="on-dot" aria-hidden="true"></span>
     </button>
   </header>
@@ -1030,10 +1055,20 @@ html[data-theme="mono"] .s-btn.ghost{background:#fff;color:#000}
 <div class="sheet-backdrop" id="settingsBackdrop" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="sheet-head">
-      <h2 id="settingsTitle">⚙️ 부모님 설정 <span class="tag">GPT 연동</span></h2>
+      <h2 id="settingsTitle">⚙️ 부모님 설정 <span class="tag">음성인식 · GPT</span></h2>
       <button class="sheet-close" id="settingsClose" type="button" aria-label="설정 닫기">✕</button>
     </div>
     <div class="sheet-body">
+
+      <div class="sens">
+        <span class="field-lbl">🎙️ 음성인식 민감도</span>
+        <div class="seg" role="radiogroup" aria-label="음성인식 민감도" id="sensSeg">
+          <button type="button" role="radio" data-sens="veryHigh" aria-checked="true">매우 높음<small>3세 아기 추천</small></button>
+          <button type="button" role="radio" data-sens="normal" aria-checked="false" tabindex="-1">보통<small>또박또박</small></button>
+          <button type="button" role="radio" data-sens="exact" aria-checked="false" tabindex="-1">정확하게<small>엄하게</small></button>
+        </div>
+        <p class="fine" id="sensHint">작은 소리·짧은 소리도 알아듣고, 비슷한 발음(ㄱ/ㅋ, ㅏ/ㅑ, 에프/에푸)도 정답으로 봐요. 아기가 한 글자만 말해도 알아들어요.</p>
+      </div>
 
       <div class="conn-row">
         <span class="badge" id="gptBadge" data-status="none"><i aria-hidden="true"></i><span id="gptBadgeText">키 없음 · 기본 모드</span></span>
@@ -1171,32 +1206,32 @@ const VOWEL = [
 ];
 
 const ALPHABET = [
-  {ch:'A', lower:'a', name:'에이', example:'apple', emoji:'🍎', say:['a','ay','ey','ei','에이','애이','아','에','apple','eh']},
-  {ch:'B', lower:'b', name:'비', example:'ball', emoji:'⚽', say:['b','bee','be','비','비이','삐','빼','boy']},
-  {ch:'C', lower:'c', name:'씨', example:'cat', emoji:'🐱', say:['c','see','sea','씨','시','씨이','싸','cat','cee']},
-  {ch:'D', lower:'d', name:'디', example:'dog', emoji:'🐶', say:['d','dee','디','디이','띠','dog']},
-  {ch:'E', lower:'e', name:'이', example:'egg', emoji:'🥚', say:['e','ee','이','에','이이','egg']},
-  {ch:'F', lower:'f', name:'에프', example:'fish', emoji:'🐟', say:['f','ef','eff','에프','에푸','에피','에풍','피','fish']},
-  {ch:'G', lower:'g', name:'지', example:'goat', emoji:'🐐', say:['g','gee','지','쥐','지이','기','goat']},
-  {ch:'H', lower:'h', name:'에이치', example:'hat', emoji:'👒', say:['h','aitch','haitch','에이치','에이취','에치','에이씨','hat']},
-  {ch:'I', lower:'i', name:'아이', example:'ice', emoji:'🧊', say:['i','eye','아이','아이이','아이요','ice']},
-  {ch:'J', lower:'j', name:'제이', example:'jam', emoji:'🍯', say:['j','jay','제이','줴이','제이이','jam']},
-  {ch:'K', lower:'k', name:'케이', example:'kite', emoji:'🪁', say:['k','kay','케이','케','케읭','kite']},
-  {ch:'L', lower:'l', name:'엘', example:'lion', emoji:'🦁', say:['l','el','ell','엘','엘르','엘리','lion']},
-  {ch:'M', lower:'m', name:'엠', example:'moon', emoji:'🌙', say:['m','em','엠','음','엠므','moon']},
-  {ch:'N', lower:'n', name:'엔', example:'nose', emoji:'👃', say:['n','en','엔','은','엔느','nose']},
-  {ch:'O', lower:'o', name:'오', example:'octopus', emoji:'🐙', say:['o','oh','오','오우','octopus']},
-  {ch:'P', lower:'p', name:'피', example:'pig', emoji:'🐷', say:['p','pee','피','피이','삐','pig']},
-  {ch:'Q', lower:'q', name:'큐', example:'queen', emoji:'👑', say:['q','cue','queue','큐','큐우','크유','queen']},
-  {ch:'R', lower:'r', name:'알', example:'rabbit', emoji:'🐰', say:['r','ar','are','알','아르','알르','rabbit']},
-  {ch:'S', lower:'s', name:'에스', example:'sun', emoji:'☀️', say:['s','ess','에스','에쓰','에쑤','sun']},
-  {ch:'T', lower:'t', name:'티', example:'tiger', emoji:'🐯', say:['t','tee','티','티이','띠','tiger']},
-  {ch:'U', lower:'u', name:'유', example:'umbrella', emoji:'☂️', say:['u','you','유','유우','umbrella']},
-  {ch:'V', lower:'v', name:'브이', example:'van', emoji:'🚐', say:['v','vee','브이','뷔','비','브이이','van']},
-  {ch:'W', lower:'w', name:'더블유', example:'whale', emoji:'🐳', say:['w','double you','double u','doubleyou','더블유','더블류','더부유','더블리유','whale']},
-  {ch:'X', lower:'x', name:'엑스', example:'box', emoji:'📦', say:['x','ex','엑스','엑쓰','엑수','엑씨','box']},
-  {ch:'Y', lower:'y', name:'와이', example:'yo-yo', emoji:'🪀', say:['y','why','와이','와이이','와이예','yoyo','yo yo']},
-  {ch:'Z', lower:'z', name:'지', example:'zebra', emoji:'🦓', say:['z','zee','zed','지','제드','제트','지이','zebra']}
+  {ch:'A', lower:'a', name:'에이', example:'apple', emoji:'🍎', say:['a','ay','ey','ei','에이','애이','에이이','아','에','apple','eh']},
+  {ch:'B', lower:'b', name:'비', example:'ball', emoji:'⚽', say:['b','bee','be','비','비이','삐','빼','비이이','boy']},
+  {ch:'C', lower:'c', name:'씨', example:'cat', emoji:'🐱', say:['c','see','sea','씨','시','씨이','싸','씨이이','cat','cee']},
+  {ch:'D', lower:'d', name:'디', example:'dog', emoji:'🐶', say:['d','dee','디','디이','띠','디이이','dog']},
+  {ch:'E', lower:'e', name:'이', example:'egg', emoji:'🥚', say:['e','ee','이','에','이이','이이이','egg']},
+  {ch:'F', lower:'f', name:'에프', example:'fish', emoji:'🐟', say:['f','ef','eff','에프','에푸','에쁘','에피','에퓨','에풍','에브','피','fish']},
+  {ch:'G', lower:'g', name:'지', example:'goat', emoji:'🐐', say:['g','gee','지','쥐','지이','기','찌','지이이','goat']},
+  {ch:'H', lower:'h', name:'에이치', example:'hat', emoji:'👒', say:['h','aitch','haitch','에이치','에이취','에치','에이씨','에이치이','에치이','hat']},
+  {ch:'I', lower:'i', name:'아이', example:'ice', emoji:'🧊', say:['i','eye','아이','아이이','아이요','아이이이','ice']},
+  {ch:'J', lower:'j', name:'제이', example:'jam', emoji:'🍯', say:['j','jay','제이','줴이','제이이','제이이이','재이','jam']},
+  {ch:'K', lower:'k', name:'케이', example:'kite', emoji:'🪁', say:['k','kay','케이','케','케읭','케이이','kite']},
+  {ch:'L', lower:'l', name:'엘', example:'lion', emoji:'🦁', say:['l','el','ell','엘','엘르','엘리','에르','엘을','lion']},
+  {ch:'M', lower:'m', name:'엠', example:'moon', emoji:'🌙', say:['m','em','엠','음','엠므','엠음','moon']},
+  {ch:'N', lower:'n', name:'엔', example:'nose', emoji:'👃', say:['n','en','엔','은','엔느','엔은','nose']},
+  {ch:'O', lower:'o', name:'오', example:'octopus', emoji:'🐙', say:['o','oh','오','오우','오우우','octopus']},
+  {ch:'P', lower:'p', name:'피', example:'pig', emoji:'🐷', say:['p','pee','피','피이','삐','피이이','pig']},
+  {ch:'Q', lower:'q', name:'큐', example:'queen', emoji:'👑', say:['q','cue','queue','큐','큐우','크유','큐우우','queen']},
+  {ch:'R', lower:'r', name:'알', example:'rabbit', emoji:'🐰', say:['r','ar','are','알','아르','알르','알아','에르','rabbit']},
+  {ch:'S', lower:'s', name:'에스', example:'sun', emoji:'☀️', say:['s','ess','에스','에쓰','에쑤','에스으','에수','sun']},
+  {ch:'T', lower:'t', name:'티', example:'tiger', emoji:'🐯', say:['t','tee','티','티이','띠','티이이','tiger']},
+  {ch:'U', lower:'u', name:'유', example:'umbrella', emoji:'☂️', say:['u','you','유','유우','유우우','umbrella']},
+  {ch:'V', lower:'v', name:'브이', example:'van', emoji:'🚐', say:['v','vee','브이','뷔','비','브이이','브이이이','van']},
+  {ch:'W', lower:'w', name:'더블유', example:'whale', emoji:'🐳', say:['w','double you','double u','doubleyou','더블유','더블류','더부유','더블리유','더블유우','whale']},
+  {ch:'X', lower:'x', name:'엑스', example:'box', emoji:'📦', say:['x','ex','엑스','엑쓰','엑수','엑씨','엑스으','box']},
+  {ch:'Y', lower:'y', name:'와이', example:'yo-yo', emoji:'🪀', say:['y','why','와이','와이이','와이예','와이이이','yoyo','yo yo']},
+  {ch:'Z', lower:'z', name:'지', example:'zebra', emoji:'🦓', say:['z','zee','zed','지','제드','제트','지이','찌','즈','제뜨','지이이','zebra']}
 ];
 
 const MODES = {
@@ -1221,6 +1256,8 @@ const ORDER = ['consonant','vowel','alphabet'];
 const STAR_KEY = 'toddlerSpeak.stars.v1';
 const THEME_KEY = 'toddlerSpeak.theme.v1';
 const MODE_KEY = 'toddlerSpeak.mode.v1';
+const SENS_KEY = 'toddlerSpeak.sensitivity.v1';
+const MIC_KEY = 'toddlerSpeak.micMonitor.v1';
 
 /* ============================================================
    2. 상태
@@ -1249,7 +1286,9 @@ const state = {
   lyricIndex:-1,
   lyricSyl:-1,
   musicDuck:false,
-  srSoftRetries:0
+  srSoftRetries:0,
+  sensitivity:'veryHigh',
+  micLevel:0
 };
 window.ToddlerApp = {state:state, MODES:MODES};
 
@@ -1282,7 +1321,9 @@ const el = {
   gptKey:$('gptKey'), gptEye:$('gptEye'), gptSave:$('gptSave'),
   gptSmart:$('gptSmart'), gptVoice:$('gptVoice'), gptWhisper:$('gptWhisper'),
   gptBadge:$('gptBadge'), gptBadgeText:$('gptBadgeText'), gptMsg:$('gptMsg'),
-  gptTest:$('gptTest'), gptClear:$('gptClear'), gptDone:$('gptDone')
+  gptTest:$('gptTest'), gptClear:$('gptClear'), gptDone:$('gptDone'),
+  sensSeg:$('sensSeg'), sensHint:$('sensHint'),
+  hearingBars:document.querySelector('#hearing .bars')
 };
 
 /* ============================================================
@@ -1347,6 +1388,8 @@ function loadStore(){
     if(t==='mono'||t==='color') state.theme = t;
     const m = localStorage.getItem(MODE_KEY);
     if(ORDER.indexOf(m)>=0) state.mode = m;
+    const sv = localStorage.getItem(SENS_KEY);
+    if(sv && SENS_LEVELS[sv]) state.sensitivity = sv;
   }catch(e){}
 }
 function saveStore(){
@@ -1354,6 +1397,7 @@ function saveStore(){
     localStorage.setItem(STAR_KEY, String(state.stars));
     localStorage.setItem(THEME_KEY, state.theme);
     localStorage.setItem(MODE_KEY, state.mode);
+    localStorage.setItem(SENS_KEY, state.sensitivity);
   }catch(e){}
 }
 
@@ -2034,6 +2078,7 @@ function openSettings(){
   el.gptSmart.checked = !!GPT.smart;
   el.gptVoice.checked = !!GPT.voice;
   el.gptWhisper.checked = !!GPT.whisper;
+  paintSensitivity();
   renderGpt();
   el.settingsBackdrop.hidden = false;
   void el.settingsBackdrop.offsetWidth;
@@ -2044,6 +2089,27 @@ function closeSettings(){
   setTimeout(()=>{
     if(!el.settingsBackdrop.classList.contains('show')) el.settingsBackdrop.hidden = true;
   }, 240);
+}
+/* ---------- 음성인식 민감도 선택 ---------- */
+function paintSensitivity(){
+  const seg = el.sensSeg;
+  if(seg){
+    seg.querySelectorAll('button[data-sens]').forEach(b=>{
+      const on = b.dataset.sens === state.sensitivity;
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+    });
+  }
+  if(el.sensHint) el.sensHint.textContent = sensCfg().hint;
+}
+function setSensitivity(v){
+  if(!SENS_LEVELS[v]) return state.sensitivity;
+  const changed = state.sensitivity !== v;
+  state.sensitivity = v;
+  try{ localStorage.setItem(SENS_KEY, v); }catch(e){}
+  paintSensitivity();
+  if(changed && state.listening){ try{ startListening(); }catch(e){} }   // 듣는 중이면 새 설정으로 다시
+  return state.sensitivity;
 }
 function readSettingsInputs(){
   const prevKey = GPT.key;
@@ -2934,6 +3000,23 @@ function levenshtein(a,b){
   }
   return prev[n];
 }
+/* ---------- 음성인식 민감도 단계 ----------
+   veryHigh: 3세 아기 추천(기본) — 비슷한 발음·자모 일부·받임이 붙어도 정답, 대안을 더 많이 보고 더 오래 듣는다
+   normal  : 또박또박 말하면 정답 — 한 글자만 말해도 자모가 같으면 정답
+   exact   : 사전에 있는 발음과 같을 때만 정답(엄하게) */
+const SENS_LEVELS = {
+  veryHigh:{ level:3, label:'매우 높음', maxAlternatives:10, listenMs:7200, retryMs:6200, softMax:3,
+             score:0.6, sylMax:2, groups:true,
+             hint:'작은 소리·짧은 소리도 알아듣고, 비슷한 발음(ㄱ/ㅋ, ㅏ/ㅑ, 에프/에푸)도 정답으로 봐요. 아기가 한 글자만 말해도 알아들어요.' },
+  normal:{ level:2, label:'보통', maxAlternatives:8, listenMs:6200, retryMs:5400, softMax:2,
+           score:0.8, sylMax:1, groups:false,
+           hint:'자모가 똑같은 한 글자(기·아)와 사전 발음은 정답이에요. 비슷한 발음(ㄱ/ㅋ)은 정답으로 보지 않아요.' },
+  exact:{ level:1, label:'정확하게', maxAlternatives:5, listenMs:5200, retryMs:4400, softMax:0,
+          score:1.1, sylMax:1, groups:false,
+          hint:'사전에 있는 이름·발음(기역, 기억, 기)과 똑같이 말해야 정답이에요. 발음 확인용이에요.' }
+};
+function sensCfg(){ return SENS_LEVELS[state.sensitivity] || SENS_LEVELS.veryHigh; }
+
 /* 한글 음절의 첫소리·가운뎃소리 — 비슷한 발음인지 판단에 쓴다 */
 const CHO_LETTERS = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
 const JUNG_LETTERS = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ';
@@ -2941,7 +3024,7 @@ function hangulParts(ch){
   const c = String(ch).charCodeAt(0);
   if(!(c >= 0xAC00 && c <= 0xD7A3)) return null;
   const i = c - 0xAC00;
-  return { cho: CHO_LETTERS.charAt(Math.floor(i/588)), jung: JUNG_LETTERS.charAt(Math.floor((i%588)/28)) };
+  return { cho: CHO_LETTERS.charAt(Math.floor(i/588)), jung: JUNG_LETTERS.charAt(Math.floor((i%588)/28)), jong: i%28 };
 }
 /* 자리마다 다른 글자가 '비슷한 소리'인지 (첫소리나 모음 중 하나는 같아야) */
 function softDiff(h, a){
@@ -2954,7 +3037,106 @@ function softDiff(h, a){
   }
   return true;
 }
-function matchesItem(heard, item){
+
+/* 3세 아기가 자주 섞어 말하는 소리 쌍 (ㄱ↔ㅋ↔ㄲ, ㄷ↔ㅌ↔ㄸ, ㅂ↔ㅍ↔ㅃ …) */
+const CHO_CLOSE = ['ㄱㅋ','ㄱㄲ','ㅋㄲ','ㄷㅌ','ㄷㄸ','ㅌㄸ','ㅂㅍ','ㅂㅃ','ㅍㅃ','ㅅㅆ',
+                   'ㅈㅉ','ㅈㅊ','ㅉㅊ','ㄹㄴ','ㅁㅂ','ㅎㅇ'];
+const JUNG_CLOSE = ['ㅏㅑ','ㅓㅕ','ㅗㅛ','ㅜㅠ','ㅐㅔ','ㅒㅖ','ㅚㅙ','ㅙㅞ','ㅚㅞ','ㅡㅓ'];
+function pairClose(list, a, b){
+  if(!a || !b) return false;
+  if(a === b) return true;
+  return list.indexOf(a+b) >= 0 || list.indexOf(b+a) >= 0;
+}
+function hangulChars(s){
+  const out = [];
+  for(const ch of String(s||'')){
+    const c = ch.charCodeAt(0);
+    if(c >= 0xAC00 && c <= 0xD7A3) out.push(ch);
+  }
+  return out;
+}
+/* 한글 비중 (영어 알파벳·숫자가 섞였는지) */
+function hangulRatio(s){
+  const t = String(s||'').replace(/\s+/g,'');
+  if(!t.length) return 0;
+  return hangulChars(t).length / t.length;
+}
+/* 한 음절이 얼마나 비슷한 소리인가 (0 ~ 1) */
+function sylScore(a, b, groups){
+  if(a === b) return 1;
+  const p = hangulParts(a), q = hangulParts(b);
+  if(!p || !q) return 0;
+  let s = 0;
+  if(p.cho === q.cho) s += 0.5;
+  else if(groups && pairClose(CHO_CLOSE, p.cho, q.cho)) s += 0.36;
+  if(p.jung === q.jung) s += 0.5;
+  else if(groups && pairClose(JUNG_CLOSE, p.jung, q.jung)) s += 0.3;
+  return s;
+}
+/* 들린 말과 목표 발음이 음절 단위로 얼마나 가까운가 (아이가 음절을 빠뜨린 경우만 봐 준다) */
+function wordScore(h, a, groups){
+  const hs = hangulChars(h), as = hangulChars(a);
+  const n = hs.length, m = as.length;
+  const res = { score:0, lenDiff:Math.abs(n-m), firstExact: !!(n && m && hs[0] === as[0]) };
+  if(!n || !m || n > m || res.lenDiff > 1) return res;   // 들린 말이 더 길면(상관없는 말) 보지 않는다
+  const avg = (xs, ys)=>{
+    let s = 0;
+    const k = Math.min(xs.length, ys.length);
+    for(let i=0;i<k;i++) s += sylScore(xs[i], ys[i], groups);
+    return s / Math.max(xs.length, ys.length);
+  };
+  if(n === m){ res.score = avg(hs, as); return res; }
+  let best = 0;
+  for(let i=0;i<m;i++) best = Math.max(best, avg(hs, as.slice(0,i).concat(as.slice(i+1))));
+  res.score = best;
+  return res;
+}
+/* 목표 자모(ㄱ·ㅏ)가 들린 한 글자 안에 들어 있는지 — 받침이 붙어도(강), 비슷한 소리여도(카) 정답 */
+function phonemeMatch(heard, item, cfg){
+  const hs = hangulChars(heard);
+  if(hs.length !== 1) return null;      // 한 글자로 또박 말할 때만 (두 글자 말은 발음 비교로)
+  const target = String(item.ch || '');
+  const isCho = CHO_LETTERS.indexOf(target) >= 0;
+  const isJung = JUNG_LETTERS.indexOf(target) >= 0;
+  if(!isCho && !isJung) return null;
+  const s = hs[0];
+  const p = hangulParts(s);
+  if(!p) return null;
+  if(isCho && (p.cho === target || (cfg.groups && pairClose(CHO_CLOSE, p.cho, target)))) return '자모:' + s;
+  if(isJung && (p.jung === target || (cfg.groups && pairClose(JUNG_CLOSE, p.jung, target)))) return '자모:' + s;
+  return null;
+}
+/* 알파벳: 아이가 목표 글자 소리로 시작하는 짧은 말을 하면 정답 (b, be, bee, buh) */
+function latinOnset(heard, item){
+  const ch = String(item.ch || '').toLowerCase();
+  if(!/^[a-z]$/.test(ch)) return null;
+  const hl = String(heard || '').toLowerCase().replace(/[^a-z]/g,'');
+  if(!hl.length || hl.length > 4) return null;
+  return hl.charAt(0) === ch ? '글자소리:' + hl : null;
+}
+/* 알파벳 이름의 한글 음차(에프/에푸/에쁘, 에이치/에치 …)를 자모 단위로 너그럽게 비교 */
+function koNameMatch(heard, item, cfg){
+  if(hangulRatio(heard) < 0.8) return null;
+  const hs = hangulChars(heard);
+  if(!hs.length || hs.length > 3) return null;
+  const cands = [item.spoken].concat(item.say || []);
+  let best = null;
+  for(const c of cands){
+    const raw = normalize(c);
+    if(hangulRatio(raw) < 0.9) continue;
+    const as = hangulChars(raw);
+    if(!as.length) continue;
+    const r = wordScore(heard, raw, cfg.groups);
+    if(r.score < cfg.score) continue;
+    if(!r.firstExact) continue;            // 첫 음절은 꼭 같아야 한다(애이 ≠ 이이)
+    if(!best || r.score > best.score) best = { score:r.score, raw:c };
+  }
+  return best;
+}
+
+function matchesItem(heard, item, cfgOrLevel){
+  const cfg = (cfgOrLevel && cfgOrLevel.score != null) ? cfgOrLevel
+            : (cfgOrLevel ? { ...sensCfg(), level:cfgOrLevel } : sensCfg());
   const h = normalize(heard);
   if(!h) return null;
   const koH = /[\uAC00-\uD7A3]/.test(h);
@@ -2965,16 +3147,25 @@ function matchesItem(heard, item){
     if(a.length>=2 && h.indexOf(a)>=0) return raw;                                  // 문장 속에 들어 있어도
     if(a.length>=2 && a.indexOf(h)===0 && h.length>=Math.min(2, a.length-1)) return raw; // 앞부분만 또박
     if(h.length===1 && a[0]===h) return raw;                                        // 한 글자만 ("기", "니")
-    if(koH && /[\uAC00-\uD7A3]/.test(a) && a.length>=2){
+    if(cfg.level>=2 && koH && /[\uAC00-\uD7A3]/.test(a) && a.length>=2){
       // 한글 발음은 한두 글자 차이까지 너그럽게 (영문 철자 이름은 정확히)
       if(h.length>=2 && Math.abs(a.length-h.length)<=1 && levenshtein(h,a)<=1 && softDiff(h,a)) return raw;
       if(a.length>=4 && h.length>=2 && Math.abs(a.length-h.length)<=1 && levenshtein(h,a)<=2) return raw;
     }
   }
+  if(cfg.level>=2){
+    const lat = latinOnset(h, item);
+    if(lat) return lat;
+    const ph = phonemeMatch(h, item, cfg);
+    if(ph) return ph;
+    const kn = koNameMatch(h, item, cfg);
+    if(kn) return kn.raw;
+  }
   const tokens = String(heard).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(Boolean);
   if(tokens.length>1){
     for(const tk of tokens){
-      const r = matchesItem(tk, item);
+      if(tk === h) continue;
+      const r = matchesItem(tk, item, cfgOrLevel);
       if(r) return r;
     }
   }
@@ -2986,16 +3177,139 @@ function currentItem(){
 }
 
 /* ============================================================
+   8-b. 마이크 음량 모니터 (아기가 작게 말해도 알아채기)
+   ============================================================ */
+/* 듣는 동안 마이크의 실제 음량을 재서
+   ① 하단 막대(음량 게이지)를 아이 목소리에 맞춰 움직이고
+   ② '못 들었어요(no-speech)'가 나도 소리는 났다면 한 번 더 들어 준다.
+   · 브라우저가 마이크를 막거나(getUserMedia 실패) 음성인식과 마이크를
+     동시에 못 쓰는 기기(iOS 일부)에서는 조용히 꺼지고 기존처럼 동작한다.
+   · 한 번 꺼진 기기는 기억해 두고 다시 시도하지 않는다(MIC_KEY='off'). */
+const MIC = {
+  on:false, ctx:null, stream:null, ana:null, buf:null, raf:0, lastTick:0,
+  level:0, peak:0, sound:false, soundMs:0, reason:'idle', forced:null, busy:false, conflicts:0, skip:false
+};
+function micAllowed(){
+  if(MIC.forced === false || MIC.skip) return false;
+  if(MIC.forced === true) return true;
+  try{ if(localStorage.getItem(MIC_KEY) === 'off') return false; }catch(e){}
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia &&
+            (window.AudioContext || window.webkitAudioContext));
+}
+function micPaint(level){
+  state.micLevel = level;
+  const bars = el.hearingBars;
+  if(!bars) return;
+  const live = level > 0.0004;
+  bars.classList.toggle('live', live);
+  if(!live){
+    for(const b of bars.children) b.style.height = '';
+    return;
+  }
+  const gain = sensCfg().level >= 3 ? 60 : 34;   // 민감도가 높으면 작은 소리도 크게 반응
+  const norm = Math.sqrt(Math.min(1, level * gain));
+  const wob = [0.9, 1, 0.95, 0.72];
+  for(let i=0;i<bars.children.length;i++){
+    const h = Math.max(3, Math.min(12, 3 + norm * 9 * (wob[i] || 0.8)));
+    bars.children[i].style.height = h.toFixed(1) + 'px';
+  }
+}
+function micStop(){
+  if(MIC.raf){ try{ cancelAnimationFrame(MIC.raf); }catch(e){} MIC.raf = 0; }
+  try{ if(MIC.stream) MIC.stream.getTracks().forEach(t=>{ try{ t.stop(); }catch(e){} }); }catch(e){}
+  try{ if(MIC.ctx && MIC.ctx.state !== 'closed') MIC.ctx.close(); }catch(e){}
+  MIC.on = false; MIC.stream = null; MIC.ana = null; MIC.buf = null; MIC.ctx = null;
+  MIC.level = 0;
+  micPaint(0);
+}
+function micDisable(reason){
+  MIC.reason = reason;
+  try{ localStorage.setItem(MIC_KEY, 'off'); }catch(e){}
+  micStop();
+}
+/* 음성인식과 마이크 모니터가 마이크를 서로 빼앗은 경우(iOS 일부)
+   첫 번째는 이번만 끄고 바로 다시 듣고, 두 번째부터는 이 기기에서 아예 끈다. */
+function micConflict(){
+  MIC.conflicts = (MIC.conflicts || 0) + 1;
+  MIC.skip = true;                 // 이번에 듣는 동안은 다시 켜지 않는다
+  if(MIC.conflicts >= 2) micDisable('sr-conflict');
+  else { MIC.reason = 'conflict'; micStop(); }
+}
+function micTick(){
+  if(!MIC.on || !MIC.ana) return;
+  MIC.raf = requestAnimationFrame(micTick);
+  const now = (window.performance && performance.now) ? performance.now() : Date.now();
+  if(now - MIC.lastTick < 45) return;     // 초당 ~22회 ­면 충분
+  MIC.lastTick = now;
+  let rms = 0;
+  try{
+    MIC.ana.getFloatTimeDomainData(MIC.buf);
+    let sum = 0;
+    for(let i=0;i<MIC.buf.length;i++){ const v = MIC.buf[i]; sum += v*v; }
+    rms = Math.sqrt(sum / MIC.buf.length);
+  }catch(e){ return; }
+  MIC.level = Math.max(rms, MIC.level * 0.82);   // 소리가 멈추면 천천히 줄어든다(VU 미터)
+  if(MIC.level > MIC.peak) MIC.peak = MIC.level;
+  if(state.sensitivity === 'exact' ? MIC.level > 0.012 : MIC.level > 0.0035){
+    MIC.sound = true; MIC.soundMs = (performance.now ? performance.now() : Date.now());
+  }
+  micPaint(MIC.level);
+}
+async function micStart(){
+  if(MIC.on || MIC.busy || !micAllowed()) return false;
+  MIC.busy = true;
+  MIC.sound = false; MIC.peak = 0;
+  let stream = null;
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true }
+    });
+    if(!state.listening){          // 그새 듣기가 끝났으면 바로 반납
+      try{ stream.getTracks().forEach(t=>t.stop()); }catch(e){}
+      MIC.busy = false; MIC.reason = 'idle';
+      return false;
+    }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AC();
+    const src = ctx.createMediaStreamSource(stream);
+    const ana = ctx.createAnalyser();
+    ana.fftSize = 512;
+    ana.smoothingTimeConstant = 0.5;
+    src.connect(ana);
+    MIC.stream = stream; MIC.ctx = ctx; MIC.ana = ana;
+    MIC.buf = new Float32Array(ana.fftSize || 512);
+    if(ctx.state === 'suspended'){ try{ ctx.resume(); }catch(e){} }
+    MIC.on = true; MIC.reason = 'on';
+    MIC.lastTick = 0;
+    MIC.raf = requestAnimationFrame(micTick);
+    MIC.busy = false;
+    return true;
+  }catch(e){
+    const name = String((e && (e.name || e.message)) || e);
+    try{ if(stream) stream.getTracks().forEach(t=>t.stop()); }catch(e2){}
+    MIC.on = false; MIC.busy = false;
+    MIC.reason = /notallowed|permission|denied/i.test(name) ? 'denied' : 'unavailable:' + name;
+    micPaint(0);
+    return false;
+  }
+}
+function micSawSound(){ return !!(MIC.on && MIC.sound); }
+function micSync(){
+  if(state.listening) micStart(); else micStop();
+}
+
+/* ============================================================
    9. 음성 인식
    ============================================================ */
 let recog = null;
 let recTimer = null;
 let recGeneration = 0;
 let judgeToken = 0;
-const SR_MAX_ALTERNATIVES = 10;
-const SR_LISTEN_MS = 6000;
-const SR_RETRY_MS = 5200;
-const srConfig = { lang:'', continuous:false, interimResults:true, maxAlternatives:SR_MAX_ALTERNATIVES };
+const SR_MAX_ALTERNATIVES = 12;      // 모든 대안을 본다(민감도별로 5~12)
+const SR_LISTEN_MS = 7200;
+const SR_RETRY_MS = 6200;
+const srConfig = { lang:'', continuous:false, interimResults:true, maxAlternatives:10,
+                   sensitivity:'veryHigh', softMax:3, listenMs:SR_LISTEN_MS, retryMs:SR_RETRY_MS };
 let srSession = null;
 function srAvailable(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
 function showSRNotice(msg){
@@ -3011,6 +3325,7 @@ function setListening(on){
   el.hearing.classList.toggle('on', on);
   if(!on){ el.hearingTxt.textContent=''; }
   else { el.hearingTxt.textContent = '듣고 있어요…'; }
+  if(on) micSync(); else micStop();
 }
 function stopRecognition(){
   const r = recog;
@@ -3021,6 +3336,7 @@ function stopRecognition(){
   if(Rec.recording) { try{ recStop(); }catch(e){} }
   recGeneration++;
   srSession = null;
+  micStop();
   setListening(false);
 }
 
@@ -3123,11 +3439,12 @@ function srSoftRetry(myGen){
   if(recTimer){ clearTimeout(recTimer); recTimer = null; }
   const r = recog; recog = null;
   if(r){ try{ r.onresult=null; r.onerror=null; r.onend=null; r.abort(); }catch(e){} }
+  micStop();
   el.hearing.classList.add('on');
-  el.hearingTxt.textContent = '조금만 더 듣고 있을게요…';
+  el.hearingTxt.textContent = state.srSoftRetries >= 2 ? '아직 듣고 있어요. 천천히 말해도 돼요…' : '조금만 더 듣고 있을게요…';
   setTimeout(()=>{
     if(myGen !== recGeneration || state.celebrating) return;
-    beginRecognition(1, myGen);
+    beginRecognition(Math.max(1, state.srSoftRetries), myGen);
   }, 240);
 }
 
@@ -3136,17 +3453,24 @@ function beginRecognition(soft, myGen){
   if(!SR){ showSRNotice(); return; }
   let r;
   try{ r = new SR(); }catch(e){ showSRNotice(); return; }
+  const cfg = sensCfg();
   recog = r;
   r.lang = currentLang();
-  r.continuous = false;
+  r.continuous = false;              // iOS 사파리는 continuous=true에서 멈추는 경우가 있어 끄고, 대신 자동 재청취로 잇는다
   r.interimResults = true;
-  r.maxAlternatives = SR_MAX_ALTERNATIVES;
+  r.maxAlternatives = cfg.maxAlternatives;
   srConfig.lang = r.lang;
   srConfig.continuous = r.continuous;
   srConfig.interimResults = r.interimResults;
   srConfig.maxAlternatives = r.maxAlternatives;
+  srConfig.sensitivity = state.sensitivity;
+  srConfig.softMax = cfg.softMax;
+  srConfig.listenMs = cfg.listenMs;
+  srConfig.retryMs = cfg.retryMs;
   const s = { gen:myGen, finished:false, gotResult:false, soft:soft||0, texts:[] };
   srSession = s;
+  /* 소리는 났는데 글자를 못 잡았으면(작은 목소리·한 글자) 한 번 더 들어 준다 */
+  const softBudget = ()=> cfg.softMax + (micSawSound() ? 1 : 0);
 
   r.onstart = ()=>{ if(myGen===recGeneration) setListening(true); };
   r.onresult = (ev)=>{ if(myGen!==recGeneration) return; handleSRResult(ev); };
@@ -3155,7 +3479,13 @@ function beginRecognition(soft, myGen){
     const err = ev && ev.error ? ev.error : 'unknown';
     state.srError = err;
     if(s.finished) return;
-    if(err==='no-speech' && !s.gotResult && s.soft < 1){
+    if((err==='aborted' || err==='audio-capture') && MIC.on){
+      /* 음성인식과 마이크 모니터가 마이크를 다투는 기기 — 모니터를 끄고 한 번 더 */
+      s.finished = true;
+      micConflict();
+      if(s.soft < 2){ srSoftRetry(myGen); return; }
+    }
+    if((err==='no-speech' || err==='aborted') && !s.gotResult && s.soft < softBudget()){
       s.finished = true;
       srSoftRetry(myGen);
       return;
@@ -3189,7 +3519,7 @@ function beginRecognition(soft, myGen){
     setListening(false);
     if(wasFinished) return;
     if(s.gotResult){ evaluateTranscripts(s.texts); return; }
-    if(s.soft < 1){ srSoftRetry(myGen); return; }
+    if(s.soft < softBudget()){ srSoftRetry(myGen); return; }
     gentlePrompt('하나도 못 들었어요', '조금 더 크게, 천천히 말해 볼까요?', 'retry');
   };
 
@@ -3205,7 +3535,7 @@ function beginRecognition(soft, myGen){
   if(recTimer){ clearTimeout(recTimer); recTimer = null; }
   recTimer = setTimeout(()=>{
     if(recog && myGen===recGeneration){ try{ recog.stop(); }catch(e){} }
-  }, soft ? SR_RETRY_MS : SR_LISTEN_MS);
+  }, soft ? cfg.retryMs : cfg.listenMs);
 }
 
 function startListening(){
@@ -3214,6 +3544,7 @@ function startListening(){
   hideFeedback();
   stopRecognition();
   state.srSoftRetries = 0;
+  MIC.skip = false;              // 새로 듣기 시작할 때만 음량 모니터를 다시 시도한다
   if(!srAvailable()){
     state.srError='unsupported';
     if(gptHasKey() && GPT.whisper && whisperAvailable()){
@@ -3565,6 +3896,23 @@ el.btnSettings.addEventListener('click', openSettings);
 el.settingsClose.addEventListener('click', closeSettings);
 el.settingsBackdrop.addEventListener('click', (e)=>{ if(e.target===el.settingsBackdrop) closeSettings(); });
 el.gptDone.addEventListener('click', ()=>{ readSettingsInputs(); closeSettings(); });
+if(el.sensSeg){
+  el.sensSeg.addEventListener('click', (e)=>{
+    const b = (e.target && e.target.closest) ? e.target.closest('button[data-sens]') : null;
+    if(!b) return;
+    setSensitivity(b.dataset.sens);
+  });
+  el.sensSeg.addEventListener('keydown', (e)=>{
+    if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const keys = Object.keys(SENS_LEVELS);
+    const i = keys.indexOf(state.sensitivity);
+    const n = keys[(i + (e.key === 'ArrowRight' ? 1 : -1) + keys.length) % keys.length];
+    setSensitivity(n);
+    const btn = el.sensSeg.querySelector('button[data-sens="' + n + '"]');
+    if(btn) btn.focus();
+  });
+}
 el.gptTest.addEventListener('click', ()=>{ testConnection(); });
 el.gptClear.addEventListener('click', clearGptKey);
 el.gptEye.addEventListener('click', ()=>{
@@ -3698,8 +4046,26 @@ ToddlerApp.sr = {
   softRetries: ()=> state.srSoftRetries,
   collect: collectSRTexts,
   handle: (ev)=> handleSRResult(ev),
-  session: ()=> srSession
+  session: ()=> srSession,
+  sensitivity: ()=> state.sensitivity,
+  setSensitivity: setSensitivity,
+  levels: SENS_LEVELS,
+  sens: ()=> sensCfg(),
+  match: (text, level)=> matchesItem(text, currentItem(), level),
+  mic: ()=>({ on:MIC.on, level:MIC.level, peak:MIC.peak, sound:MIC.sound, reason:MIC.reason, forced:MIC.forced,
+              conflicts:MIC.conflicts, skip:MIC.skip, soundSec: MIC.soundMs ? Math.round(MIC.soundMs) : 0 }),
+  micSawSound: micSawSound,
+  setMicMonitor: (v)=>{
+    MIC.forced = (v === null || v === undefined) ? null : !!v;
+    MIC.skip = false; MIC.conflicts = 0;
+    if(MIC.forced !== false){ try{ localStorage.removeItem(MIC_KEY); }catch(e){} }
+    if(!MIC.forced) micStop();
+    return MIC.forced;
+  },
+  micReset: ()=>{ MIC.reason = 'idle'; MIC.peak = 0; MIC.sound = false; }
 };
+ToddlerApp.sens = SENS_LEVELS;
+ToddlerApp.matchesAt = (text, level)=> matchesItem(text, currentItem(), level);
 /* 🎙️ 내 목소리 녹음 훅 (테스트용) */
 ToddlerApp.rec = {
   supported: recSupported,
@@ -3754,6 +4120,7 @@ setTheme(state.theme);
 buildLyrics();
 render(false);
 renderGpt();
+paintSensitivity();
 try{ Rec.boot(); }catch(e){ Rec.mem = true; Rec.ready = true; }
 if(!srAvailable()){
   showSRNotice('이 브라우저에서는 마이크 인식을 쓸 수 없어요. 아래 <b>부모님 도움</b>에서 <b>정답</b>을 눌러 주세요.');
