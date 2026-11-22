@@ -3103,7 +3103,8 @@ function phonemeMatch(heard, item, cfg){
   const p = hangulParts(s);
   if(!p) return null;
   if(isCho && (p.cho === target || (cfg.groups && pairClose(CHO_CLOSE, p.cho, target)))) return '자모:' + s;
-  if(isJung && (p.jung === target || (cfg.groups && pairClose(JUNG_CLOSE, p.jung, target)))) return '자모:' + s;
+  /* 모음은 받침 없는 열린 글자에서만 ("밥"이 ㅏ 로 정답이 되지 않게) */
+  if(isJung && p.jong === 0 && (p.jung === target || (cfg.groups && pairClose(JUNG_CLOSE, p.jung, target)))) return '자모:' + s;
   return null;
 }
 /* 알파벳: 아이가 목표 글자 소리로 시작하는 짧은 말을 하면 정답 (b, be, bee, buh) */
