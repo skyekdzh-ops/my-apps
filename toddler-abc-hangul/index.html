@@ -2524,6 +2524,10 @@ function recRowHTML(v, active){
   const renaming = (Rec.renameId === v.id);
   const confirming = (Rec.confirmId === v.id);
   const isNew = !!(Rec.lastSaved && Rec.lastSaved.id === v.id);
+  const meta = [];
+  if(v.dur) meta.push(recFmtDur(v.dur));
+  meta.push(recFmtWhen(v.at));
+  meta.push(recFmtSize(v.blob ? v.blob.size : 0));
   const chips = REC_LABEL_CHIPS.map(c=>
     '<button type="button" class="vchip" data-act="tag" data-label="' + escapeHtml(c) + '">' + escapeHtml(c) + '</button>'
   ).join('');
@@ -2536,7 +2540,7 @@ function recRowHTML(v, active){
     +       (active ? '<span class="vbadge">지금 사용</span>' : '')
     +       (isNew ? '<span class="vbadge new">방금 담음</span>' : '')
     +     '</div>'
-    +     '<div class="vmeta">' + recFmtDur(v.dur) + ' · ' + recFmtWhen(v.at) + ' · ' + recFmtSize(v.blob ? v.blob.size : 0) + '</div>'
+    +     '<div class="vmeta">' + meta.join(' · ') + '</div>'
     +     (renaming
         ? '<div class="vrename"><input class="vinput" type="text" maxlength="16" value="' + escapeHtml(v.label || '') + '"'
           + ' aria-label="버전 이름" enterkeyhint="done">'
