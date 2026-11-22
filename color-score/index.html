@@ -537,6 +537,14 @@
   /* ---------- sheet ---------- */
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
   .toolbar .btn{flex:0 0 auto}
+  /* ↩ 되돌리기 — 늘 같은 자리에 있고, 되돌릴 편집이 없으면 흐리게(disabled) 보입니다 */
+  .undo-btn .undo-n{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:19px;height:19px;padding:0 5px;border-radius:10px;
+    background:var(--ink);color:#FFF7E9;font-size:10.5px;font-weight:800;letter-spacing:0;
+  }
+  .undo-btn:not([disabled]){border-color:#D8C9AE;background:#FFFCF6}
+  .undo-btn:active{transform:scale(.975)}
   .chip-toggle{
     display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
     background:#fff;border-radius:11px;padding:8px 11px;font-size:12px;font-weight:700;
@@ -904,6 +912,14 @@
               title="켜면 모든 마디에서 가사 입력칸과 1도·4도·5도 색 단추가 바로 보입니다">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4.2L19 9.2a2.4 2.4 0 0 0-3.4-3.4L4.8 16.6z"/><path d="M14.5 6.5l3 3"/><path d="M4 20h16"/></svg>
         ✏️ 바로 수정
+      </button>
+      <button class="btn undo-btn" id="undoBtn" type="button" disabled
+              aria-keyshortcuts="Control+Z Meta+Z"
+              aria-label="되돌리기 — 되돌릴 편집이 없습니다"
+              title="방금 한 편집을 되돌립니다 (Ctrl+Z / ⌘Z)">
+        <span aria-hidden="true">↩</span>
+        <span>되돌리기</span>
+        <span class="undo-n" id="undoCount" hidden></span>
       </button>
       <button class="btn" id="printBtn" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="2"/><path d="M7 16h10v4H7z"/></svg>
@@ -1400,7 +1416,7 @@
       <div class="rule-row" style="color:var(--ink-3)">색이 있는 곳에서만 악기를 연주하고, 색이 없는 가사는 그냥 노래합니다.</div>
       <div class="rule-row" style="color:var(--ink-3)">중간 박자에 다른 화음이 오면 그 색으로 칠해집니다(예: 4도 → 1도).</div>
     </div>
-    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요(상세 창의 <b>🎹 건반</b>을 터치하면 피아노 건반으로 멜로디를 넣을 수 있어요). 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다 — <b>조성을 바꾸면 그 곡의 멜로디가 새 조성으로 함께 전조</b>되고(가까운 쪽 반음으로 옮겨 옥타브가 튀지 않게, 샤프 조성은 #·플랫 조성은 b 표기), 바뀐 직후 <b>되돌리기</b>로 원래 조성·멜로디로 돌아갈 수 있어요. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭을 열어 악보 마디마다 나타나는 <b>체크박스</b>로 원하는 마디를 골라(연속되지 않아도 됩니다) <b>🗑 선택한 N마디 삭제</b>를 누르거나, <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다.</p>
+    <p class="hint" style="margin-top:12px"><b>악보 화면에서 바로 고치기:</b> 색깔악보에서 <b>가사 부분을 누르면</b> 그 마디 안에 입력칸이 바로 열려 가사를 통째로 적을 수 있어요(Enter는 다음 마디, Esc는 취소). <b>화성 표시(예: 1도 C)를 누르면</b> 그 자리에서 <b>1도·4도·5도·기타·없음</b> 색 단추가 열립니다. 위쪽 <b>✏️ 바로 수정</b>을 켜면 모든 마디에 입력칸과 색 단추가 한꺼번에 보여서 여러 마디를 이어서 고칠 수 있어요. 멜로디나 박자 나누기처럼 세밀한 수정은 마디 구석의 <b>상세</b>를 누르세요(상세 창의 <b>🎹 건반</b>을 터치하면 피아노 건반으로 멜로디를 넣을 수 있어요). 위쪽 <b>조성</b>·<b>빠르기</b>도 악보에서 바로 바뀝니다 — <b>조성을 바꾸면 그 곡의 멜로디가 새 조성으로 함께 전조</b>되고(가까운 쪽 반음으로 옮겨 옥타브가 튀지 않게, 샤프 조성은 #·플랫 조성은 b 표기), 바뀐 직후 <b>되돌리기</b>로 원래 조성·멜로디로 돌아갈 수 있어요. <b>마디 추가</b>는 악보 위 <b>＋ 마디 추가</b> 줄에서 <b>맨 앞·마디 앞·마디 뒤·맨 뒤</b>와 <b>1·2·4마디</b>를 고른 뒤 <b>＋ 빈 마디 추가</b>를 누르면 창을 띄우지 않고 그 자리에 바로 들어갑니다. 마디 안의 <b>＋ 앞에</b>·<b>＋ 뒤에</b>는 누르는 즉시 그 자리에 빈 마디 하나를 넣습니다. 새로 넣은 마디는 가사·화성이 비어 있는 빈 마디로 들어가고, 마디 번호는 자동으로 다시 매겨집니다. <b>마디 삭제</b>는 <b>바로 수정</b>을 켠 뒤 지울 마디의 <b>🗑 삭제</b>를 누르면 바로 지워지고 번호가 다시 매겨지며(지운 직후 <b>되돌리기</b>로 복구), 여러 마디를 한꺼번에는 위쪽 <b>🗑 삭제</b> 탭을 열어 악보 마디마다 나타나는 <b>체크박스</b>로 원하는 마디를 골라(연속되지 않아도 됩니다) <b>🗑 선택한 N마디 삭제</b>를 누르거나, <b>몇 번부터 몇 마디</b>를 골라 지웁니다. 악보에는 언제나 마지막 <b>1마디</b>가 남습니다. <b>실수로 고쳤다면</b> 위쪽 <b>↩ 되돌리기</b>를 누르세요 — 가사·화성·멜로디·마디 추가/삭제·조성·박자·빠르기·불러오기까지 최근 <b>40단계</b>를 차례로 되돌리고, 화면·저장·내 악보 목록이 함께 되돌아갑니다(되돌릴 게 없으면 버튼이 흐려지고, PC에서는 <b>Ctrl+Z / ⌘Z</b>, 되돌린 직후에는 <b>다시 실행</b>도 됩니다).</p>
     <p class="hint">‘멜로디 포함’을 켜면 악보에 음이름이 보이고, 들을 때 멜로디도 함께 연주됩니다. 이 악보는 이 브라우저에 자동 저장되고, JSON으로 내려받아 다른 기기로 옮길 수 있어요. 사진은 저장되지 않습니다.</p>
     <p class="hint"><b>여러 곡을 모아 두려면 위의 📚 내 악보 목록</b>을 쓰세요. <b>💾 목록에 저장</b>을 누르면 지금 악보가 목록에 들어가고, 그 뒤로는 고칠 때마다 목록에도 자동으로 저장됩니다. 목록에서 다른 곡을 눌러 바로 열 수 있고, 같은 곡을 다른 조성·난이도로 남기려면 목록의 <b>＋ 지금 악보를 새 항목으로 저장</b>을 누르세요.</p>
   </div>
@@ -1784,6 +1800,8 @@
      PERSIST
      ============================================================ */
   function save(){
+    /* 모든 편집은 저장으로 끝나므로, 여기서 ‘바뀌기 전 상태’를 되돌리기 기록에 남깁니다 */
+    undoRecord();
     try{
       localStorage.setItem(STORE_KEY, JSON.stringify({
         v:3,
@@ -1825,16 +1843,153 @@
       measures:state.measures
     });
   }
-  function restore(snap){
-    if (!snap) return;
-    state.title = snap.title; state.key = snap.key; state.bpm = snap.bpm;
-    state.beats = snap.beats;
-    state.midBeat = clamp(parseInt(snap.midBeat, 10) || MID_BEAT_DEFAULT[state.beats] || 3, 2, state.beats);
-    state.level = (snap.level === 2) ? 2 : 1;
-    state.melodyOn = !!snap.melodyOn;
-    state.measures = clone(snap.measures);
-    renderAll(); save();
+  /* ============================================================
+     UNDO — 상시 다단계 되돌리기 (최대 40단계)
+     ------------------------------------------------------------
+     · 모든 편집은 save()로 끝나므로, 저장할 때마다 ‘바뀌기 전 상태’를 한 단계로 남깁니다.
+       (직전 기록과 똑같으면 넣지 않습니다 — 중복 방지)
+     · 입력칸에 글자를 치는 동안처럼 잇달아 바뀌는 편집은 디바운스 저장이 한 번 불릴 때
+       한 단계로 묶입니다(가사·제목은 0.4초, 멜로디는 0.14초 쉬면 저장).
+     · 되돌리면 화면·localStorage·내 악보 목록(colorScoreLibrary.v1)까지 함께 되돌아갑니다.
+     ============================================================ */
+  var UNDO_MAX = 40;
+
+  var undo = {
+    stack: [],     /* [{ snap, libId }] — 최근 것이 마지막 */
+    redo: [],
+    cur: null,     /* 마지막으로 기록한 상태 { snap, sig, libId } */
+    lock: 0        /* 복원 중에는 기록하지 않습니다 */
+  };
+
+  function undoSig(snap){ return JSON.stringify(snap); }
+
+  /* 바뀐 내용이 있으면 직전 상태를 되돌리기 스택에 넣습니다 (같으면 그냥 지나갑니다) */
+  function undoRecord(){
+    if (undo.lock) return false;
+    var snap = snapshot();
+    var sig = undoSig(snap);
+    if (!undo.cur){
+      undo.cur = { snap:snap, sig:sig, libId:str(state.libId) };
+      return false;
+    }
+    if (sig === undo.cur.sig){
+      /* 내용은 그대로인데 목록 연결만 바뀐 경우(목록에 저장·삭제)에도 기준점을 맞춰 둡니다 */
+      undo.cur.libId = str(state.libId);
+      return false;
+    }
+    undo.stack.push({ snap:undo.cur.snap, libId:undo.cur.libId });
+    if (undo.stack.length > UNDO_MAX) undo.stack.splice(0, undo.stack.length - UNDO_MAX);
+    undo.redo.length = 0;
+    undo.cur = { snap:snap, sig:sig, libId:str(state.libId) };
+    undoPaint();
+    return true;
   }
+
+  /* 기록은 건드리지 않고, 화면·저장소·목록에만 스냅샷을 그대로 반영합니다 */
+  function undoRestoreState(snap, libId){
+    if (!snap) return;
+    if (audio.playing) stopScore();
+    undo.lock++;
+    try{
+      state.title = snap.title; state.key = snap.key; state.bpm = snap.bpm;
+      state.beats = snap.beats;
+      state.midBeat = clamp(parseInt(snap.midBeat, 10) || MID_BEAT_DEFAULT[state.beats] || 3, 2, state.beats);
+      state.level = (snap.level === 2) ? 2 : 1;
+      state.melodyOn = !!snap.melodyOn;
+      state.measures = clone(snap.measures);
+      if (libId !== undefined) state.libId = str(libId);
+      renderAll();
+      save();            /* localStorage + 내 악보 목록까지 함께 동기화 */
+      /* 마디 수가 달라졌을 수 있으니 지우기용 체크 선택은 비웁니다 */
+      if (delSel.on) delSelClearAll();
+      /* 마디 상세·건반이 열려 있으면 그 안의 멜로디 칸도 되돌린 값으로 */
+      if (mmIndex >= 0){
+        if (state.measures[mmIndex]){
+          if ($('mmMelody')) $('mmMelody').value = state.measures[mmIndex].melody;
+          updateMM();
+          pianoNow();
+        } else {
+          closeMeasureEditor();
+        }
+      }
+    } finally { undo.lock--; }
+    libSyncUI();
+  }
+
+  /* 지금 화면을 기록의 기준점으로 삼고, 같아진 꼬리 단계는 정리합니다 */
+  function undoResync(){
+    var snap = snapshot();
+    var sig = undoSig(snap);
+    undo.cur = { snap:snap, sig:sig, libId:str(state.libId) };
+    while (undo.stack.length && undoSig(undo.stack[undo.stack.length - 1].snap) === sig) undo.stack.pop();
+  }
+
+  function undoPaint(){
+    var btn = $('undoBtn');
+    if (!btn) return;
+    var n = undo.stack.length;
+    var cnt = $('undoCount');
+    if (cnt){
+      cnt.textContent = n ? '(' + n + ')' : '';
+      cnt.hidden = !n;
+    }
+    btn.disabled = !n;
+    btn.setAttribute('aria-label', n ? ('되돌리기 ' + n + '단계 — 방금 한 편집을 되돌립니다')
+                                     : '되돌리기 — 되돌릴 편집이 없습니다');
+    btn.setAttribute('title', n ? ('방금 한 편집을 되돌립니다 (남은 ' + n + '단계 · Ctrl+Z)')
+                               : '되돌릴 편집이 없습니다');
+  }
+
+  /* 열어 둔 입력칸을 정리하고, 아직 저장되지 않은 변경도 한 단계로 확정합니다 */
+  function undoFlush(){
+    if (inline.lyric >= 0) commitInlineLyric(inline.lyric);
+    closeInlineChord();
+    closeAddMeasure();
+    undoRecord();
+  }
+
+  function undoStep(){
+    undoFlush();
+    if (!undo.stack.length){
+      undoPaint();
+      toast('되돌릴 편집이 없어요');
+      return false;
+    }
+    var entry = undo.stack.pop();
+    undo.redo.push({ snap:snapshot(), libId:str(state.libId) });
+    undoRestoreState(entry.snap, entry.libId);
+    undoResync();
+    undoPaint();
+    toast('이전 상태로 되돌렸어요', undo.redo.length ? '다시 실행' : null,
+          undo.redo.length ? redoStep : null);
+    return true;
+  }
+
+  function redoStep(){
+    if (!undo.redo.length){
+      toast('다시 실행할 편집이 없어요');
+      return false;
+    }
+    var entry = undo.redo.pop();
+    undo.stack.push({ snap:snapshot(), libId:str(state.libId) });
+    if (undo.stack.length > UNDO_MAX) undo.stack.splice(0, undo.stack.length - UNDO_MAX);
+    undoRestoreState(entry.snap, entry.libId);
+    undoResync();
+    undoPaint();
+    toast('다시 실행했어요');
+    return true;
+  }
+
+  /* 토스트의 한 번짜리 ‘되돌리기’가 쓰는 복원 — 기록도 함께 맞춥니다 */
+  function restore(snap, libId){
+    if (!snap) return;
+    undoRestoreState(snap, libId);
+    undo.redo.length = 0;
+    undoResync();
+    undoPaint();
+  }
+
+  $('undoBtn').addEventListener('click', function(){ undoStep(); });
 
   /* ============================================================
      LIBRARY — 작업한 색깔악보를 목록으로 모아 두기
@@ -4947,6 +5102,17 @@
     }
   });
 
+  /* PC 키보드 — 글자를 입력하는 칸에 초점이 있을 때는 브라우저의 글자 되돌리기를 그대로 둡니다 */
+  document.addEventListener('keydown', function(e){
+    if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
+    var t = e.target;
+    var tag = (t && t.tagName) ? String(t.tagName).toUpperCase() : '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+    var k = String(e.key || '').toLowerCase();
+    if (k === 'z' && !e.shiftKey){ e.preventDefault(); undoStep(); }
+    else if (k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); redoStep(); }
+  });
+
   /* ============================================================
      BOOT
      ============================================================ */
@@ -4975,6 +5141,9 @@
     showView('score');
     $('helpModal').hidden = true;
     libSyncUI();
+    /* 지금 열린 악보를 되돌리기의 출발점으로 삼습니다 */
+    undoResync();
+    undoPaint();
   }
 
   /* small debug/verification handle (harmless) */
@@ -5060,7 +5229,13 @@
     libRenderList: libRenderList,
     libSyncUI: libSyncUI,
     libSyncCurrent: libSyncCurrent,
-    version: '3.6.1'
+    undo: undoStep,
+    redo: redoStep,
+    undoCount: function(){ return undo.stack.length; },
+    redoCount: function(){ return undo.redo.length; },
+    undoState: function(){ return { undo:undo.stack.length, redo:undo.redo.length, max:UNDO_MAX }; },
+    undoReset: function(){ undo.stack.length = 0; undo.redo.length = 0; undoResync(); undoPaint(); },
+    version: '3.7.0'
   };
 
   if (document.readyState === 'loading'){
